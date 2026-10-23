@@ -5,7 +5,7 @@ type SectionHeadingProps = {
   /** Heading level — sections use h2, page titles h1. */
   as?: "h1" | "h2" | "h3";
   /** Display size of the heading. */
-  size?: "lg" | "sm";
+  size?: "xl" | "lg" | "sm";
   align?: "start" | "center";
   /** Light surfaces by default; "dark" for text on the plum bands. */
   tone?: "light" | "dark";
@@ -33,9 +33,11 @@ export function SectionHeading({
   const centered = align === "center";
 
   const headingClass = [
-    size === "lg"
-      ? "text-headline-lg-mobile lg:text-headline-lg"
-      : "text-headline-md",
+    size === "xl"
+      ? "text-display-hero-mobile lg:text-display-hero"
+      : size === "lg"
+        ? "text-headline-lg-mobile lg:text-headline-lg"
+        : "text-headline-md",
     "text-balance",
     dark ? "text-on-primary" : "text-primary",
   ].join(" ");

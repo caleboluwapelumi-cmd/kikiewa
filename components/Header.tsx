@@ -2,12 +2,17 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 import { Button } from "@/components/Button";
 import { Icon } from "@/components/Icon";
 import { bookingHref, navLinks, site } from "@/data/site";
 
 export function Header() {
   const [open, setOpen] = useState(false);
+  const pathname = usePathname();
+
+  const isCurrent = (href: string) =>
+    pathname === href || pathname.startsWith(href + "/");
 
   // Keep the page behind the open menu from scrolling, and allow Escape to close.
   useEffect(() => {
@@ -28,9 +33,13 @@ export function Header() {
 
   return (
     <header className="fixed inset-x-0 top-0 z-50 border-b border-border bg-background/90 backdrop-blur-md">
-      <div className="shell flex h-20 items-center justify-between">
-        <Link href="/" className="flex flex-col" onClick={() => setOpen(false)}>
-          <span className="text-headline-sm uppercase tracking-widest text-primary">
+      <div className="shell flex h-20 items-center justify-between gap-space-lg">
+        <Link
+          href="/"
+          className="flex flex-col gap-1"
+          onClick={() => setOpen(false)}
+        >
+          <span className="font-display text-headline-sm uppercase tracking-[0.2em] text-primary">
             {site.name}
           </span>
           <span className="text-label-sm uppercase text-secondary">
@@ -38,16 +47,23 @@ export function Header() {
           </span>
         </Link>
 
-        <nav aria-label="Primary" className="hidden items-center gap-space-lg lg:flex">
-          {navLinks.map((link) => (
-            <Link
-              key={link.href}
-              href={link.href}
-              className="py-space-xs text-title-md text-muted transition-colors hover:text-foreground"
-            >
-              {link.label}
-            </Link>
-          ))}
+        <nav aria-label="Primary" className="hidden items-center gap-8 lg:flex">
+          {navLinks.map((link) => {
+            const current = isCurrent(link.href);
+            return (
+              <Link
+                key={link.href}
+                href={link.href}
+                aria-current={current ? "page" : undefined}
+                className={[
+                  "link-rule py-1 text-body-sm font-medium",
+                  current ? "text-primary" : "text-muted hover:text-primary",
+                ].join(" ")}
+              >
+                {link.label}
+              </Link>
+            );
+          })}
         </nav>
 
         <div className="flex items-center gap-space-sm">
@@ -61,35 +77,57 @@ export function Header() {
             aria-expanded={open}
             aria-controls="mobile-menu"
             aria-label={open ? "Close menu" : "Open menu"}
-            className="flex size-11 items-center justify-center rounded-xs border border-border text-primary transition-colors hover:bg-surface lg:hidden"
+            className="flex size-11 items-center justify-center rounded-xs border border-border text-primary transition-colors duration-200 hover:border-primary active:translate-y-px lg:hidden"
           >
-            <Icon name={open ? "close" : "menu"} className="size-6" />
+            <Icon name={open ? "close" : "menu"} className="size-5" />
           </button>
         </div>
       </div>
 
-      {/* Mobile menu */}
+      {/* Mobile menu — full-height sheet under the bar. Stays mounted so it can
+          fade in; `inert` removes it from focus and the accessibility tree
+          while closed. */}
       <div
         id="mobile-menu"
-        hidden={!open}
-        className="border-t border-border bg-background lg:hidden"
+        inert={!open}
+        className={[
+          "absolute inset-x-0 top-full h-[calc(100dvh-5rem)] overflow-y-auto border-t border-border bg-background transition-[opacity,transform,visibility] duration-300 ease-out-soft lg:hidden",
+          open
+            ? "visible translate-y-0 opacity-100"
+            : "invisible -translate-y-2 opacity-0",
+        ].join(" ")}
       >
         <nav
           aria-label="Primary mobile"
-          className="shell flex flex-col gap-space-xs py-space-md"
+          className="shell flex min-h-full flex-col py-space-lg"
         >
-          {navLinks.map((link) => (
-            <Link
-              key={link.href}
-              href={link.href}
-              onClick={() => setOpen(false)}
-              className="border-b border-border py-space-md text-title-lg text-foreground transition-colors last:border-b-0 hover:text-secondary"
-            >
-              {link.label}
-            </Link>
-          ))}
+          <ul className="border-t border-border">
+            {navLinks.map((link) => {
+              const current = isCurrent(link.href);
+              return (
+                <li key={link.href} className="border-b border-border">
+                  <Link
+                    href={link.href}
+                    onClick={() => setOpen(false)}
+                    aria-current={current ? "page" : undefined}
+                    className={[
+                      "group flex items-center justify-between py-5 font-display text-headline-md transition-colors duration-200",
+                      current ? "text-secondary" : "text-primary hover:text-secondary",
+                    ].join(" ")}
+                  >
+                    {link.label}
+                    <Icon
+                      name="arrowRight"
+                      className="size-5 shrink-0 text-secondary transition-transform duration-300 ease-out-soft group-hover:translate-x-1"
+                    />
+                  </Link>
+                </li>
+              );
+            })}
+          </ul>
+
           {/* Click bubbles up from the link, closing the menu on navigation */}
-          <div onClick={() => setOpen(false)} className="mt-space-sm sm:hidden">
+          <div onClick={() => setOpen(false)} className="mt-auto pt-space-xl">
             <Button href={bookingHref} size="lg" icon="arrowRight" className="w-full">
               Book an appointment
             </Button>

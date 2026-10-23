@@ -2,26 +2,40 @@ import { Button } from "@/components/Button";
 import { SectionHeading } from "@/components/SectionHeading";
 import { ctaBand } from "@/data/site";
 
+/**
+ * Closing call to action. Full-bleed plum that runs straight into the plum
+ * footer, separated only by a hairline — one confident dark finale on every
+ * page rather than another light band.
+ */
 export function CtaBand() {
   return (
-    <section className="w-full bg-card py-space-xl lg:py-24">
-      <div className="shell text-center">
-        <div className="mx-auto flex max-w-2xl flex-col items-center">
+    <section
+      data-tone="dark"
+      className="w-full bg-primary pt-space-2xl pb-space-xl text-on-primary md:pt-space-3xl lg:pt-32 lg:pb-space-2xl"
+    >
+      <div className="shell">
+        <div className="grid grid-cols-1 gap-space-xl lg:grid-cols-12 lg:items-end lg:gap-gutter-desktop">
           <SectionHeading
             eyebrow={ctaBand.eyebrow}
             heading={ctaBand.heading}
-            body={ctaBand.body}
-            align="center"
-            className="mb-space-lg"
+            tone="dark"
+            size="xl"
+            className="lg:col-span-7"
           />
-          <Button
-            href={ctaBand.cta.href}
-            size="lg"
-            icon="calendar"
-            className="px-10 py-5"
-          >
-            {ctaBand.cta.label}
-          </Button>
+
+          <div className="flex flex-col items-start gap-space-lg lg:col-span-4 lg:col-start-9 lg:border-l lg:border-on-primary/20 lg:pl-gutter-desktop">
+            <p className="text-pretty text-body-lg text-on-primary/80">
+              {ctaBand.body}
+            </p>
+            <Button
+              href={ctaBand.cta.href}
+              variant="inverse"
+              size="lg"
+              icon="calendar"
+            >
+              {ctaBand.cta.label}
+            </Button>
+          </div>
         </div>
       </div>
     </section>
