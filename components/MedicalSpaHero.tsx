@@ -5,28 +5,26 @@ import { medicalSpa } from "@/data/site";
 /**
  * Medical spa hero. Deliberately quieter than the home hero: no stat block,
  * no floating badge and no image overlay — a statement, one supporting line
- * and a single action.
+ * and a single action, on the cool neutral frame.
  */
 export function MedicalSpaHero() {
   const { hero } = medicalSpa;
 
   return (
-    <section className="w-full border-b border-border bg-background py-space-xl lg:py-32">
+    <section className="w-full bg-background pt-space-2xl pb-space-2xl md:pt-space-3xl lg:pt-28 lg:pb-28">
       <div className="shell">
-        <div className="grid grid-cols-1 items-center gap-gutter-desktop lg:grid-cols-12 lg:gap-16">
-          <div className="flex flex-col lg:col-span-7">
-            <div className="mb-space-lg flex items-center gap-space-sm">
-              <span className="inline-block h-px w-8 bg-accent" />
-              <span className="text-label-sm uppercase text-secondary">
-                {hero.eyebrow}
-              </span>
-            </div>
+        <div className="grid grid-cols-1 items-end gap-space-2xl lg:grid-cols-12 lg:gap-gutter-desktop">
+          <div className="flex flex-col lg:col-span-7 lg:pb-space-xl">
+            <p className="mb-space-lg flex items-center gap-3 text-label-sm uppercase text-secondary">
+              <span aria-hidden="true" className="inline-block h-px w-8 bg-accent" />
+              {hero.eyebrow}
+            </p>
 
-            <h1 className="max-w-2xl text-display-hero-mobile text-primary lg:text-display-hero">
+            <h1 className="max-w-[12em] text-balance text-display-hero-mobile text-primary lg:text-display-hero">
               {hero.heading}
             </h1>
 
-            <p className="mt-space-lg max-w-xl text-body-lg text-muted">
+            <p className="mt-space-lg max-w-[52ch] text-pretty text-body-lg text-muted">
               {hero.body}
             </p>
 
@@ -37,7 +35,7 @@ export function MedicalSpaHero() {
             </div>
           </div>
 
-          <div className="mt-space-lg lg:col-span-5 lg:mt-0">
+          <div className="lg:col-span-5">
             <ImageFrame
               alt={hero.image.alt}
               ratio="aspect-[4/5]"
