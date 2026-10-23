@@ -8,6 +8,9 @@ import "./globals.css";
 const bodoniModa = Bodoni_Moda({
   variable: "--font-bodoni-moda",
   subsets: ["latin"],
+  // Optical sizing: hairline contrast at display sizes, sturdier strokes at
+  // the small sizes used for card titles.
+  axes: ["opsz"],
   display: "swap",
 });
 
@@ -33,9 +36,15 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
       className={`${bodoniModa.variable} ${plusJakartaSans.variable} h-full antialiased`}
     >
       <body className="flex min-h-full flex-col">
+        <a
+          href="#main"
+          className="sr-only z-[60] bg-primary px-space-md py-space-sm text-label-md uppercase text-on-primary focus:not-sr-only focus:fixed focus:top-space-md focus:left-space-md"
+        >
+          Skip to content
+        </a>
         <Header />
         {/* Offset the fixed 80px header */}
-        <main className="w-full flex-1 pt-20">{children}</main>
+        <main id="main" tabIndex={-1} className="w-full flex-1 pt-20 focus:outline-none">{children}</main>
         <Footer />
       </body>
     </html>
