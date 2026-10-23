@@ -19,8 +19,8 @@ export type ImageTone = "neutral" | "warm";
 const tones: Record<ImageTone, string> = {
   // Clinical and default: the cool end of the alabaster scale
   neutral: "bg-surface-2",
-  // Salon & spa: a soft accent wash over the section surface
-  warm: "bg-accent/15",
+  // Salon & spa: alabaster with a soft accent wash
+  warm: "bg-surface-warm",
 };
 
 type ImageFrameProps = {
@@ -82,8 +82,8 @@ export function ImageFrame({
         className="pointer-events-none absolute inset-3 border border-primary/10 md:inset-4"
       />
 
-      <span className="absolute top-6 right-6 flex items-center gap-2 text-label-sm uppercase text-muted md:top-7 md:right-7">
-        <span aria-hidden="true" className="inline-block h-px w-4 bg-muted/60" />
+      <span className="absolute inset-x-6 top-6 flex items-start justify-end gap-2 text-right text-label-sm uppercase text-muted md:inset-x-7 md:top-7">
+        <span aria-hidden="true" className="mt-[0.4rem] inline-block h-px w-4 shrink-0 bg-muted/60" />
         Image to be supplied
       </span>
 

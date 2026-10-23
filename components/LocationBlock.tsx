@@ -18,14 +18,20 @@ export type LocationTone = "clinical" | "warm";
 /**
  * Tone changes the setting, not the palette: the clinical page states the
  * facts on bare background beside a neutral frame; the salon page sits them
- * on a card panel beside an accent-washed frame.
+ * on a card panel, on the tinted surface, beside an accent-washed frame.
  */
 const tones: Record<
   LocationTone,
-  { grid: string; panel: string; image: ImageTone }
+  { section: string; grid: string; panel: string; image: ImageTone }
 > = {
-  clinical: { grid: "items-start", panel: "", image: "neutral" },
+  clinical: {
+    section: "bg-background",
+    grid: "items-start",
+    panel: "",
+    image: "neutral",
+  },
   warm: {
+    section: "border-t border-border bg-surface",
     grid: "items-start",
     panel: "border border-border bg-card p-space-lg md:p-10",
     image: "warm",
@@ -50,7 +56,7 @@ export function LocationBlock({
   const toneClasses = tones[tone];
 
   return (
-    <section className="section-y w-full bg-background">
+    <section className={"section-y w-full " + toneClasses.section}>
       <div className="shell">
         <SectionHeading
           eyebrow={copy.eyebrow}

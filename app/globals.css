@@ -21,6 +21,8 @@
   --color-surface: #f3f0eb;
   --color-surface-2: #edeae4;
   --color-surface-3: #e7e3dc;
+  /* Warm wash for the salon & spa: accent folded into the background, opaque */
+  --color-surface-warm: color-mix(in oklab, var(--color-accent) 16%, var(--color-background));
   --color-border: #e5dfd7;
   /* Stronger hairline for clinical rules and active states */
   --color-border-strong: color-mix(in oklab, var(--color-primary) 22%, var(--color-border));

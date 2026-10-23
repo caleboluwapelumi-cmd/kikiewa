@@ -37,7 +37,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
       <body className="flex min-h-full flex-col">
         <a
           href="#main"
-          className="sr-only z-[60] bg-primary px-space-md py-space-sm text-label-md uppercase text-on-primary focus:not-sr-only focus:fixed focus:top-space-md focus:left-space-md"
+          className="fixed top-space-md left-space-md z-[60] -translate-y-[200%] bg-primary px-space-md py-space-sm text-label-md uppercase text-on-primary transition-transform duration-200 focus:translate-y-0"
         >
           Skip to content
         </a>

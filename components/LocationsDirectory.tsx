@@ -9,13 +9,14 @@ import { locations, locationsPage } from "@/data/site";
  */
 export function LocationsDirectory() {
   return (
-    <section className="section-y w-full bg-background">
+    <section className="w-full bg-background pt-space-2xl pb-space-3xl md:pt-space-3xl lg:pt-28 lg:pb-32">
       <div className="shell">
         <SectionHeading
           eyebrow={locationsPage.eyebrow}
           heading={locationsPage.heading}
           body={locationsPage.body}
           as="h1"
+          size="xl"
           className="mb-space-2xl"
         />
 

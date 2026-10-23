@@ -3,34 +3,32 @@ import { SectionHeading } from "@/components/SectionHeading";
 import { salonSpa } from "@/data/site";
 
 /**
- * "What to expect" — three plain assurances on a soft accent wash, the warmest
+ * "What to expect" — three plain assurances on the warm wash, the warmest
  * surface on the page. One sentence each, no specifics we cannot stand behind.
  */
 export function ExpectationPoints() {
   const { expectIntro, expectations } = salonSpa;
 
   return (
-    <section className="w-full border-y border-border bg-accent/10 py-space-xl lg:py-28">
+    <section className="section-y w-full border-y border-border bg-surface-warm">
       <div className="shell">
         <SectionHeading
           eyebrow={expectIntro.eyebrow}
           heading={expectIntro.heading}
           body={expectIntro.body}
-          className="mb-space-xl"
+          className="mb-space-2xl"
         />
 
-        <ul className="grid grid-cols-1 gap-gutter-desktop md:grid-cols-3">
+        <ul className="grid grid-cols-1 gap-space-xl md:grid-cols-3 md:gap-gutter-desktop">
           {expectations.map((point) => (
-            <li key={point.title} className="flex flex-col">
+            <li key={point.title} className="flex flex-col border-t border-accent pt-space-lg">
               <Icon name={point.icon} className="size-6 text-secondary" />
-              <h3 className="mt-space-md text-title-lg text-primary">
+              <h3 className="mt-space-lg text-headline-sm text-primary">
                 {point.title}
               </h3>
-              <span
-                aria-hidden="true"
-                className="mt-space-md block h-px w-10 bg-accent"
-              />
-              <p className="mt-space-md text-body-md text-muted">{point.body}</p>
+              <p className="mt-space-sm max-w-[40ch] text-pretty text-body-md text-muted">
+                {point.body}
+              </p>
             </li>
           ))}
         </ul>
