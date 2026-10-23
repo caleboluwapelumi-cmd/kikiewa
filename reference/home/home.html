@@ -1,0 +1,607 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta content="width=device-width, initial-scale=1.0" name="viewport"><meta content="web_standard" name="shell-type"><link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet"><link href="https://fonts.googleapis.com" rel="preconnect"><link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"><style>
+  .bg-primary { background-color: #5A1F5E !important; }
+  .hover\:bg-inverse-surface:hover { background-color: #48184B !important; }
+  .text-secondary { color: #8E3F8F !important; }
+  .bg-secondary { background-color: #8E3F8F !important; }
+  .border-outline-variant { border-color: #E5DFD7 !important; }
+  .bg-secondary-container\/20 { background-color: rgba(201, 139, 185, 0.15) !important; }
+  .bg-secondary-container\/30 { background-color: rgba(201, 139, 185, 0.22) !important; }
+  .text-on-secondary-container { color: #5A1F5E !important; }
+  .decoration-secondary { text-decoration-color: #8E3F8F !important; }
+</style><link href="https://fonts.googleapis.com/css2?family=Bodoni+Moda:ital,opsz,wght@0,6..96,400..900;1,6..96,400..900&amp;family=Plus+Jakarta+Sans:ital,wght@0,300..800;1,300..800&amp;display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"><style>@layer base{html,body{margin:0;padding:0;}body{overscroll-behavior:none;}main>:first-child{margin-top:0!important;}main>:last-child{margin-bottom:0!important;}}::-webkit-scrollbar{display:none;}</style><script src="https://cdn.tailwindcss.com"></script><script id="tailwind-config">tailwind.config = {
+    darkMode: "class",
+    theme: {
+      extend: {
+        "colors": {
+          "surface-container-lowest": "#ffffff",
+          "surface-container": "#efeeeb",
+          "error-container": "#ffdad6",
+          "background": "#fbf9f6",
+          "on-tertiary": "#ffffff",
+          "tertiary": "#000000",
+          "on-error-container": "#93000a",
+          "on-tertiary-fixed": "#1c1c17",
+          "on-background": "#1b1c1a",
+          "on-surface-variant": "#474741",
+          "on-tertiary-container": "#86847d",
+          "on-secondary-fixed": "#291800",
+          "on-secondary-fixed-variant": "#5b421f",
+          "surface-container-highest": "#e4e2df",
+          "inverse-surface": "#30312f",
+          "surface-tint": "#5f5e5c",
+          "on-surface": "#1b1c1a",
+          "on-primary-fixed": "#1c1c1a",
+          "on-error": "#ffffff",
+          "primary": "#000000",
+          "on-primary": "#ffffff",
+          "secondary-container": "#ffdaab",
+          "on-secondary-container": "#7a5e38",
+          "primary-container": "#1c1c1a",
+          "secondary": "#755a34",
+          "surface": "#fbf9f6",
+          "inverse-on-surface": "#f2f0ed",
+          "secondary-fixed-dim": "#e5c193",
+          "inverse-primary": "#c9c6c3",
+          "on-secondary": "#ffffff",
+          "surface-bright": "#fbf9f6",
+          "surface-container-high": "#eae8e5",
+          "on-tertiary-fixed-variant": "#484741",
+          "primary-fixed-dim": "#c9c6c3",
+          "surface-container-low": "#f5f3f0",
+          "tertiary-fixed-dim": "#cac6bf",
+          "on-primary-container": "#858481",
+          "on-primary-fixed-variant": "#474744",
+          "outline-variant": "#c8c7bf",
+          "surface-variant": "#e4e2df",
+          "secondary-fixed": "#ffddb3",
+          "tertiary-fixed": "#e6e2db",
+          "outline": "#777771",
+          "surface-dim": "#dbdad7",
+          "error": "#ba1a1a",
+          "primary-fixed": "#e5e2de",
+          "tertiary-container": "#1c1c17"
+        },
+        "borderRadius": {
+          "DEFAULT": "0.125rem",
+          "lg": "0.25rem",
+          "xl": "0.5rem",
+          "full": "0.75rem"
+        },
+        "spacing": {
+          "gutter-desktop": "2.5rem",
+          "gutter": "1.5rem",
+          "margin": "1.25rem",
+          "margin-tablet": "2.5rem",
+          "space-xs": "0.25rem",
+          "margin-desktop": "4rem",
+          "space-sm": "0.5rem",
+          "space-md": "1rem",
+          "space-lg": "1.75rem",
+          "space-xl": "3rem"
+        },
+        "fontFamily": {
+          "display-hero-mobile": [
+            "Bodoni Moda"
+          ],
+          "headline-md": [
+            "Bodoni Moda"
+          ],
+          "headline-lg": [
+            "Bodoni Moda"
+          ],
+          "title-lg": [
+            "Plus Jakarta Sans"
+          ],
+          "title-md": [
+            "Plus Jakarta Sans"
+          ],
+          "body-md": [
+            "Plus Jakarta Sans"
+          ],
+          "headline-lg-mobile": [
+            "Bodoni Moda"
+          ],
+          "body-lg": [
+            "Plus Jakarta Sans"
+          ],
+          "headline-sm": [
+            "Bodoni Moda"
+          ],
+          "label-sm": [
+            "Plus Jakarta Sans"
+          ],
+          "display-hero": [
+            "Bodoni Moda"
+          ],
+          "label-md": [
+            "Plus Jakarta Sans"
+          ],
+          "body-sm": [
+            "Plus Jakarta Sans"
+          ]
+        },
+        "fontSize": {
+          "display-hero-mobile": [
+            "38px",
+            {
+              "lineHeight": "44px",
+              "letterSpacing": "-0.01em",
+              "fontWeight": "400"
+            }
+          ],
+          "headline-md": [
+            "28px",
+            {
+              "lineHeight": "36px",
+              "letterSpacing": "-0.01em",
+              "fontWeight": "500"
+            }
+          ],
+          "headline-lg": [
+            "40px",
+            {
+              "lineHeight": "48px",
+              "letterSpacing": "-0.015em",
+              "fontWeight": "400"
+            }
+          ],
+          "title-lg": [
+            "18px",
+            {
+              "lineHeight": "26px",
+              "letterSpacing": "-0.01em",
+              "fontWeight": "600"
+            }
+          ],
+          "title-md": [
+            "16px",
+            {
+              "lineHeight": "24px",
+              "letterSpacing": "0em",
+              "fontWeight": "600"
+            }
+          ],
+          "body-md": [
+            "15px",
+            {
+              "lineHeight": "24px",
+              "letterSpacing": "0.005em",
+              "fontWeight": "400"
+            }
+          ],
+          "headline-lg-mobile": [
+            "28px",
+            {
+              "lineHeight": "36px",
+              "letterSpacing": "0em",
+              "fontWeight": "400"
+            }
+          ],
+          "body-lg": [
+            "18px",
+            {
+              "lineHeight": "30px",
+              "letterSpacing": "0em",
+              "fontWeight": "400"
+            }
+          ],
+          "headline-sm": [
+            "22px",
+            {
+              "lineHeight": "28px",
+              "letterSpacing": "0em",
+              "fontWeight": "500"
+            }
+          ],
+          "label-sm": [
+            "11px",
+            {
+              "lineHeight": "14px",
+              "letterSpacing": "0.1em",
+              "fontWeight": "600"
+            }
+          ],
+          "display-hero": [
+            "56px",
+            {
+              "lineHeight": "64px",
+              "letterSpacing": "-0.02em",
+              "fontWeight": "400"
+            }
+          ],
+          "label-md": [
+            "12px",
+            {
+              "lineHeight": "16px",
+              "letterSpacing": "0.08em",
+              "fontWeight": "600"
+            }
+          ],
+          "body-sm": [
+            "13px",
+            {
+              "lineHeight": "20px",
+              "letterSpacing": "0.01em",
+              "fontWeight": "400"
+            }
+          ]
+        }
+      },
+    },
+  }</script></head><body class="bg-background font-body-md text-body-md text-on-surface antialiased"><header class="fixed top-0 left-0 right-0 z-50 bg-surface/90 backdrop-blur-md border-b border-outline-variant"><div class="max-w-[1360px] mx-auto px-margin md:px-margin-tablet lg:px-margin-desktop h-20 flex items-center justify-between"><div class="flex items-center gap-space-md"><a class="flex flex-col" data-path="home" href="#"><span class="font-headline-sm text-headline-sm uppercase tracking-widest text-primary">KIKIEWA</span><span class="font-label-sm text-label-sm tracking-widest uppercase text-secondary">Aesthetics • Lagos</span></a></div><nav class="hidden lg:flex items-center gap-space-lg" data-active-classes="text-primary border-b border-secondary font-title-md"><a class="font-title-md text-title-md text-on-surface-variant hover:text-on-surface transition-colors py-space-xs" data-path="salon-and-spa" href="#">Salon &amp; Spa</a><a class="font-title-md text-title-md text-on-surface-variant hover:text-on-surface transition-colors py-space-xs" data-path="medical-spa" href="#">Medical Spa</a><a class="font-title-md text-title-md text-on-surface-variant hover:text-on-surface transition-colors py-space-xs" data-path="beauty-institute" href="#">Beauty Institute</a><a class="font-title-md text-title-md text-on-surface-variant hover:text-on-surface transition-colors py-space-xs" data-path="locations" href="#">Locations</a><a class="font-title-md text-title-md text-on-surface-variant hover:text-on-surface transition-colors py-space-xs" data-path="contact" href="#">Contact</a></nav><div class="flex items-center gap-space-md"><a class="px-space-md py-space-sm bg-primary text-on-primary hover:bg-inverse-surface hover:text-inverse-on-surface rounded font-label-md text-label-md uppercase tracking-wider transition-colors" data-path="book-treatment" href="#">Book</a><img alt="Profile" class="w-8 h-8 rounded-full object-cover border border-outline-variant" src="https://lh3.googleusercontent.com/aida/AEtjO1W0CvIlLrafHyd-8vcaPNEBNIqZN2PrbIfxACWa-NkM_HDM_fMcGuCtSFRzKveTqja9Pwd3OWfKrSHagte4XY3-ixdnFjUPXn1Q57ze5QijkXxQmEnAjaDD6tK1l9xPGoPBk9fk-jVjt_-SjaAD2QTns7kyzyu-d132J75NaRnKpSfiGD75BktULT9o8EKV1JEWurHyynA41zRL1qb7-cB9ZZqscNOOAykhAxJlWpxhMOKq-LpaUJEx"></div></div></header><main class="w-full pt-20 bg-background"><div class="flex flex-col w-full">
+<!-- HERO SECTION -->
+<section class="relative w-full overflow-hidden bg-surface py-space-xl lg:py-28">
+<div class="max-w-[1360px] mx-auto px-margin md:px-margin-tablet lg:px-margin-desktop">
+<div class="grid grid-cols-1 lg:grid-cols-12 gap-gutter-desktop items-center">
+<!-- Text Column: Asymmetric 7 cols -->
+<div class="lg:col-span-7 flex flex-col z-10">
+<div class="flex items-center gap-space-sm mb-space-md">
+<span class="inline-block w-8 h-[1px] bg-secondary"></span>
+<span class="font-label-sm text-label-sm uppercase tracking-widest text-secondary">Clinical Rigour • Restorative Wellness</span>
+</div>
+<h1 class="font-display-hero text-display-hero text-primary tracking-tight mb-space-md max-w-2xl">
+            Elevated beauty, clinical precision, and transformative aesthetic wellness in Lagos.
+          </h1>
+<p class="font-body-lg text-body-lg text-on-surface-variant max-w-xl mb-space-xl leading-relaxed">
+            A multidisciplinary sanctuary uniting bespoke salon rituals, physician-led medical spa treatments, and professional aesthetic education.
+          </p>
+<div class="flex flex-wrap items-center gap-space-md">
+<a class="px-8 py-4 bg-primary text-on-primary hover:bg-inverse-surface rounded font-label-md text-label-md uppercase tracking-widest transition-all duration-300 shadow-sm flex items-center gap-space-xs group" data-path="book-treatment" href="#">
+<span class="">Book an appointment</span>
+<span class="material-symbols-outlined text-[16px] transition-transform duration-300 group-hover:translate-x-1">arrow_forward</span>
+</a>
+<a class="px-6 py-4 text-primary font-label-md text-label-md uppercase tracking-widest hover:text-secondary transition-colors underline underline-offset-8 decoration-secondary" href="#divisions">
+              Explore services
+            </a>
+</div>
+<!-- Micro Metas -->
+<div class="grid grid-cols-3 gap-space-md mt-space-xl pt-space-md bg-surface-container-low p-space-md rounded"><div>
+<span class="block font-headline-sm text-headline-sm text-primary">02 Locations</span>
+<span class="font-label-sm text-label-sm uppercase tracking-wider text-on-surface-variant">Ebute and Nitel</span>
+</div>
+<div>
+<span class="block font-title-md text-title-md text-primary mt-1">Clinical Protocol</span>
+<span class="font-label-sm text-label-sm uppercase tracking-wider text-on-surface-variant">[Licence details to be confirmed]</span>
+</div>
+<div>
+<span class="block font-title-md text-title-md text-primary mt-1">Curriculum</span>
+<span class="font-label-sm text-label-sm uppercase tracking-wider text-on-surface-variant">[Accreditation to be confirmed]</span>
+</div></div>
+</div>
+<!-- Visual Column: Asymmetric 5 cols with Editorial Overlap -->
+<div class="lg:col-span-5 relative mt-space-lg lg:mt-0">
+<div class="relative w-full aspect-[4/5] bg-surface-container rounded overflow-hidden shadow-md">
+<img class="w-full h-full object-cover" data-alt="Editorial architectural photo of Kikiewa aesthetics sanctuary in Lagos, warm alabaster lime-wash concrete walls, fluted timber partitions, soft morning sunlight casting shadows, minimalist linen treatment plinth, serene high-end spa aesthetic with natural earth tones, fine art interior photography" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDBbGpCPT8x5YSwHFeCCo5o1DKHNUDC-cRYhcQcABd345dRuAOh7HEWDaYUQ2OH0VJYEeIU5y91gLc51xtQEBhcfudgCRvUzwUlrIC-u-oHP_c7TLMawciXMyeSIp4eDnmKwWU34q4z84cv06yoLxI7ePohWy_AjVen1w2BQNZeX0plch0pFXzsjRHMbDkI7dIlnQNKsEx0K7SqL8Xpgc1Ce3EvG8qf_O7_PI5HI61VB3jAcOLIXyM">
+<div class="absolute inset-0 bg-gradient-to-t from-primary/40 via-transparent to-transparent"></div>
+<div class="absolute bottom-6 left-6 right-6 p-space-md bg-surface/90 backdrop-blur-md rounded">
+<span class="font-label-sm text-label-sm uppercase tracking-widest text-secondary block">Sanctuary Architecture</span>
+<p class="font-body-sm text-body-sm text-on-surface mt-1">Ebute &amp; Nitel Enclaves • Monolithic minimalism tailored for contemplative tranquility.</p>
+</div>
+</div>
+<!-- Floating Architectural Badge -->
+<div class="hidden sm:flex absolute -top-6 -left-8 bg-surface-container-lowest p-5 rounded shadow-xl flex-col gap-1 max-w-[200px]"><span class="material-symbols-outlined text-secondary text-2xl">verified_user</span>
+<span class="font-title-md text-title-md text-primary mt-1">Clinical Premises</span>
+<span class="font-body-sm text-body-sm text-on-surface-variant leading-snug">[Accreditation to be confirmed]</span></div>
+</div>
+</div>
+</div>
+</section>
+<!-- THREE DIVISION CARDS SECTION -->
+<section class="w-full bg-surface-container-low py-space-xl lg:py-28" id="divisions">
+<div class="max-w-[1360px] mx-auto px-margin md:px-margin-tablet lg:px-margin-desktop">
+<div class="flex flex-col md:flex-row md:items-end justify-between mb-space-xl gap-space-md">
+<div>
+<span class="font-label-sm text-label-sm uppercase tracking-widest text-secondary block mb-space-xs">Pillars of Practice</span>
+<h2 class="font-headline-lg text-headline-lg text-primary tracking-tight">Three Multidisciplinary Divisions</h2>
+</div>
+<p class="font-body-md text-body-md text-on-surface-variant max-w-md">
+          Engineered to cater to personal rejuvenation, clinical dermatology, and vocational mastery within dedicated purpose-built spaces.
+        </p>
+</div>
+<!-- 3-Column Editorial Grid -->
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-gutter-desktop">
+<!-- Division 1: Salon & Spa -->
+<article class="flex flex-col bg-surface-container-lowest rounded overflow-hidden shadow-sm hover:shadow-md transition-shadow duration-300 group">
+<div class="relative w-full aspect-[16/11] overflow-hidden bg-surface-container">
+<img class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" data-alt="Close-up editorial photograph of mindful restorative scalp ritual and botanical hair conditioning at Kikiewa Salon Lagos, warm gentle water flow, deep terracotta ceramic basin, warm natural lighting, peaceful atmosphere, warm beige tone palette" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCc5zujmoGUb_mRNrNrL3z0erpEyN1TUdkat76kineUYlfXHy8sg7HMK21hTv_zsKgr1EViKh_KBKinIQd6IaI5mypIR8Y7Agv_ARfcJbVy5B7SUpDbHe2ZavT8VTBnFNRZGheo-c9ZwnDLmhCENgczJ_ULMMhsYgoggOmBXS27VJtMbNLmcISnDb1YzVt21H9DFfasTIQVnnJhhoa1-yNLf0XZ7CUrAeO1BZSBqAp1LJN29xhzdAE">
+<div class="absolute top-4 left-4 bg-surface/90 backdrop-blur-sm px-3 py-1 rounded">
+<span class="font-label-sm text-label-sm tracking-widest uppercase text-primary">Division 01</span>
+</div>
+</div>
+<div class="p-8 flex flex-col flex-1 justify-between">
+<div>
+<div class="flex items-center gap-2 mb-2 text-secondary">
+<span class="material-symbols-outlined text-lg">spa</span>
+<span class="font-label-sm text-label-sm uppercase tracking-wider">Rituals • Restorative Care</span>
+</div>
+<h3 class="font-headline-md text-headline-md text-primary mb-3">Salon &amp; Spa</h3>
+<p class="font-body-md text-body-md text-on-surface-variant leading-relaxed mb-6">
+                Curated hair styling, wellness rituals, and rejuvenating restorative therapies crafted for calm.
+              </p>
+</div>
+<a class="font-title-md text-title-md text-primary flex items-center gap-2 group-hover:text-secondary transition-colors pt-4 bg-surface-container-low px-4 py-3 rounded" data-path="salon-and-spa" href="#">
+<span class="">Explore Salon &amp; Spa</span>
+<span class="material-symbols-outlined text-lg transition-transform duration-300 group-hover:translate-x-1">east</span>
+</a>
+</div>
+</article>
+<!-- Division 2: Medical Spa & Makeover -->
+<article class="flex flex-col bg-surface-container-lowest rounded overflow-hidden shadow-sm hover:shadow-md transition-shadow duration-300 group">
+<div class="relative w-full aspect-[16/11] overflow-hidden bg-surface-container">
+<img class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" data-alt="Minimalist dermatological clinical room in Lagos with state of the art skincare technology, serene soft amber lighting, sterilized glass surfaces, clean architectural cabinetry, warm limestone floor, quiet high-end clinical aesthetic medicine setting" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDoNW89TUz1IGyx_phG9bXIQN77fg0d_HyWW83p8hB524tDeCFubNkpOU1r8M1ThRqfe_Z5TsPOd3L9iLqM7sKYhRe4BvN7ioLm5bdmYwTfl8Z5i86gqBgMs5JoapOgBT5WwZZB1h56LwI0LghsciAZOP27j8LEbNDNiind9XU7rtNYrQE5u6uGUn5sGX_Dep8X8yyB34NiDYciZNxDk1t3lkRqnK8FtrawGWsOpEI4ieAFJb1LLM4">
+<div class="absolute top-4 left-4 bg-surface/90 backdrop-blur-sm px-3 py-1 rounded">
+<span class="font-label-sm text-label-sm tracking-widest uppercase text-primary">Division 02</span>
+</div>
+</div>
+<div class="p-8 flex flex-col flex-1 justify-between">
+<div>
+<div class="flex items-center gap-2 mb-2 text-secondary">
+<span class="material-symbols-outlined text-lg">medical_services</span>
+<span class="font-label-sm text-label-sm uppercase tracking-wider">Physician-Supervised Dermal Care</span>
+</div>
+<h3 class="font-headline-md text-headline-md text-primary mb-3">Medical Spa &amp; Makeover</h3>
+<p class="font-body-md text-body-md text-on-surface-variant leading-relaxed mb-6">
+                Physician-guided skin rejuvenation, advanced dermal therapies, and signature artistic makeovers.
+              </p>
+</div>
+<a class="font-title-md text-title-md text-primary flex items-center gap-2 group-hover:text-secondary transition-colors pt-4 bg-surface-container-low px-4 py-3 rounded" data-path="medical-spa" href="#">
+<span class="">Explore Medical Spa</span>
+<span class="material-symbols-outlined text-lg transition-transform duration-300 group-hover:translate-x-1">east</span>
+</a>
+</div>
+</article>
+<!-- Division 3: Beauty Institute -->
+<article class="flex flex-col bg-surface-container-lowest rounded overflow-hidden shadow-sm hover:shadow-md transition-shadow duration-300 group">
+<div class="relative w-full aspect-[16/11] overflow-hidden bg-surface-container">
+<img class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" data-alt="Pristine professional beauty and dermal education training studio in Lagos, clean stainless workstations, students practicing professional cosmetic consultation under diffused neutral gallery lighting, focus and educational rigor, warm monochromatic atmosphere" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBOIaLuOE4GaOygu-C4Oo4RhNL_voR8I_Mi4rNbSJPxoTSYDm9xov7CswOktR6EQAGaRJCwWuyvNUSMrI1XqPHfm0TIoNtGJ2CIeBgZQ8aJqz3kBv5DO6_PhcepodU8EerzqzXg4zTom6o9NYjwXbTUr8_S21RKh1nUqXc_34VuljkKUWaj2rLWLWj_AFVQQtCMvodZA2_prGxTpaIsM8FxN0kK8kpbEo7pzAQXb__D-loCcTOmoIc">
+<div class="absolute top-4 left-4 bg-surface/90 backdrop-blur-sm px-3 py-1 rounded">
+<span class="font-label-sm text-label-sm tracking-widest uppercase text-primary">Division 03</span>
+</div>
+</div>
+<div class="p-8 flex flex-col flex-1 justify-between">
+<div>
+<div class="flex items-center gap-2 mb-2 text-secondary">
+<span class="material-symbols-outlined text-lg">school</span>
+<span class="font-label-sm text-label-sm uppercase tracking-wider">Accredited Vocational Diploma</span>
+</div>
+<h3 class="font-headline-md text-headline-md text-primary mb-3">Beauty Institute</h3>
+<p class="font-body-md text-body-md text-on-surface-variant leading-relaxed mb-6">
+                Accredited diploma curricula and masterclasses mentoring the next generation of aesthetic practitioners.
+              </p>
+</div>
+<a class="font-title-md text-title-md text-primary flex items-center gap-2 group-hover:text-secondary transition-colors pt-4 bg-surface-container-low px-4 py-3 rounded" data-path="beauty-institute" href="#">
+<span class="">View Academic Programs</span>
+<span class="material-symbols-outlined text-lg transition-transform duration-300 group-hover:translate-x-1">east</span>
+</a>
+</div>
+</article>
+</div>
+</div>
+</section>
+<!-- CHOOSE YOUR LOCATION SECTION -->
+<section class="w-full bg-surface py-space-xl lg:py-28">
+<div class="max-w-[1360px] mx-auto px-margin md:px-margin-tablet lg:px-margin-desktop">
+<div class="max-w-2xl mb-space-xl">
+<span class="font-label-sm text-label-sm uppercase tracking-widest text-secondary block mb-space-xs">Physical Enclaves</span>
+<h2 class="font-headline-lg text-headline-lg text-primary tracking-tight mb-space-sm">Choose Your Location</h2>
+<p class="font-body-lg text-body-lg text-on-surface-variant">
+          Two purpose-built spaces across Lagos dedicated to your aesthetic journey.
+        </p>
+</div>
+<div class="grid grid-cols-1 lg:grid-cols-2 gap-gutter-desktop">
+<!-- Location 1: Ebute Branch -->
+<div class="bg-surface-container-low p-8 lg:p-10 rounded shadow-sm flex flex-col justify-between">
+<div>
+<div class="flex items-center justify-between mb-6">
+<span class="font-label-sm text-label-sm uppercase tracking-widest text-secondary bg-surface px-3 py-1 rounded">Salon • Spa Suites</span>
+<span class="material-symbols-outlined text-on-surface-variant">location_on</span>
+</div>
+<h3 class="font-headline-md text-headline-md text-primary mb-2">Ebute Branch — Salon &amp; Spa</h3>
+<p class="font-body-sm text-body-sm text-on-surface-variant mb-8">
+              A restorative sanctuary configured for hair rituals, therapeutic hydrotherapy, and quiet body treatments away from city cadence.
+            </p>
+<div class="space-y-4 mb-8">
+<div class="flex items-start gap-3 bg-surface p-4 rounded">
+<span class="material-symbols-outlined text-secondary text-lg mt-0.5">home_pin</span>
+<div>
+<span class="block font-label-sm text-label-sm uppercase tracking-wider text-on-surface-variant">Address</span>
+<span class="font-body-md text-body-md text-primary">[Street Address Placeholder, Ebute, Lagos, Nigeria]</span>
+</div>
+</div>
+<div class="flex items-start gap-3 bg-surface p-4 rounded">
+<span class="material-symbols-outlined text-secondary text-lg mt-0.5">schedule</span>
+<div>
+<span class="block font-label-sm text-label-sm uppercase tracking-wider text-on-surface-variant">Operating Hours</span>
+<span class="font-body-md text-body-md text-primary">[Monday – Saturday: 09:00 – 19:00 | Sunday: By Appointment]</span>
+</div>
+</div>
+<div class="flex items-start gap-3 bg-surface p-4 rounded">
+<span class="material-symbols-outlined text-secondary text-lg mt-0.5">call</span>
+<div>
+<span class="block font-label-sm text-label-sm uppercase tracking-wider text-on-surface-variant">Contact &amp; Concierge</span>
+<span class="font-body-md text-body-md text-primary">[+234 (0) Placeholder Phone Number]</span>
+</div>
+</div>
+</div>
+</div>
+<div class="flex flex-wrap items-center gap-space-md pt-4">
+<a class="px-6 py-3 bg-primary text-on-primary hover:bg-inverse-surface rounded font-label-md text-label-md uppercase tracking-wider transition-colors" data-path="book-ebute" href="#">
+              Book at Ebute
+            </a>
+<a class="px-5 py-3 text-primary font-label-md text-label-md uppercase tracking-wider hover:text-secondary transition-colors flex items-center gap-1.5" data-path="directions-ebute" href="#">
+<span class="">Directions</span>
+<span class="material-symbols-outlined text-base">near_me</span>
+</a>
+</div>
+</div>
+<!-- Location 2: Nitel Branch -->
+<div class="bg-surface-container-low p-8 lg:p-10 rounded shadow-sm flex flex-col justify-between">
+<div>
+<div class="flex items-center justify-between mb-6">
+<span class="font-label-sm text-label-sm uppercase tracking-widest text-secondary bg-surface px-3 py-1 rounded">Clinical Spa • Institute</span>
+<span class="material-symbols-outlined text-on-surface-variant">local_hospital</span>
+</div>
+<h3 class="font-headline-md text-headline-md text-primary mb-2">Nitel Branch — Medical Spa &amp; Makeover</h3>
+<p class="font-body-sm text-body-sm text-on-surface-variant mb-8">
+              Clinical consultations, advanced dermal laser technologies, medical-grade chemical peels, and institute learning labs.
+            </p>
+<div class="space-y-4 mb-8">
+<div class="flex items-start gap-3 bg-surface p-4 rounded">
+<span class="material-symbols-outlined text-secondary text-lg mt-0.5">home_pin</span>
+<div>
+<span class="block font-label-sm text-label-sm uppercase tracking-wider text-on-surface-variant">Address</span>
+<span class="font-body-md text-body-md text-primary">[Street Address Placeholder, Near Old Nitel Exchange, Lagos, Nigeria]</span>
+</div>
+</div>
+<div class="flex items-start gap-3 bg-surface p-4 rounded">
+<span class="material-symbols-outlined text-secondary text-lg mt-0.5">schedule</span>
+<div>
+<span class="block font-label-sm text-label-sm uppercase tracking-wider text-on-surface-variant">Operating Hours</span>
+<span class="font-body-md text-body-md text-primary">[Tuesday – Saturday: 10:00 – 18:00 | Consultation Only]</span>
+</div>
+</div>
+<div class="flex items-start gap-3 bg-surface p-4 rounded">
+<span class="material-symbols-outlined text-secondary text-lg mt-0.5">call</span>
+<div>
+<span class="block font-label-sm text-label-sm uppercase tracking-wider text-on-surface-variant">Direct Medical Desk</span>
+<span class="font-body-md text-body-md text-primary">[+234 (0) Placeholder Phone Number]</span>
+</div>
+</div>
+</div>
+</div>
+<div class="flex flex-wrap items-center gap-space-md pt-4">
+<a class="px-6 py-3 bg-primary text-on-primary hover:bg-inverse-surface rounded font-label-md text-label-md uppercase tracking-wider transition-colors" data-path="book-nitel" href="#">
+              Schedule Clinical Consultation
+            </a>
+<a class="px-5 py-3 text-primary font-label-md text-label-md uppercase tracking-wider hover:text-secondary transition-colors flex items-center gap-1.5" data-path="directions-nitel" href="#">
+<span class="">Directions</span>
+<span class="material-symbols-outlined text-base">near_me</span>
+</a>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- CREDIBILITY STRIP -->
+<section class="w-full bg-surface-container py-space-xl">
+<div class="max-w-[1360px] mx-auto px-margin md:px-margin-tablet lg:px-margin-desktop">
+<div class="mb-space-md">
+<span class="font-label-sm text-label-sm uppercase tracking-widest text-secondary block">Assurance &amp; Governance</span>
+<h3 class="font-headline-sm text-headline-sm text-primary">Institutional Rigor and Standards</h3>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-gutter"><!-- Item 1 -->
+<div class="bg-surface p-6 rounded shadow-sm flex flex-col justify-between">
+<div>
+<span class="material-symbols-outlined text-secondary text-3xl mb-4">verified</span>
+<h4 class="font-title-md text-title-md text-primary mb-2">Clinical Facility</h4>
+<p class="font-body-sm text-body-sm text-on-surface-variant leading-relaxed">
+              Purpose-built aesthetics establishment in Lagos. [Licence details to be confirmed].
+            </p>
+</div>
+<span class="font-label-sm text-label-sm text-secondary uppercase tracking-widest mt-6 block">Standard 01</span>
+</div>
+<!-- Item 2 -->
+<div class="bg-surface p-6 rounded shadow-sm flex flex-col justify-between">
+<div>
+<span class="material-symbols-outlined text-secondary text-3xl mb-4">badge</span>
+<h4 class="font-title-md text-title-md text-primary mb-2">Practitioners &amp; Staff</h4>
+<p class="font-body-sm text-body-sm text-on-surface-variant leading-relaxed">
+              Qualified dermal therapists and cosmetic specialists. [Licence details to be confirmed].
+            </p>
+</div>
+<span class="font-label-sm text-label-sm text-secondary uppercase tracking-widest mt-6 block">Standard 02</span>
+</div>
+<!-- Item 3 -->
+<div class="bg-surface p-6 rounded shadow-sm flex flex-col justify-between">
+<div>
+<span class="material-symbols-outlined text-secondary text-3xl mb-4">sanitizer</span>
+<h4 class="font-title-md text-title-md text-primary mb-2">Hygiene Protocol</h4>
+<p class="font-body-sm text-body-sm text-on-surface-variant leading-relaxed">
+              Standardized sterilization, autoclave-tested instruments, and curated formulations.
+            </p>
+</div>
+<span class="font-label-sm text-label-sm text-secondary uppercase tracking-widest mt-6 block">Standard 03</span>
+</div>
+<!-- Item 4 -->
+<div class="bg-surface p-6 rounded shadow-sm flex flex-col justify-between">
+<div>
+<span class="material-symbols-outlined text-secondary text-3xl mb-4">auto_stories</span>
+<h4 class="font-title-md text-title-md text-primary mb-2">Institute Curriculum</h4>
+<p class="font-body-sm text-body-sm text-on-surface-variant leading-relaxed">
+              Structured training syllabus for aspiring practitioners. [Accreditation to be confirmed].
+            </p>
+</div>
+<span class="font-label-sm text-label-sm text-secondary uppercase tracking-widest mt-6 block">Standard 04</span>
+</div></div>
+</div>
+</section>
+<!-- BEAUTY INSTITUTE ENROLMENT BANNER -->
+<section class="w-full bg-surface-container-high py-space-xl lg:py-24">
+<div class="max-w-[1360px] mx-auto px-margin md:px-margin-tablet lg:px-margin-desktop">
+<div class="bg-surface-container-lowest p-8 md:p-14 lg:p-16 rounded shadow-md relative overflow-hidden">
+<div class="absolute -right-16 -bottom-16 w-96 h-96 bg-secondary-container/20 rounded-full blur-3xl pointer-events-none"></div>
+<div class="grid grid-cols-1 lg:grid-cols-12 gap-gutter-desktop items-center relative z-10">
+<div class="lg:col-span-8 flex flex-col">
+<div class="inline-flex items-center gap-2 bg-secondary-container/30 px-3.5 py-1.5 rounded w-fit mb-space-md">
+<span class="w-2 h-2 rounded-full bg-secondary animate-pulse"></span>
+<span class="font-label-sm text-label-sm uppercase tracking-widest text-on-secondary-container">
+                Next Cohort Commencing [Term / Month Placeholder]
+              </span>
+</div>
+<h2 class="font-headline-lg text-headline-lg text-primary tracking-tight mb-space-sm">
+              Shape the Future of Aesthetic Excellence
+            </h2>
+<p class="font-body-lg text-body-lg text-on-surface-variant max-w-2xl mb-space-lg leading-relaxed">
+              Admissions are open for upcoming cohorts in clinical aesthetics, advanced makeup artistry, and spa management.
+            </p>
+<div class="flex flex-wrap items-center gap-space-md">
+<a class="px-8 py-4 bg-primary text-on-primary hover:bg-inverse-surface rounded font-label-md text-label-md uppercase tracking-widest transition-colors shadow-sm" data-path="apply-institute" href="#">
+                Apply for Next Cohort
+              </a>
+<a class="px-6 py-4 bg-surface-container-low text-primary hover:bg-surface-container-highest rounded font-label-md text-label-md uppercase tracking-widest transition-colors flex items-center gap-2" data-path="download-prospectus" href="#">
+<span class="material-symbols-outlined text-base">download</span>
+<span class="">Download Prospectus</span>
+</a>
+</div>
+</div>
+<div class="lg:col-span-4 bg-surface-container-low p-6 rounded flex flex-col gap-4">
+<span class="font-label-sm text-label-sm uppercase tracking-widest text-secondary">Academic Credentials</span>
+<div class="flex items-center gap-3">
+<span class="material-symbols-outlined text-primary">clinical_notes</span>
+<span class="font-body-sm text-body-sm text-on-surface font-semibold">Clinical Cosmetology Diploma (12 Months)</span>
+</div>
+<div class="flex items-center gap-3">
+<span class="material-symbols-outlined text-primary">brush</span>
+<span class="font-body-sm text-body-sm text-on-surface font-semibold">Advanced Bridal &amp; Editorial Artistry (16 Weeks)</span>
+</div>
+<div class="flex items-center gap-3">
+<span class="material-symbols-outlined text-primary">spa</span>
+<span class="font-body-sm text-body-sm text-on-surface font-semibold">Holistic Spa Operations &amp; Therapy (24 Weeks)</span>
+</div>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- FINAL CTA BAND -->
+<section class="w-full bg-surface-container-lowest py-space-xl lg:py-24">
+<div class="max-w-[1360px] mx-auto px-margin md:px-margin-tablet lg:px-margin-desktop text-center">
+<div class="max-w-2xl mx-auto flex flex-col items-center">
+<span class="font-label-sm text-label-sm uppercase tracking-widest text-secondary mb-space-xs block">Personalized Appointments</span>
+<h2 class="font-headline-lg text-headline-lg text-primary tracking-tight mb-space-sm">
+          Experience Kikiewa in Person
+        </h2>
+<p class="font-body-lg text-body-lg text-on-surface-variant mb-space-lg leading-relaxed">
+          Reserve your consultation or ritual with our multidisciplinary specialists today.
+        </p>
+<a class="px-10 py-5 bg-primary text-on-primary hover:bg-inverse-surface rounded font-label-md text-label-md uppercase tracking-widest transition-colors shadow-sm flex items-center gap-2 group" data-path="book-treatment" href="#">
+<span class="">Book an appointment</span>
+<span class="material-symbols-outlined text-lg transition-transform duration-300 group-hover:translate-x-1">calendar_today</span>
+</a>
+</div>
+</div>
+</section>
+</div></main><footer class="w-full bg-surface-container-low border-t border-outline-variant pt-space-xl pb-space-lg"><div class="max-w-[1360px] mx-auto px-margin md:px-margin-tablet lg:px-margin-desktop"><div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-12 gap-gutter-desktop pb-space-xl border-b border-outline-variant"><div class="lg:col-span-4 flex flex-col gap-space-md"><span class="font-headline-sm text-headline-sm uppercase tracking-widest text-primary">KIKIEWA</span><p class="font-body-md text-body-md text-on-surface-variant max-w-sm">Licensed clinical aesthetics, restorative wellness therapies, and accredited beauty education rooted in Lagos, Nigeria. Architectural discipline meeting holistic dermatology.</p><div class="flex items-center gap-space-sm pt-space-xs"><span class="font-label-sm text-label-sm uppercase tracking-widest text-secondary border border-outline-variant bg-surface px-space-sm py-space-xs">[Licence details to be confirmed]</span></div></div><div class="lg:col-span-3 flex flex-col gap-space-sm"><span class="font-label-md text-label-md uppercase tracking-widest text-primary mb-space-xs">Divisions</span><a class="font-body-md text-body-md text-on-surface-variant hover:text-on-surface transition-colors" data-path="salon-and-spa" href="#">Salon &amp; Spa</a><a class="font-body-md text-body-md text-on-surface-variant hover:text-on-surface transition-colors" data-path="medical-spa" href="#">Medical Spa &amp; Makeover</a><a class="font-body-md text-body-md text-on-surface-variant hover:text-on-surface transition-colors" data-path="beauty-institute" href="#">Beauty Institute</a><a class="font-body-md text-body-md text-on-surface-variant hover:text-on-surface transition-colors" data-path="skin-diagnostic" href="#">Skin Diagnostic Protocol</a></div><div class="lg:col-span-3 flex flex-col gap-space-sm"><span class="font-label-md text-label-md uppercase tracking-widest text-primary mb-space-xs">Lagos Practices</span><div class="flex flex-col gap-space-xs"><span class="font-title-md text-title-md text-on-surface">Ebute Practice</span><span class="font-body-sm text-body-sm text-on-surface-variant">Mainland Aesthetics Suite, Ebute, Lagos</span></div><div class="flex flex-col gap-space-xs pt-space-xs"><span class="font-title-md text-title-md text-on-surface">Nitel Enclave</span><span class="font-body-sm text-body-sm text-on-surface-variant">Dermatology &amp; Clinical Institute, Nitel Zone, Lagos</span></div></div><div class="lg:col-span-2 flex flex-col gap-space-sm"><span class="font-label-md text-label-md uppercase tracking-widest text-primary mb-space-xs">Inquiries</span><span class="font-body-sm text-body-sm text-on-surface-variant">Concierge &amp; Appointments</span><span class="font-body-md text-body-md text-on-surface">lagos@kikiewa.com</span><span class="font-body-sm text-body-sm text-on-surface-variant pt-space-xs">Mon – Sat: 09:00 – 19:00</span></div></div><div class="pt-space-md flex flex-col md:flex-row items-center justify-between gap-space-sm text-on-surface-variant"><span class="font-body-sm text-body-sm">© 2025 Kikiewa Aesthetics Limited. All rights reserved. Lagos, Nigeria.</span><div class="flex items-center gap-space-md font-body-sm text-body-sm"><a class="hover:text-on-surface transition-colors" data-path="terms-and-licensing" href="#">Medical Licensing &amp; Compliance</a><a class="hover:text-on-surface transition-colors" data-path="privacy-policy" href="#">Privacy Policy</a></div></div></div></footer>
+
+</body></html>
