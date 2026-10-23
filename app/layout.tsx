@@ -8,8 +8,7 @@ import "./globals.css";
 const bodoniModa = Bodoni_Moda({
   variable: "--font-bodoni-moda",
   subsets: ["latin"],
-  // Optical sizing: hairline contrast at display sizes, sturdier strokes at
-  // the small sizes used for card titles.
+  // Optical-size axis. Values are set per type tier in app/globals.css.
   axes: ["opsz"],
   display: "swap",
 });

@@ -2,32 +2,34 @@ import { Icon } from "@/components/Icon";
 import { SectionHeading } from "@/components/SectionHeading";
 import { credibility, credibilityIntro } from "@/data/site";
 
+/**
+ * Assurance standards, set as a ruled register rather than cards: a
+ * governance list should read like a document, not an offer.
+ */
 export function CredibilityStrip() {
   return (
-    <section className="w-full bg-surface-2 py-space-xl">
+    <section className="section-y w-full border-y border-border bg-surface">
       <div className="shell">
         <SectionHeading
           eyebrow={credibilityIntro.eyebrow}
           heading={credibilityIntro.heading}
-          as="h3"
-          size="sm"
-          className="mb-space-md"
+          className="mb-space-2xl"
         />
 
-        <ul className="grid grid-cols-1 gap-gutter md:grid-cols-2 lg:grid-cols-4">
+        <ul className="grid grid-cols-1 border-t border-border-strong md:grid-cols-2 lg:grid-cols-4">
           {credibility.map((item) => (
             <li
               key={item.title}
-              className="flex flex-col justify-between rounded-xs bg-background p-6 shadow-sm"
+              className="flex flex-col border-b border-border py-space-lg md:px-space-lg md:odd:border-r md:odd:pl-0 lg:border-b-0 lg:border-r lg:py-space-xl lg:first:pl-0 lg:last:border-r-0 lg:[&:nth-child(3)]:pl-space-lg"
             >
-              <div>
-                <Icon name={item.icon} className="mb-4 size-7 text-secondary" />
-                <h4 className="mb-2 text-title-md text-primary">{item.title}</h4>
-                <p className="text-body-sm text-muted">{item.body}</p>
+              <div className="flex items-center justify-between text-secondary">
+                <span className="text-label-sm uppercase">{item.standard}</span>
+                <Icon name={item.icon} className="size-5" />
               </div>
-              <span className="mt-6 block text-label-sm uppercase text-secondary">
-                {item.standard}
-              </span>
+              <h3 className="mt-space-lg text-title-lg text-primary">{item.title}</h3>
+              <p className="mt-space-sm text-pretty text-body-sm text-muted">
+                {item.body}
+              </p>
             </li>
           ))}
         </ul>

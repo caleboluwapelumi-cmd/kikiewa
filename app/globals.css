@@ -201,6 +201,25 @@
   h4 {
     font-family: var(--font-display);
   }
+
+  /* Bodoni optical sizes, set per tier rather than automatically: at its
+     automatic setting the hairlines fall below a pixel on standard (1x)
+     screens. Contrast rises with size, but every stroke stays visible. */
+  h1,
+  h2,
+  h3,
+  h4,
+  [class*="font-display"] {
+    font-variation-settings: "opsz" 14;
+  }
+
+  [class*="text-headline-lg"] {
+    font-variation-settings: "opsz" 20;
+  }
+
+  [class*="text-display-hero"] {
+    font-variation-settings: "opsz" 24;
+  }
 }
 
 @utility shell {

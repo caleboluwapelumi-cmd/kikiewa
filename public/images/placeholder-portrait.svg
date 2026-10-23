@@ -1,12 +1,10 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 1000" width="800" height="1000" role="img">
-  <rect width="800" height="1000" fill="#F3F0EB"/>
-  <rect x="0" y="640" width="800" height="360" fill="#E7E3DC"/>
-  <circle cx="560" cy="300" r="170" fill="#C98BB9" opacity="0.28"/>
-  <path d="M0 640 L300 330 L600 640 Z" fill="#5A1F5E" opacity="0.12"/>
-  <path d="M240 640 L470 400 L700 640 Z" fill="#5A1F5E" opacity="0.08"/>
-  <g stroke="#5A1F5E" stroke-width="1.5" opacity="0.18">
-    <line x1="80" y1="120" x2="80" y2="640"/>
-    <line x1="140" y1="120" x2="140" y2="640"/>
-    <line x1="200" y1="120" x2="200" y2="640"/>
+  <!-- Transparent placeholder: a hairline arch and floor line. The frame
+       behind it supplies the surface tone, so the same file serves the
+       clinical and the warm pages. -->
+  <g fill="none" stroke="#5A1F5E" stroke-width="1.25" vector-effect="non-scaling-stroke">
+    <path d="M270 780V420a130 130 0 0 1 260 0v360" opacity="0.22"/>
+    <path d="M292 780V420a108 108 0 0 1 216 0v360" opacity="0.12"/>
+    <path d="M0 780h800" opacity="0.14"/>
   </g>
 </svg>
