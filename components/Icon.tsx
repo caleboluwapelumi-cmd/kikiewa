@@ -13,6 +13,8 @@ export type IconName =
   | "brush"
   | "calendar"
   | "chevronDown"
+  | "chevronLeft"
+  | "chevronRight"
   | "close"
   | "clock"
   | "compass"
@@ -20,19 +22,19 @@ export type IconName =
   | "face"
   | "hand"
   | "home"
-  | "hospital"
-  | "medical"
   | "menu"
   | "notes"
+  | "pause"
   | "phone"
   | "pin"
+  | "play"
   | "sanitizer"
   | "school"
   | "scissors"
   | "shield"
   | "sparkle"
   | "spa"
-  | "syringe"
+  | "star"
   | "verified"
   | "whatsapp";
 
@@ -69,6 +71,8 @@ const paths: Record<IconName, React.ReactNode> = {
     </>
   ),
   chevronDown: <path d="m6 9 6 6 6-6" />,
+  chevronLeft: <path d="m15 6-6 6 6 6" />,
+  chevronRight: <path d="m9 6 6 6-6 6" />,
   close: (
     <>
       <path d="m6 6 12 12" />
@@ -116,20 +120,6 @@ const paths: Record<IconName, React.ReactNode> = {
       <circle cx="12" cy="13" r="2" />
     </>
   ),
-  hospital: (
-    <>
-      <path d="M5 21V8l7-5 7 5v13" />
-      <path d="M12 9v6M9 12h6" />
-    </>
-  ),
-  medical: (
-    <>
-      <path d="M8 3v5a4 4 0 0 0 8 0V3" />
-      <path d="M6 3h4M14 3h4" />
-      <path d="M12 12v3a4 4 0 0 0 7 2.5" />
-      <circle cx="19" cy="18" r="2" />
-    </>
-  ),
   menu: (
     <>
       <path d="M4 7h16" />
@@ -142,6 +132,12 @@ const paths: Record<IconName, React.ReactNode> = {
       <path d="M5 3h10l4 4v14H5z" />
       <path d="M15 3v4h4" />
       <path d="M9 12h6M9 16h4" />
+    </>
+  ),
+  pause: (
+    <>
+      <path d="M9 5v14" />
+      <path d="M15 5v14" />
     </>
   ),
   phone: (
@@ -161,6 +157,7 @@ const paths: Record<IconName, React.ReactNode> = {
       <path d="M10 13h4" />
     </>
   ),
+  play: <path d="M8 5v14l11-7z" />,
   school: (
     <>
       <path d="M12 4 2 9l10 5 10-5z" />
@@ -190,14 +187,8 @@ const paths: Record<IconName, React.ReactNode> = {
       <path d="M12 21c-2-4-2-8 0-12 2 4 2 8 0 12" />
     </>
   ),
-  syringe: (
-    <>
-      <path d="M9 3h6" />
-      <path d="M12 3v3" />
-      <path d="M8 6h8v9a2 2 0 0 1-2 2h-4a2 2 0 0 1-2-2z" />
-      <path d="M12 17v4" />
-      <path d="M10 9h4M10 12h4" />
-    </>
+  star: (
+    <path d="m12 3 2.7 5.6 6.1.8-4.5 4.2 1.1 6.1L12 16.8l-5.4 2.9 1.1-6.1-4.5-4.2 6.1-.8z" />
   ),
   verified: (
     <>

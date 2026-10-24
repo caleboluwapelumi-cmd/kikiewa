@@ -2,33 +2,21 @@ import type { Metadata } from "next";
 import { Confirmable } from "@/components/Confirmable";
 import { LocationCard } from "@/components/LocationCard";
 import { PageIntro } from "@/components/PageIntro";
-import { contact, locations, pages, seo } from "@/data/site";
+import { contact, contactPage, locations, seo } from "@/data/site";
 import { pageMetadata } from "@/lib/seo";
-import { telHref } from "@/lib/phone";
 
 export const metadata: Metadata = pageMetadata(seo.contact);
 
 /**
- * Also the fallback for every WhatsApp and Call action while those numbers
- * are TBC, so it always shows what is (and isn't) confirmed.
+ * Contact (site plan, section 7). Also the fallback for every WhatsApp and
+ * Call action while those numbers are TBC, so it always shows what is (and
+ * isn't) confirmed. The message form comes with the next step.
  */
 export default function ContactPage() {
-  const tel = telHref(contact.phone);
-
   const rows = [
-    { label: "WhatsApp", value: <Confirmable value={contact.whatsapp} /> },
+    { label: contactPage.whatsappLabel, value: <Confirmable value={contact.whatsapp} /> },
     {
-      label: "Phone",
-      value: tel ? (
-        <a href={tel} className="link-rule hover:text-secondary">
-          {contact.phone}
-        </a>
-      ) : (
-        <Confirmable value={contact.phone} />
-      ),
-    },
-    {
-      label: "Email",
+      label: contactPage.emailLabel,
       value: (
         <Confirmable
           value={contact.email}
@@ -44,7 +32,7 @@ export default function ContactPage() {
 
   return (
     <>
-      <PageIntro copy={pages.contact}>
+      <PageIntro copy={contactPage.intro}>
         <dl className="max-w-xl divide-y divide-border border-y border-border-strong">
           {rows.map((row) => (
             <div

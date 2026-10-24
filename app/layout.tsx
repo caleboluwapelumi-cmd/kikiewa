@@ -2,10 +2,12 @@ import type { Metadata } from "next";
 import { Bodoni_Moda, Plus_Jakarta_Sans } from "next/font/google";
 import { Header } from "@/components/Header";
 import { Footer } from "@/components/Footer";
+import { JsonLd } from "@/components/JsonLd";
 import { MenuStateProvider } from "@/components/MenuState";
 import { MobileActionBar } from "@/components/MobileActionBar";
 import { seo, site } from "@/data/site";
 import { isProductionSite } from "@/lib/env";
+import { organizationJsonLd } from "@/lib/jsonld";
 import "./globals.css";
 
 const bodoniModa = Bodoni_Moda({
@@ -59,6 +61,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
         >
           Skip to content
         </a>
+        <JsonLd data={organizationJsonLd()} />
         <MenuStateProvider>
           <Header />
           {/* Offset the fixed header (taller from lg, with the utility bar) */}

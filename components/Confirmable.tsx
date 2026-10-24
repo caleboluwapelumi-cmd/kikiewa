@@ -12,8 +12,14 @@ import { isTBC, type OrTBC } from "@/data/site";
 const labelClass =
   "inline-block font-body text-label-sm font-semibold uppercase not-italic text-muted in-data-[tone=dark]:text-on-primary/75";
 
-export function TbcLabel({ className = "" }: { className?: string }) {
-  return <span className={[labelClass, className].join(" ")}>To be confirmed</span>;
+export function TbcLabel({
+  className = "",
+  children = "To be confirmed",
+}: {
+  className?: string;
+  children?: React.ReactNode;
+}) {
+  return <span className={[labelClass, className].join(" ")}>{children}</span>;
 }
 
 type ConfirmableProps<T extends string | number> = {

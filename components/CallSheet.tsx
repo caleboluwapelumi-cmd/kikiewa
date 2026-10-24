@@ -1,10 +1,9 @@
 "use client";
 
 import { useEffect, useId, useRef, useState } from "react";
-import Link from "next/link";
+import { CallSheetList } from "@/components/CallSheetList";
 import { Icon } from "@/components/Icon";
-import { callSheet, contactHref, locations } from "@/data/site";
-import { telHref } from "@/lib/phone";
+import { callSheet } from "@/data/site";
 
 /**
  * The mobile action bar's Call button and the "Which location?" sheet it
@@ -75,41 +74,7 @@ export function CallSheet({ className }: { className: string }) {
             </button>
           </div>
 
-          <ul className="divide-y divide-border">
-            {locations.map((location) => {
-              const tel = telHref(location.phone);
-              const rowClass =
-                "flex min-h-16 items-center justify-between gap-space-md px-space-lg py-space-md transition-colors duration-200 hover:bg-surface";
-              const content = (
-                <>
-                  <span className="flex flex-col gap-space-xs">
-                    <span className="text-title-md text-primary">{location.callLabel}</span>
-                    <span className="text-body-sm text-muted">
-                      {tel ? location.phone : callSheet.fallback}
-                    </span>
-                  </span>
-                  <Icon
-                    name={tel ? "phone" : "arrowRight"}
-                    className="size-5 shrink-0 text-secondary"
-                  />
-                </>
-              );
-
-              return (
-                <li key={location.id}>
-                  {tel ? (
-                    <a href={tel} onClick={close} className={rowClass}>
-                      {content}
-                    </a>
-                  ) : (
-                    <Link href={contactHref} onClick={close} className={rowClass}>
-                      {content}
-                    </Link>
-                  )}
-                </li>
-              );
-            })}
-          </ul>
+          <CallSheetList onNavigate={close} />
         </div>
       </dialog>
     </>

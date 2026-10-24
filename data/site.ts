@@ -1,22 +1,24 @@
 import type { IconName } from "@/components/Icon";
-import { formatNaira } from "@/lib/format";
 import { whatsappLink } from "@/lib/whatsapp";
 
 /**
  * Single source of content for the site. Every page reads from here.
  *
- * Content rules (reference/design-tokens.md, reference/copy-deck.md):
- * - No invented credentials, statistics, prices, durations, treatment claims
- *   or testimonials. Anything unconfirmed is the literal `TBC`. Never print a
- *   TBC value directly.
- * - "To be confirmed" (components/Confirmable.tsx) is shown only for prices
- *   and durations in service and treatment rows, and in fact tables.
- *   Anything else that is TBC (credentials, licence, team, reviews, intake
- *   flags) is hidden until confirmed.
- * - Marketing copy written before client sign-off is marked
- *   `// DRAFT COPY - client approval needed`. Copy comes from
- *   reference/copy-deck.md; `{{tokens}}` there are `TBC` here.
- * - Both locations are in Ikorodu, Lagos State.
+ * Source: reference/site-plan.md (v3). Content rules:
+ * - Kikiewa is one business. Ebute and Nitel are two equal locations in
+ *   Ikorodu offering the same services. Nothing here ties a service to one
+ *   location unless a service sets `locations` (only when the client says so).
+ * - Never "branch", "head office", "division" or "house" on screen.
+ * - Not on the website (site plan, section 0): buttock injectables, body
+ *   fillers, any filler or injectable named by product, weight-loss
+ *   injections or medication, "face ammunization", before/after photos
+ *   without written consent, outcome promises.
+ * - No invented facts. Anything unconfirmed is the literal `TBC`; never print
+ *   it directly. Prices, durations, addresses, hours, phones and course facts
+ *   show "To be confirmed" (components/Confirmable.tsx). Story, team, socials
+ *   and testimonials are hidden until real.
+ * - Copy written before client sign-off is marked
+ *   `// DRAFT COPY - client approval needed`.
  */
 
 /* ---------------------------------------------------------------------------
@@ -37,201 +39,98 @@ export function hasConfirmed(values: unknown[]): boolean {
   return values.some((value) => value !== undefined && !isTBC(value));
 }
 
-export type DivisionSlug = "salon-spa" | "medical-spa" | "institute";
-export type ServiceDivision = Exclude<DivisionSlug, "institute">;
-
 export type NavLink = { label: string; href: string };
 export type NavItem = NavLink & { children?: NavLink[] };
 
-/* ---------------------------------------------------------------------------
-   Content model
---------------------------------------------------------------------------- */
+/** Copy for a page's opening section. */
+export type PageCopy = { eyebrow: string; heading: string; body: string };
+
+/** A question and answer. Questions whose answer is TBC are not shown. */
+export type FaqItem = { question: string; answer: OrTBC<string> };
+
+/** A titled point (values, steps, reasons). */
+export type Point = { title: string; body?: string };
 
 /**
- * A photograph. `source` defaults to "final"; "instagram-temp" marks a
- * stand-in taken from Instagram, stored under public/images/{division}/temp/.
- * `npm run check:images` lists every temp image still referenced.
+ * A photograph, stored under public/images/{folder}/. `source` defaults to
+ * "final"; "instagram-temp" marks a stand-in from Instagram, kept in a temp/
+ * folder. `npm run check:images` lists every temp image still referenced.
  *
- * Alt text pattern: "{what is shown} at Kikiewa, {location}, Ikorodu".
+ * Alt text pattern: "{what is shown} at Kikiewa, Ikorodu".
  */
 export type ImageAsset = {
   src: string;
   alt: string;
   width: number;
   height: number;
-  division?: DivisionSlug;
-  category?: string;
   source?: "final" | "instagram-temp";
 };
 
-export interface GalleryItem extends ImageAsset {
-  caption?: string;
-}
-
-export type ConcernSlug =
-  | "pigmentation"
-  | "acne-scarring"
-  | "texture"
-  | "hydration"
-  | "ageing"
-  | "unwanted-hair";
-
-/** Medical spa only. */
-export type Concern = { slug: ConcernSlug; name: string; summary: string };
-
-export type ServiceCategory = {
-  slug: string;
-  division: ServiceDivision;
-  name: string;
-  icon: IconName;
-  summary: OrTBC<string>;
-};
-
-export type Service = {
-  slug: string;
-  division: ServiceDivision;
-  /** A ServiceCategory slug in the same division. */
-  category: string;
-  name: string;
-  summary: string;
-  durationMins?: OrTBC<number>;
-  priceFrom?: OrTBC<number>;
-  currency: "NGN";
-  requiresConsultation: boolean;
-  concerns?: ConcernSlug[];
-  /** The client's written aftercare, one point per item. Hidden while TBC. */
-  aftercare?: OrTBC<string[]>;
-  image?: ImageAsset;
-};
-
-export type Course = {
-  slug: string;
-  name: string;
-  summary: OrTBC<string>;
-  level: OrTBC<string>;
-  entryRequirements: OrTBC<string>;
-  duration: OrTBC<string>;
-  /** In naira. */
-  fee: OrTBC<number>;
-  nextIntake: OrTBC<string>;
-  certifyingBody: OrTBC<string>;
-};
-
-/** Hidden until the client supplies names and verified roles. */
-export type TeamMember = {
-  name: OrTBC<string>;
-  role: string;
-  division: DivisionSlug;
-  bio: OrTBC<string>;
-  /** Clinical staff only: registration body and number. Hidden while TBC. */
-  registration?: OrTBC<string>;
-  image?: ImageAsset;
-};
-
-/** A question and answer. Questions whose answer is TBC are not shown. */
-export type FaqItem = { question: string; answer: OrTBC<string> };
+/** A picture position with its alt text, waiting for a photograph. */
+export type ImageSlot = { alt: string; image?: ImageAsset };
 
 /* ---------------------------------------------------------------------------
-   Site, contact, navigation
+   Site, contact
 --------------------------------------------------------------------------- */
 
 export const site = {
   name: "Kikiewa",
+  /** Registered business name, for structured data. */
+  legalName: TBC as OrTBC<string>,
   url: "https://kikiewa.com",
   /** Where both locations are. Confirmed in the brief. */
-  area: "Ikorodu, Lagos State",
+  area: "Ikorodu, Lagos",
+  region: "Lagos State",
   lang: "en-NG",
   ogLocale: "en_NG",
   /** Static: cacheComponents rejects new Date() during prerender. */
   copyrightYear: 2026,
 } as const;
 
-/** Business-wide contact details. Location details live on each location. */
-export const contact: {
-  whatsapp: OrTBC<string>;
-  /** Main line, shown on /contact. */
-  phone: OrTBC<string>;
-  email: OrTBC<string>;
-} = {
+/** Business-wide contact details. Phones live on each location. */
+export const contact: { whatsapp: OrTBC<string>; email: OrTBC<string> } = {
   whatsapp: TBC,
-  phone: TBC,
   email: TBC,
 };
 
+/** Social profiles. The footer's Follow column is hidden while empty. */
+export const socials: NavLink[] = [];
+
 export const bookingHref = "/book";
-/** Booking a skin consultation at Nitel: every skin treatment starts here. */
-export const consultationHref = bookingHref + "?location=nitel&service=consultation";
 export const contactHref = "/contact";
+/** Every aesthetic treatment starts with a consultation. */
+export const consultationHref = bookingHref + "?service=aesthetic-consultation";
 
 // DRAFT COPY - client approval needed
-/** Pre-filled WhatsApp messages (copy deck, "WhatsApp prefilled messages"). */
+/** Pre-filled WhatsApp messages. */
 export const whatsappMessages = {
   general: "Hello Kikiewa, I'd like some help choosing a service.",
-  salon: "Hello Kikiewa, I'd like to book an appointment in Ebute.",
-  medical: "Hello Kikiewa Medical Spa, I'd like to book a consultation.",
-  institute:
-    "Hello Kikiewa Beauty Institute, I'd like to know more about your courses and the next intake.",
+  consultation: "Hello Kikiewa, I'd like to book an aesthetic consultation.",
+  academy: "Hello Kikiewa, I'd like to know more about the Academy courses.",
 } as const;
 
-/** Pre-filled WhatsApp message for the header and mobile action bar. */
-export const whatsappGreeting = whatsappMessages.general;
-
 /** WhatsApp link with the general greeting (falls back to /contact while TBC). */
-export const whatsappHref = whatsappLink(contact.whatsapp, whatsappGreeting);
+export const whatsappHref = whatsappLink(contact.whatsapp, whatsappMessages.general);
 
-/**
- * Nav labels are what people see; the URLs stay /salon-spa, /medical-spa and
- * /beauty-institute for search. The Hair & Beauty dropdown jumps to the
- * category anchors on /salon-spa (ids are the category slugs).
- */
+/** Every CTA label (site plan, section 1). */
 // DRAFT COPY - client approval needed
-export const primaryNav: NavItem[] = [
-  {
-    label: "Hair & Beauty",
-    href: "/salon-spa",
-    children: [
-      { label: "Hair", href: "/salon-spa#hair" },
-      { label: "Nails", href: "/salon-spa#nails" },
-      { label: "Makeup", href: "/salon-spa#makeup" },
-      { label: "Spa & massage", href: "/salon-spa#spa" },
-      { label: "Facials", href: "/salon-spa#facials" },
-      { label: "Brows & lashes", href: "/salon-spa#brows-lashes" },
-    ],
-  },
-  {
-    label: "Skin & Aesthetics",
-    href: "/medical-spa",
-    children: [
-      { label: "Treatments", href: "/medical-spa/treatments" },
-      { label: "By concern", href: "/medical-spa/concerns" },
-      { label: "Your consultation", href: "/medical-spa/consultation" },
-    ],
-  },
-  {
-    label: "Academy",
-    href: "/beauty-institute",
-    children: [
-      { label: "Courses", href: "/beauty-institute/courses" },
-      { label: "How to apply", href: "/beauty-institute/admissions" },
-    ],
-  },
-  { label: "Gallery", href: "/gallery" },
-  { label: "Visit us", href: "/locations" },
-];
-
-export const hoursLink: NavLink = { label: "Opening hours", href: "/locations" };
-
-/** Desktop utility bar: "Ikorodu, Lagos · {phone} · Opening hours · Contact". */
-export const utilityBar = {
-  place: "Ikorodu, Lagos",
+export const cta = {
+  book: "Book an appointment",
+  bookShort: "Book",
+  whatsapp: "Chat on WhatsApp",
+  call: "Call us",
+  viewServices: "View services",
+  seeWork: "See our work",
+  seeCourses: "See our courses",
+  directions: "Get directions",
+  consultation: "Book a consultation",
+  bookHere: "Book here",
+  viewCourse: "View course",
 } as const;
 
 /* ---------------------------------------------------------------------------
-   SEO: one row per route (reference/seo-plan.md, section 3).
+   SEO: one row per route (site plan, section 8).
    Titles ≤ 60 characters, descriptions ≤ 155, never "TBC" or "{{".
-   One brand: never "Kikiewa Salon & Spa" or "Kikiewa Medical Spa" as names.
-   Say "Kikiewa" plus what it is ("Kikiewa's medical spa in Nitel"), so the
-   search terms stay without implying separate businesses.
    `npm run check:seo` checks the built pages against these rules.
 --------------------------------------------------------------------------- */
 
@@ -241,105 +140,117 @@ export type PageMeta = { title: string; description: string; path: string };
 export const seo = {
   home: {
     path: "/",
-    title: "Kikiewa | Salon, Spa & Medical Spa in Ikorodu, Lagos",
+    title: "Kikiewa | Med Spa, Facials & Beauty in Ikorodu, Lagos",
     description:
-      "Beauty, in good hands. Hair, nails, spa, skin and aesthetic care at Kikiewa in Ikorodu, Lagos. Book online or chat on WhatsApp.",
+      "Your beauty, seen and felt. Facials, massage, aesthetics, hair, nails and makeup at Kikiewa in Ikorodu, Lagos. Book online or on WhatsApp.",
   },
-  salonSpa: {
-    path: "/salon-spa",
-    title: "Salon & Spa in Ikorodu, Lagos | Kikiewa",
+  about: {
+    path: "/about",
+    title: "About Kikiewa | Med Spa & Beauty in Ikorodu",
     description:
-      "Hair, nails, makeup, massage and spa at Kikiewa in Ebute, Ikorodu. See services and prices, then book online or on WhatsApp.",
+      "Everyone is beautiful in their own way. Meet Kikiewa, the med spa and beauty studio in Ikorodu, Lagos, that brings it out.",
   },
-  salonServices: {
-    path: "/salon-spa/services",
-    title: "Hair, Nails & Spa Services in Ikorodu | Kikiewa",
+  services: {
+    path: "/services",
+    title: "Med Spa & Beauty Services in Ikorodu | Kikiewa",
     description:
-      "Hair, nails, makeup, massage and spa at Kikiewa in Ebute, Ikorodu. See durations and starting prices, then book online or on WhatsApp.",
+      "Facials, massage, aesthetics, hair and barbing, nails and makeup at Kikiewa's two locations in Ikorodu, Lagos. See prices and book.",
   },
-  medicalSpa: {
-    path: "/medical-spa",
-    title: "Medical Spa in Ikorodu, Lagos | Kikiewa",
+  facials: {
+    path: "/services/facials",
+    title: "Facials in Ikorodu, Lagos | Kikiewa",
     description:
-      "Consultation-led skin and aesthetic treatments at Kikiewa's medical spa in Nitel, Ikorodu. Book a consultation online or on WhatsApp.",
+      "Deep-cleansing, hydrating and glow facials at Kikiewa in Ikorodu, Lagos, matched to your skin. See prices and book online.",
   },
-  treatments: {
-    path: "/medical-spa/treatments",
-    title: "Skin & Aesthetic Treatments in Ikorodu | Kikiewa",
+  massage: {
+    path: "/services/massage",
+    title: "Massage & Spa in Ikorodu, Lagos | Kikiewa",
     description:
-      "Skin and aesthetic treatments at Kikiewa in Nitel, Ikorodu. Every treatment begins with a consultation and a suitability assessment.",
+      "Relaxing and deep tissue massage at Kikiewa in Ikorodu, Lagos. Switch off, breathe out. See prices and book online.",
   },
-  concerns: {
-    path: "/medical-spa/concerns",
-    title: "Skin Concerns in Ikorodu, Lagos | Kikiewa",
+  aesthetics: {
+    path: "/services/aesthetics",
+    title: "Aesthetic Skin Treatments in Ikorodu | Kikiewa",
     description:
-      "Start with your concern: pigmentation, breakouts, texture and more. Book a consultation at Kikiewa in Nitel, Ikorodu, to find what suits your skin.",
+      "Advanced aesthetic skin treatments at Kikiewa in Ikorodu, Lagos, always starting with a consultation. Book a consultation online.",
   },
-  consultation: {
-    path: "/medical-spa/consultation",
-    title: "Your Skin Consultation | Kikiewa Ikorodu",
+  hair: {
+    path: "/services/hair",
+    title: "Hair Salon & Barbing in Ikorodu | Kikiewa",
     description:
-      "What happens at a skin consultation at Kikiewa in Nitel, Ikorodu: your concerns, medical history, suitable options, costs and aftercare.",
+      "Hair styling, treatments, braids and barbing at Kikiewa in Ikorodu, Lagos. See prices and book online or on WhatsApp.",
   },
-  institute: {
-    path: "/beauty-institute",
-    title: "Beauty School & Training in Ikorodu | Kikiewa",
+  nails: {
+    path: "/services/nails",
+    title: "Nails, Manicure & Pedicure in Ikorodu | Kikiewa",
     description:
-      "Practical beauty courses in Ikorodu, Lagos: compare levels, duration, fees and intake dates at the Kikiewa Beauty Institute.",
+      "Manicures, pedicures, gel and nail art at Kikiewa in Ikorodu, Lagos. See prices and book online or on WhatsApp.",
   },
-  courses: {
-    path: "/beauty-institute/courses",
-    title: "Beauty Courses in Ikorodu, Lagos | Kikiewa",
+  makeup: {
+    path: "/services/makeup",
+    title: "Makeup Artist in Ikorodu, Lagos | Kikiewa",
     description:
-      "Compare beauty courses at the Kikiewa Beauty Institute in Ikorodu, Lagos: level, entry requirements, duration, fees and next intake.",
+      "Bridal, event and photoshoot makeup at Kikiewa in Ikorodu, Lagos, matched to your skin and occasion. Book online.",
   },
-  admissions: {
-    path: "/beauty-institute/admissions",
-    title: "How to Apply | Kikiewa Beauty Institute, Ikorodu",
+  academy: {
+    path: "/academy",
+    title: "Beauty School in Ikorodu, Lagos | Kikiewa Academy",
     description:
-      "How to apply to the Kikiewa Beauty Institute in Ikorodu, Lagos: choose a course, book a visit to see where you'll train, then apply and enrol.",
+      "Hands-on cosmetology and aesthetics courses at Kikiewa Academy, Ikorodu. Learn from the people who practise the craft.",
   },
-  locations: {
-    path: "/locations",
-    title: "Our Locations in Ikorodu, Lagos | Kikiewa",
+  cosmetology: {
+    path: "/academy/cosmetology",
+    title: "Cosmetology Course in Ikorodu | Kikiewa Academy",
     description:
-      "Kikiewa has two locations in Ikorodu, Lagos: Ebute for hair, nails and spa, and Nitel for skin and aesthetics. Addresses, hours and directions.",
+      "Learn hair styling, barbing, nails, makeup, manicure and pedicure at Kikiewa Academy in Ikorodu, Lagos. See fees and how to apply.",
   },
-  ebute: {
-    path: "/locations/ebute",
-    title: "Kikiewa Ebute, Ikorodu | Salon & Spa",
+  aestheticsCourse: {
+    path: "/academy/aesthetics",
+    title: "Aesthetics Course in Ikorodu | Kikiewa Academy",
     description:
-      "Kikiewa's salon and spa in Ebute, Ikorodu, for hair, nails, makeup and massage: address, opening hours and directions. Book online or on WhatsApp.",
-  },
-  nitel: {
-    path: "/locations/nitel",
-    title: "Kikiewa Nitel, Ikorodu | Medical Spa",
-    description:
-      "Kikiewa's medical spa in Nitel, Ikorodu, for skin and aesthetic treatments: address, opening hours and directions. Book a consultation.",
+      "Learn facials and massage at Kikiewa Academy in Ikorodu, Lagos. Hands-on training from working professionals. See how to apply.",
   },
   gallery: {
     path: "/gallery",
-    title: "Gallery | Kikiewa Ikorodu",
+    title: "Our Work | Kikiewa Ikorodu",
     description:
-      "Inside Kikiewa in Ikorodu, Lagos: recent work from our team, and our salon, spa and medical spa spaces in Ebute and Nitel.",
+      "Recent facials, hair, nails, makeup and more from the team at Kikiewa in Ikorodu, Lagos.",
+  },
+  locations: {
+    path: "/locations",
+    title: "Kikiewa Locations in Ikorodu, Lagos",
+    description:
+      "Visit Kikiewa at Ebute or Nitel, Ikorodu: addresses, opening hours, phone numbers and directions.",
+  },
+  ebute: {
+    path: "/locations/ebute",
+    title: "Kikiewa Ebute, Ikorodu | Med Spa & Beauty",
+    description:
+      "Kikiewa in Ebute, Ikorodu: facials, massage, aesthetics, hair, nails and makeup. Address, hours and directions.",
+  },
+  nitel: {
+    path: "/locations/nitel",
+    title: "Kikiewa Nitel, Ikorodu | Med Spa & Beauty",
+    description:
+      "Kikiewa in Nitel, Ikorodu: facials, massage, aesthetics, hair, nails and makeup. Address, hours and directions.",
   },
   book: {
     path: "/book",
     title: "Book an Appointment | Kikiewa Ikorodu",
     description:
-      "Book a salon, spa or medical spa appointment at Kikiewa in Ikorodu, Lagos. Choose a service and time; we'll confirm on WhatsApp.",
+      "Book facials, massage, aesthetics, hair, nails or makeup at Kikiewa in Ikorodu, Lagos. Choose a time; we'll confirm on WhatsApp.",
   },
   contact: {
     path: "/contact",
     title: "Contact Kikiewa | Ikorodu, Lagos",
-    description:
-      "Call, WhatsApp or message Kikiewa in Ikorodu, Lagos: our salon and spa in Ebute, and our medical spa in Nitel. We reply during opening hours.",
+    description: "Call, WhatsApp or message Kikiewa at Ebute or Nitel, Ikorodu, Lagos.",
   },
-  licensing: {
-    path: "/licensing",
-    title: "Licensing & Compliance | Kikiewa",
+  // Not in the site plan's table: written to the same rules.
+  bookingPolicy: {
+    path: "/booking-policy",
+    title: "Booking Policy | Kikiewa Ikorodu",
     description:
-      "Licence and registration details for Kikiewa in Ikorodu, Lagos. We publish each one here once it has been verified.",
+      "How booking, rescheduling and cancellation work at Kikiewa in Ikorodu, Lagos.",
   },
   privacy: {
     path: "/privacy",
@@ -349,142 +260,68 @@ export const seo = {
   },
 } satisfies Record<string, PageMeta>;
 
-const TITLE_MAX = 60;
-const DESCRIPTION_MAX = 155;
-
-/** The first candidate that fits, else the last (check:seo then flags it). */
-function fit(max: number, ...candidates: string[]): string {
-  return candidates.find((text) => text.length <= max) ?? candidates[candidates.length - 1];
-}
-
-/** "Fine lines & firmness" -> "Fine Lines & Firmness", for titles. */
-function titleCase(text: string): string {
-  return text.replace(/(^|\s)(\p{Ll})/gu, (_, space: string, letter: string) => space + letter.toUpperCase());
-}
-
-/** "Acne & scarring" -> "acne and scarring", for running text. */
-function inSentence(text: string): string {
-  return text.replace(/ & /g, " and ").toLowerCase();
-}
-
-/** /medical-spa/[treatment], from the seo-plan pattern. TBC clauses are dropped. */
-// DRAFT COPY - client approval needed
-export function treatmentMeta(service: Service): PageMeta {
-  const name = titleCase(service.name);
-  const lead = `${service.name} at Kikiewa in Nitel, Ikorodu.`;
-  const how = service.requiresConsultation
-    ? " Starts with a consultation to assess suitability."
-    : " Book online or chat with us on WhatsApp.";
-  const price =
-    service.priceFrom === undefined || isTBC(service.priceFrom)
-      ? ""
-      : ` From ${formatNaira(service.priceFrom)}.`;
-  return {
-    path: treatmentHref(service),
-    title: fit(
-      TITLE_MAX,
-      `${name} in Ikorodu, Lagos | Kikiewa`,
-      `${name} | Kikiewa Ikorodu`,
-      `${name} | Kikiewa`,
-    ),
-    description: fit(DESCRIPTION_MAX, lead + how + price, lead + how),
-  };
-}
-
-/** /medical-spa/concerns/[concern], from the seo-plan pattern. */
-// DRAFT COPY - client approval needed
-export function concernMeta(concern: Concern): PageMeta {
-  const name = titleCase(concern.name);
-  const about = inSentence(concern.name);
-  return {
-    path: concernHref(concern),
-    title: fit(
-      TITLE_MAX,
-      `${name} Treatment in Ikorodu | Kikiewa`,
-      `${name} | Kikiewa Ikorodu`,
-      `${name} | Kikiewa`,
-    ),
-    description: fit(
-      DESCRIPTION_MAX,
-      `Concerned about ${about}? Book a consultation at Kikiewa's medical spa in Nitel, Ikorodu, to find the approach that suits your skin.`,
-      `Concerned about ${about}? Book a consultation at Kikiewa in Nitel, Ikorodu, to find the approach that suits your skin.`,
-    ),
-  };
-}
-
 /* ---------------------------------------------------------------------------
-   Locations
+   Locations: two equals. Identical fields, identical pages.
 --------------------------------------------------------------------------- */
 
 export type LocationId = "ebute" | "nitel";
 
+export type OpeningHours = { days: string; time: string };
+
 export type Location = {
   id: LocationId;
-  /** Area name, e.g. "Ebute". */
+  /** Area name: "Ebute". */
   name: string;
-  /** Area and town, e.g. "Ebute, Ikorodu". */
-  area: string;
-  /** What you come here for, short: "Hair, nails & spa". Footer and eyebrows. */
-  services: string;
-  /** What you come here for, in full: "Hair, nails, makeup and spa". Cards. */
-  offer: string;
-  /** Row label in the mobile "Which location?" sheet. */
-  callLabel: string;
-  icon: IconName;
-  /** The location page's H1 (copy deck section 6). */
+  /** Card title and call-sheet row: "Kikiewa Ebute". */
   title: string;
-  /** The location page's intro. */
-  body: string;
+  /** The location page's H1: "Kikiewa Ebute, Ikorodu". */
+  heading: string;
+  /** Area and town: "Ebute, Ikorodu". */
+  area: string;
   address: OrTBC<string>;
-  hours: OrTBC<string>;
+  landmark: OrTBC<string>;
+  hours: OrTBC<OpeningHours[]>;
   phone: OrTBC<string>;
-  phoneLabel: string;
-  primaryCta: NavLink;
+  /** Google Maps link for "Get directions". */
+  mapUrl: OrTBC<string>;
   href: string;
+  bookHref: string;
+  seo: PageMeta;
 };
 
-// DRAFT COPY - client approval needed
 export const ebuteLocation: Location = {
   id: "ebute",
   name: "Ebute",
+  title: "Kikiewa Ebute",
+  heading: "Kikiewa Ebute, Ikorodu",
   area: "Ebute, Ikorodu",
-  services: "Hair, nails & spa",
-  offer: "Hair, nails, makeup and spa",
-  callLabel: "Ebute: hair, nails & spa",
-  icon: "pin",
-  title: "Salon & Spa in Ebute, Ikorodu",
-  body: "Kikiewa in Ebute is where you'll find our hair, nails, makeup and spa services, delivered without rushing.",
   address: TBC,
+  landmark: TBC,
   hours: TBC,
   phone: TBC,
-  phoneLabel: "Phone",
-  primaryCta: { label: "Book an appointment", href: bookingHref + "?location=ebute" },
+  mapUrl: TBC,
   href: "/locations/ebute",
+  bookHref: bookingHref + "?location=ebute",
+  seo: seo.ebute,
 };
 
-/** The medical spa. Read by the home page and by /medical-spa. */
-// DRAFT COPY - client approval needed
 export const nitelLocation: Location = {
   id: "nitel",
   name: "Nitel",
+  title: "Kikiewa Nitel",
+  heading: "Kikiewa Nitel, Ikorodu",
   area: "Nitel, Ikorodu",
-  services: "Skin & aesthetics",
-  offer: "Skin, aesthetics and makeover",
-  callLabel: "Nitel: skin & aesthetics",
-  icon: "hospital",
-  title: "Medical Spa in Nitel, Ikorodu",
-  body: "Kikiewa in Nitel is home to our Medical Spa & Makeover: skin and aesthetic treatments that always begin with a consultation.",
   address: TBC,
+  landmark: TBC,
   hours: TBC,
   phone: TBC,
-  phoneLabel: "Phone",
-  primaryCta: {
-    label: "Book a consultation",
-    href: bookingHref + "?location=nitel",
-  },
+  mapUrl: TBC,
   href: "/locations/nitel",
+  bookHref: bookingHref + "?location=nitel",
+  seo: seo.nitel,
 };
 
+/** Alphabetical, so neither reads as the main one. */
 export const locations: Location[] = [ebuteLocation, nitelLocation];
 
 /** The mobile Call sheet. Rows with a TBC phone open /contact instead. */
@@ -497,1184 +334,918 @@ export const callSheet = {
   fallback: "See contact details",
 } as const;
 
-export type LocationBlockCopy = {
-  eyebrow: string;
-  heading: string;
-  body?: string;
-  mapAlt: string;
-  whatsappLabel: string;
-  whatsappMessage: string;
-};
+/** Labels shared by location cards and pages. */
+// DRAFT COPY - client approval needed
+export const locationLabels = {
+  address: "Address",
+  landmark: "Landmark",
+  hours: "Opening hours",
+  phone: "Phone",
+  directionsTbc: "Directions to be confirmed",
+  servicesHeading: "Services at this location",
+} as const;
 
 /* ---------------------------------------------------------------------------
-   Services, concerns, courses, team, gallery
+   Services: six categories, every one offered at both locations.
 --------------------------------------------------------------------------- */
 
-/**
- * Category names group the menus. The client must confirm which salon
- * categories exist; delete any that don't.
- */
-// DRAFT COPY - client approval needed (salon summaries)
-export const serviceCategories: ServiceCategory[] = [
-  // Salon & Spa (Ebute)
-  {
-    slug: "hair",
-    division: "salon-spa",
-    name: "Hair",
-    icon: "scissors",
-    summary: "Cuts, styling, colour and treatments for every texture, natural hair included.",
-  },
-  {
-    slug: "nails",
-    division: "salon-spa",
-    name: "Nails",
-    icon: "hand",
-    summary: "Manicures, pedicures and nail care, finished with precision.",
-  },
-  {
-    // Slug doubles as the /salon-spa anchor; the nav and Home link to #spa.
-    slug: "spa",
-    division: "salon-spa",
-    name: "Spa & massage",
-    icon: "spa",
-    summary: "Massages and body rituals to release tension and restore calm.",
-  },
-  {
-    slug: "facials",
-    division: "salon-spa",
-    name: "Facials",
-    icon: "face",
-    summary: "Relaxing, results-minded facials for a fresh, healthy glow.",
-  },
-  {
-    slug: "makeup",
-    division: "salon-spa",
-    name: "Makeup",
-    icon: "brush",
-    summary: "Event, bridal and everyday makeup, matched to your skin and occasion.",
-  },
-  {
-    slug: "brows-lashes",
-    division: "salon-spa",
-    name: "Brows & lashes",
-    icon: "sparkle",
-    summary: "Shaping, tinting and lash services, kept natural or made bold.",
-  },
-  // Medical Spa & Makeover (Nitel). Names only from the licence-approved list.
-  { slug: "injectables", division: "medical-spa", name: "Injectables", icon: "syringe", summary: TBC },
-  { slug: "skin-treatments", division: "medical-spa", name: "Skin Treatments", icon: "spa", summary: TBC },
-  { slug: "makeup-makeover", division: "medical-spa", name: "Makeup & Makeover", icon: "brush", summary: TBC },
-  { slug: "bridal-makeover", division: "medical-spa", name: "Bridal Makeover", icon: "sparkle", summary: TBC },
-  { slug: "facial-aesthetics", division: "medical-spa", name: "Facial Aesthetics", icon: "face", summary: TBC },
-  { slug: "consultations", division: "medical-spa", name: "Consultations", icon: "notes", summary: TBC },
-];
+export type ServiceSlug = "facials" | "massage" | "aesthetics" | "hair" | "nails" | "makeup";
 
-export function categoriesFor(division: ServiceDivision): ServiceCategory[] {
-  return serviceCategories.filter((category) => category.division === division);
+export type ServiceItem = {
+  slug: string;
+  /** Named by benefit: "Hydrating Facial", not "Facial B". */
+  name: string;
+  summary: string;
+  durationMins: OrTBC<number>;
+  priceFrom: OrTBC<number>;
+  /** False for the site plan's suggested names: hidden in production. */
+  confirmed: boolean;
+  /** Books a consultation first (aesthetics). */
+  requiresConsultation?: boolean;
+  /** Only when the client says a service is at one location. Default: both. */
+  locations?: LocationId[];
+};
+
+export type ServiceCategory = {
+  slug: ServiceSlug;
+  /** Nav, card and filter label: "Massage & Spa". */
+  name: string;
+  href: string;
+  icon: IconName;
+  /** One line for the cards on Home and /services. */
+  cardLine: string;
+  image: ImageSlot;
+  /** The service page's H1 and line. */
+  heading: string;
+  line: string;
+  intro: string;
+  /** "What to expect", 3–4 short steps. Left out where the plan has none. */
+  expect?: Point[];
+  faqs: FaqItem[];
+  /** Small print on the page (aesthetics). */
+  disclaimer?: string;
+  /** Aesthetics: every booking is a consultation. */
+  consultationLed: boolean;
+  seo: PageMeta;
+};
+
+export function serviceHref(slug: ServiceSlug): string {
+  return "/services/" + slug;
 }
 
-/**
- * Seed menu. Names are generic and every duration and price is TBC until the
- * client supplies the real list.
- */
-// DRAFT COPY - client approval needed (all summaries)
-export const services: Service[] = [
-  // Salon & Spa
+// DRAFT COPY - client approval needed
+export const serviceCategories: ServiceCategory[] = [
   {
-    slug: "hair-styling",
-    division: "salon-spa",
-    category: "hair",
-    name: "Hair Styling",
-    summary: "Washing, styling and finishing, talked through with you before we begin.",
-    durationMins: TBC,
-    priceFrom: TBC,
-    currency: "NGN",
-    requiresConsultation: false,
-  },
-  {
-    slug: "bridal-styling",
-    division: "salon-spa",
-    category: "hair",
-    name: "Bridal & Event Styling",
-    summary: "Hair and styling for your day, planned with you in advance.",
-    durationMins: TBC,
-    priceFrom: TBC,
-    currency: "NGN",
-    requiresConsultation: false,
-  },
-  {
-    slug: "manicure",
-    division: "salon-spa",
-    category: "nails",
-    name: "Manicure",
-    summary: "Nail shaping, cuticle care and a finish of your choice.",
-    durationMins: TBC,
-    priceFrom: TBC,
-    currency: "NGN",
-    requiresConsultation: false,
-  },
-  {
-    slug: "pedicure",
-    division: "salon-spa",
-    category: "nails",
-    name: "Pedicure",
-    summary: "Foot care and a finish of your choice, at an unhurried pace.",
-    durationMins: TBC,
-    priceFrom: TBC,
-    currency: "NGN",
-    requiresConsultation: false,
+    slug: "facials",
+    name: "Facials",
+    href: serviceHref("facials"),
+    icon: "face",
+    cardLine: "Deep-cleansing, hydrating and glow facials, matched to your skin.",
+    image: { alt: "Facial treatment at Kikiewa, Ikorodu" },
+    heading: "Facials",
+    line: "Skin that feels as good as it looks.",
+    intro:
+      "Every facial starts with a look at your skin and a chat about what you'd like. Then we cleanse, treat and finish with care, and send you home with simple advice to keep the glow going.",
+    expect: [
+      { title: "Skin check" },
+      { title: "Cleanse & exfoliate" },
+      { title: "Treat & massage" },
+      { title: "Finish & advice" },
+    ],
+    faqs: [
+      { question: "How often should I have a facial?", answer: TBC },
+      { question: "Can I wear makeup afterwards?", answer: TBC },
+      { question: "Is it suitable for sensitive skin?", answer: TBC },
+    ],
+    consultationLed: false,
+    seo: seo.facials,
   },
   {
     slug: "massage",
-    division: "salon-spa",
-    category: "spa",
-    name: "Massage",
-    summary: "Time to unwind, with pressure and focus agreed with you first.",
-    durationMins: TBC,
-    priceFrom: TBC,
-    currency: "NGN",
-    requiresConsultation: false,
-  },
-  {
-    slug: "signature-facial",
-    division: "salon-spa",
-    category: "facials",
-    name: "Signature Facial",
-    summary: "A cleansing, calming facial suited to your skin on the day.",
-    durationMins: TBC,
-    priceFrom: TBC,
-    currency: "NGN",
-    requiresConsultation: false,
-  },
-  // Medical Spa & Makeover
-  {
-    slug: "consultation",
-    division: "medical-spa",
-    category: "consultations",
-    name: "Consultation",
-    summary: "Where every medical spa treatment begins: your history, your goals and what is suitable for you.",
-    durationMins: TBC,
-    priceFrom: TBC,
-    currency: "NGN",
-    requiresConsultation: false,
-    concerns: ["pigmentation", "acne-scarring", "texture", "hydration", "ageing", "unwanted-hair"],
-  },
-  {
-    slug: "skin-treatment",
-    division: "medical-spa",
-    category: "skin-treatments",
-    name: "Skin Treatment",
-    summary: "Skin treatments planned at consultation. Suitability is assessed in person.",
-    durationMins: TBC,
-    priceFrom: TBC,
-    currency: "NGN",
-    requiresConsultation: true,
-    aftercare: TBC,
-  },
-  {
-    slug: "injectable-treatment",
-    division: "medical-spa",
-    category: "injectables",
-    name: "Injectable Treatment",
-    summary: "Considered only after a consultation. Results vary from person to person.",
-    durationMins: TBC,
-    priceFrom: TBC,
-    currency: "NGN",
-    requiresConsultation: true,
-    aftercare: TBC,
-  },
-  {
-    slug: "facial-aesthetics",
-    division: "medical-spa",
-    category: "facial-aesthetics",
-    name: "Facial Aesthetics",
-    summary: "Facial aesthetic treatments, agreed in a written plan after consultation.",
-    durationMins: TBC,
-    priceFrom: TBC,
-    currency: "NGN",
-    requiresConsultation: true,
-    aftercare: TBC,
-  },
-  {
-    slug: "makeover-session",
-    division: "medical-spa",
-    category: "makeup-makeover",
-    name: "Makeover Session",
-    summary: "Makeup and styling for an occasion, or just for you.",
-    durationMins: TBC,
-    priceFrom: TBC,
-    currency: "NGN",
-    requiresConsultation: false,
-  },
-  {
-    slug: "bridal-makeover",
-    division: "medical-spa",
-    category: "bridal-makeover",
-    name: "Bridal Makeover",
-    summary: "Bridal makeup planned with you ahead of the day.",
-    durationMins: TBC,
-    priceFrom: TBC,
-    currency: "NGN",
-    requiresConsultation: false,
-  },
-];
-
-export function servicesFor(division: ServiceDivision): Service[] {
-  return services.filter((service) => service.division === division);
-}
-
-/**
- * Skin & aesthetics services with their own /medical-spa/[treatment] page.
- * The consultation has a page of its own (/medical-spa/consultation), and
- * no slug may match a fixed route under /medical-spa.
- */
-const fixedMedicalRoutes = new Set(["consultation", "treatments", "concerns"]);
-
-export function medicalTreatments(): Service[] {
-  return servicesFor("medical-spa").filter(
-    (service) =>
-      service.category !== "consultations" && !fixedMedicalRoutes.has(service.slug),
-  );
-}
-
-export function findTreatment(slug: string): Service | undefined {
-  return medicalTreatments().find((service) => service.slug === slug);
-}
-
-/** Where a skin & aesthetics row links: its own page, or the consultation page. */
-export function treatmentHref(service: Service): string {
-  return service.category === "consultations"
-    ? "/medical-spa/consultation"
-    : "/medical-spa/" + service.slug;
-}
-
-/** How to book at Nitel: consultation-led services book the consultation. */
-export function medicalBookingHref(service: Service): string {
-  return service.requiresConsultation
-    ? consultationHref
-    : bookingHref + "?location=nitel&service=" + service.slug;
-}
-
-/**
- * Concern cards for the medical spa. Show only those the client confirms the
- * licence allows. Concerns stay unlinked from treatments for now.
- */
-// DRAFT COPY - client approval needed
-export const concerns: Concern[] = [
-  {
-    slug: "pigmentation",
-    name: "Pigmentation & uneven tone",
-    summary: "For dark spots, patches and uneven skin tone.",
-  },
-  {
-    slug: "acne-scarring",
-    name: "Acne & scarring",
-    summary: "For active breakouts and the marks they leave behind.",
-  },
-  {
-    slug: "texture",
-    name: "Texture & pores",
-    summary: "For rough texture and enlarged pores.",
-  },
-  {
-    slug: "hydration",
-    name: "Hydration & glow",
-    summary: "For dull, dehydrated or tired-looking skin.",
-  },
-  {
-    slug: "ageing",
-    name: "Fine lines & firmness",
-    summary: "For early signs of ageing.",
-  },
-  {
-    slug: "unwanted-hair",
-    name: "Unwanted hair",
-    summary: "For longer-term hair reduction.",
-  },
-];
-
-export function findConcern(slug: string): Concern | undefined {
-  return concerns.find((concern) => concern.slug === slug);
-}
-
-export function concernHref(concern: Concern): string {
-  return "/medical-spa/concerns/" + concern.slug;
-}
-
-/** Generic course names. Every course detail is TBC with the client. */
-// DRAFT COPY - client approval needed (summaries)
-export const courses: Course[] = [
-  {
-    slug: "cosmetology",
-    name: "Cosmetology",
-    summary: "Skin, hair and beauty foundations, taught in working rooms.",
-    level: TBC,
-    entryRequirements: TBC,
-    duration: TBC,
-    fee: TBC,
-    nextIntake: TBC,
-    certifyingBody: TBC,
-  },
-  {
-    slug: "makeup-artistry",
-    name: "Bridal & Editorial Makeup",
-    summary: "Makeup for brides, events and camera.",
-    level: TBC,
-    entryRequirements: TBC,
-    duration: TBC,
-    fee: TBC,
-    nextIntake: TBC,
-    certifyingBody: TBC,
-  },
-  {
-    slug: "spa-therapy",
-    name: "Spa Therapy",
-    summary: "Spa treatments and the running of a treatment room.",
-    level: TBC,
-    entryRequirements: TBC,
-    duration: TBC,
-    fee: TBC,
-    nextIntake: TBC,
-    certifyingBody: TBC,
-  },
-];
-
-/** Hidden until the client supplies real people (copy deck: "Hidden until real"). */
-export const team: TeamMember[] = [
-  { name: TBC, role: "Salon & Spa team", division: "salon-spa", bio: TBC },
-  { name: TBC, role: "Medical Spa practitioner", division: "medical-spa", bio: TBC },
-  { name: TBC, role: "Institute tutor", division: "institute", bio: TBC },
-];
-
-/**
- * Gallery photographs. Empty until photography is supplied. No client faces
- * or before/after images without written consent (public/images/README.md).
- * Captions describe what is shown, never client names.
- */
-export const gallery: GalleryItem[] = [];
-
-/* ---------------------------------------------------------------------------
-   Home
---------------------------------------------------------------------------- */
-
-/**
- * Home, in the copy deck's v2 order: hero, promise, everything under one
- * roof, skin & aesthetics, your visit, favourites, gallery, Academy, visit
- * us, closing band. Kikiewa is one brand; Ebute and Nitel are just where
- * you go for each service.
- */
-
-// DRAFT COPY - client approval needed
-export const hero: {
-  eyebrow: string;
-  heading: string;
-  body: string;
-  primaryCta: NavLink;
-  /** "Help me choose" opens WhatsApp with the general greeting. */
-  secondaryCta: NavLink;
-  image: { alt: string; asset?: ImageAsset };
-} = {
-  eyebrow: "Kikiewa · Ikorodu, Lagos",
-  heading: "Beauty, in good hands.",
-  body: "Hair, nails, spa, skin and aesthetic care, all under one name in Ikorodu, from people who take your beauty as seriously as you do.",
-  primaryCta: { label: "Book an appointment", href: bookingHref },
-  secondaryCta: { label: "Help me choose", href: whatsappHref },
-  image: {
-    alt: "Stylist finishing a client's hair at Kikiewa, Ebute, Ikorodu",
-  },
-};
-
-export type Pillar = { title: string; body: string };
-
-/** The three promises under the line (copy deck, "The brand idea"). */
-// DRAFT COPY - client approval needed
-export const brandPromise: {
-  /** Visually hidden: the section's heading for assistive tech. */
-  heading: string;
-  statement: string;
-  pillars: Pillar[];
-} = {
-  heading: "Our promise",
-  statement:
-    "We believe beauty shouldn't be rushed, oversold or left to chance. So we take our time, we tell you the truth, and we do the work beautifully.",
-  pillars: [
-    {
-      title: "Unhurried",
-      body: "Time is part of the treatment. Nobody rushes you to make room for the next booking.",
-    },
-    {
-      title: "Honest",
-      body: "We tell you what will suit you, what it costs and what to expect, including when something isn't right for you.",
-    },
-    {
-      title: "Beautifully done",
-      body: "Careful work, and a finish you'll want to show off.",
-    },
-  ],
-};
-
-export type Offering = {
-  name: string;
-  line: string;
-  href: string;
-  imageAlt: string;
-  image?: ImageAsset;
-};
-
-// DRAFT COPY - client approval needed
-export const offeringsIntro: { heading: string; body: string } = {
-  heading: "All of you, under one roof",
-  body: "Book one thing or make a day of it. Whatever brings you in, it's the same care, the same standards and the same people.",
-};
-
-/**
- * Home tiles. The client must confirm which categories exist; remove any
- * that don't (and the matching anchor on /salon-spa).
- */
-// DRAFT COPY - client approval needed
-export const offerings: Offering[] = [
-  {
-    name: "Hair",
-    line: "Cuts, colour, styling and treatments for every texture.",
-    href: "/salon-spa#hair",
-    imageAlt: "Stylist at work on a client's hair at Kikiewa, Ebute, Ikorodu",
-  },
-  {
-    name: "Nails",
-    line: "Manicures and pedicures, finished with precision.",
-    href: "/salon-spa#nails",
-    imageAlt: "Manicure in progress at Kikiewa, Ebute, Ikorodu",
-  },
-  {
-    name: "Makeup",
-    line: "For the big day, the big night and everything between.",
-    href: "/salon-spa#makeup",
-    imageAlt: "Makeup artist at work at Kikiewa, Ebute, Ikorodu",
-  },
-  {
-    name: "Spa & massage",
-    line: "Massages and body rituals to help you fully switch off.",
-    href: "/salon-spa#spa",
-    imageAlt: "Massage room at Kikiewa, Ebute, Ikorodu",
-  },
-  {
-    name: "Facials",
-    line: "Relaxing, results-minded facials for healthy, glowing skin.",
-    href: "/salon-spa#facials",
-    imageAlt: "Facial treatment at Kikiewa, Ebute, Ikorodu",
-  },
-  {
-    name: "Skin & aesthetics",
-    line: "Clinical skin treatments, always starting with a consultation.",
-    href: "/medical-spa",
-    imageAlt: "Consultation room at Kikiewa, Nitel, Ikorodu",
-  },
-];
-
-export type FeatureCopy = {
-  eyebrow: string;
-  heading: string;
-  body: string;
-  note?: string;
-  cta?: NavLink;
-  imageAlt: string;
-  image?: ImageAsset;
-};
-
-/** Where skin & aesthetics lives on Home: part of the brand, not a separate one. */
-// DRAFT COPY - client approval needed
-export const skinFeature: FeatureCopy = {
-  eyebrow: "Skin & aesthetics",
-  heading: "When your skin needs more than a facial.",
-  body: "For pigmentation, breakouts, texture and more, our skin and aesthetic treatments bring clinical care into the same caring hands. Every treatment starts with a consultation, so you only ever get what's right for your skin.",
-  note: "At our Nitel location, Ikorodu.",
-  cta: {
-    label: "Book a consultation",
-    href: bookingHref + "?location=nitel&service=consultation",
-  },
-  imageAlt: "Consultation room at Kikiewa, Nitel, Ikorodu",
-};
-
-// DRAFT COPY - client approval needed
-export const visitFeature: FeatureCopy = {
-  eyebrow: "Your visit",
-  heading: "Time set aside, just for you.",
-  body: "Lagos moves fast. Your appointment shouldn't. Every visit starts with a conversation about what you'd like, and ends with a finish you'll want to show off, plus simple advice on keeping it that way.",
-  imageAlt: "Quiet treatment room at Kikiewa, Ebute, Ikorodu",
-};
-
-/**
- * Signature services, mixing both locations. "What our guests come back for"
- * claims popularity: use it only once the client confirms the most-booked
- * services. Until then, "A few favourites".
- */
-// DRAFT COPY - client approval needed
-export const favourites: {
-  heading: string;
-  /** Service slugs, in display order. */
-  slugs: string[];
-  bookLabel: string;
-  consultationLabel: string;
-} = {
-  heading: "A few favourites",
-  slugs: [
-    "hair-styling",
-    "manicure",
-    "massage",
-    "signature-facial",
-    "skin-treatment",
-    "bridal-makeover",
-  ],
-  bookLabel: "Book this service",
-  consultationLabel: "Book a consultation",
-};
-
-/** A gallery position with its alt text, waiting for a photograph. */
-export type GallerySlot = { alt: string; image?: ImageAsset };
-
-// DRAFT COPY - client approval needed
-export const homeGallery: {
-  heading: string;
-  body: string;
-  link: NavLink;
-  items: GallerySlot[];
-} = {
-  heading: "Inside Kikiewa",
-  body: "Recent work, our spaces, and the moments in between.",
-  link: { label: "See more work", href: "/gallery" },
-  items: [
-    { alt: "Finished hairstyle at Kikiewa, Ebute, Ikorodu" },
-    { alt: "Treatment room at Kikiewa, Nitel, Ikorodu" },
-    { alt: "Manicure and pedicure area at Kikiewa, Ebute, Ikorodu" },
-    { alt: "Reception at Kikiewa, Ebute, Ikorodu" },
-  ],
-};
-
-// DRAFT COPY - client approval needed
-export const academyBand: {
-  eyebrow: string;
-  heading: string;
-  body: string;
-  cta: NavLink;
-} = {
-  eyebrow: "Kikiewa Beauty Institute",
-  heading: "We teach what we practise.",
-  body: "Our institute trains the next generation of beauty professionals to the same standards our clients see every day.",
-  cta: { label: "See our courses", href: "/beauty-institute/courses" },
-};
-
-// DRAFT COPY - client approval needed
-export const findUs: { heading: string; body: string } = {
-  heading: "Find us in Ikorodu",
-  body: "Two locations in Ikorodu, each set up for its own kind of care.",
-};
-
-export type CredibilityItem = {
-  icon: IconName;
-  title: string;
-  body: string;
-  detailLabel: string;
-  detail: OrTBC<string>;
-  standard: string;
-};
-
-export const credibilityIntro = {
-  eyebrow: "Standards",
-  heading: "Our standards",
-} as const;
-
-/** Hidden until at least one detail is confirmed. Not on Home for now. */
-// DRAFT COPY - client approval needed
-export const credibility: CredibilityItem[] = [
-  {
-    icon: "verified",
-    title: "Clinical facility",
-    body: "A dedicated medical spa in Nitel, Ikorodu.",
-    detailLabel: "Licence",
-    detail: TBC,
-    standard: "Standard 01",
-  },
-  {
-    icon: "badge",
-    title: "Practitioners & staff",
-    body: "The people who carry out your treatment.",
-    detailLabel: "Credentials",
-    detail: TBC,
-    standard: "Standard 02",
-  },
-  {
-    icon: "sanitizer",
-    title: "Hygiene protocol",
-    body: "Sterilisation and hygiene procedures across both locations.",
-    detailLabel: "Protocol",
-    detail: TBC,
-    standard: "Standard 03",
-  },
-  {
-    icon: "book",
-    title: "Institute curriculum",
-    body: "A structured syllabus for aspiring beauty professionals.",
-    detailLabel: "Accreditation",
-    detail: TBC,
-    standard: "Standard 04",
-  },
-];
-
-/**
- * Closing band on every page (copy deck, "Global elements").
- *
- * Peacock lines ("Made to be seen", "Leave in full feather", "Show it off")
- * appear at most once per page. This band is global, so its line doesn't
- * count toward that limit. "Made to be seen" belongs to /gallery only.
- */
-// DRAFT COPY - client approval needed
-export const ctaBand = {
-  heading: "Come in. Leave in full feather.",
-  body: "Book in a few taps, or message us and we'll help you choose.",
-  cta: { label: "Book an appointment", href: bookingHref },
-  secondaryCta: { label: "Chat on WhatsApp", href: whatsappHref },
-} as const;
-
-/* ---------------------------------------------------------------------------
-   Footer
---------------------------------------------------------------------------- */
-
-// DRAFT COPY - client approval needed
-export const footer: {
-  /** The brand line, under the logo. */
-  tagline: string;
-  place: string;
-  /** Hidden while TBC. */
-  licence: { label: string; value: OrTBC<string> };
-  exploreHeading: string;
-  exploreLinks: NavLink[];
-  visitHeading: string;
-  helpHeading: string;
-  helpLinks: NavLink[];
-  legalLinks: NavLink[];
-  rights: string;
-  medicalNote: string;
-} = {
-  tagline: "Beauty, in good hands.",
-  place: "Ikorodu, Lagos.",
-  licence: { label: "Licence", value: TBC },
-  exploreHeading: "Explore",
-  // Journal joins this list once /journal exists.
-  exploreLinks: [
-    { label: "Hair & Beauty", href: "/salon-spa" },
-    { label: "Skin & Aesthetics", href: "/medical-spa" },
-    { label: "Academy", href: "/beauty-institute" },
-    { label: "Gallery", href: "/gallery" },
-  ],
-  visitHeading: "Visit",
-  helpHeading: "Help",
-  helpLinks: [
-    { label: "Book an appointment", href: bookingHref },
-    { label: "Contact", href: contactHref },
-    { label: "Opening hours", href: hoursLink.href },
-  ],
-  legalLinks: [
-    { label: "Licensing & Compliance", href: "/licensing" },
-    { label: "Privacy", href: "/privacy" },
-  ],
-  rights: "All rights reserved.",
-  medicalNote:
-    "Skin and aesthetic treatments follow a consultation and suitability assessment. Individual results vary.",
-};
-
-/* ---------------------------------------------------------------------------
-   /medical-spa
-   Clinical register: no before/after imagery, result promises, statistics,
-   testimonials or prices. Don't strengthen any line here.
---------------------------------------------------------------------------- */
-
-export type ConsultationStep = {
-  step: string;
-  icon: IconName;
-  title: string;
-  body: string;
-  /** Hidden while the value is TBC. */
-  note?: { label: string; value: OrTBC<string> };
-};
-export type Credential = { icon: IconName; label: string; value: OrTBC<string> };
-
-export const medicalSpa: {
-  hero: {
-    eyebrow: string;
-    heading: string;
-    body: string;
-    cta: NavLink;
-    secondaryCta: NavLink;
-    image: { alt: string; asset?: ImageAsset };
-  };
-  /** In-page index under the hero. Hrefs are the section ids. */
-  contents: { label: string; links: NavLink[] };
-  /** Large serif statement, with a small label beside it on desktop. */
-  intro: { label: string; body: string };
-  pathway: { eyebrow: string; heading: string; body?: string };
-  steps: ConsultationStep[];
-  concernsIntro: { eyebrow: string; heading: string; body: string; cardLink: string };
-  treatmentsIntro: { eyebrow: string; heading: string; body: string };
-  /** Column headings and the tag in the treatments table. */
-  treatmentTable: {
-    caption: string;
-    treatment: string;
-    duration: string;
-    price: string;
-    consultationTag: string;
-  };
-  /** Hidden until a clinical team member has a confirmed name. */
-  teamIntro: { eyebrow: string; heading: string; registrationLabel: string };
-  credentialsIntro: { eyebrow: string; heading: string; body: string };
-  /** The section is hidden until at least one value is confirmed. */
-  credentials: Credential[];
-  faq: { eyebrow: string; heading: string; items: FaqItem[] };
-  location: LocationBlockCopy;
-  /** The skin note at the foot of the page (copy deck: "Footer note"). */
-  pageNote: string;
-} = {
-  // DRAFT COPY - client approval needed
-  hero: {
-    eyebrow: "Skin & Aesthetics · Kikiewa Medical Spa, Nitel, Ikorodu",
-    heading: "Every treatment begins with a conversation.",
-    body: "The same Kikiewa care, with clinical standards. We assess, explain and plan with you before any treatment begins.",
-    cta: { label: "Book a consultation", href: consultationHref },
-    secondaryCta: {
-      label: "Chat on WhatsApp",
-      href: whatsappLink(contact.whatsapp, whatsappMessages.medical),
-    },
-    image: {
-      alt: "Consultation room at Kikiewa, Nitel, Ikorodu",
-    },
-  },
-
-  // DRAFT COPY - client approval needed
-  contents: {
-    label: "On this page",
-    links: [
-      { label: "How it works", href: "#how-it-works" },
-      { label: "By concern", href: "#concerns" },
-      { label: "Treatments", href: "#treatments" },
-      { label: "Before your consultation", href: "#faq" },
+    name: "Massage & Spa",
+    href: serviceHref("massage"),
+    icon: "spa",
+    cardLine: "Massages that release tension and help you fully switch off.",
+    image: { alt: "Massage treatment at Kikiewa, Ikorodu" },
+    heading: "Massage & Spa",
+    line: "Switch off. Breathe out.",
+    intro:
+      "Choose the pressure and the pace. Our therapists work with you to release tension, ease tired muscles and give your mind a proper rest.",
+    expect: [
+      { title: "Settle in" },
+      { title: "Tell us what you need" },
+      { title: "Your massage" },
+      { title: "Take your time afterwards" },
     ],
+    faqs: [
+      { question: "What should I wear?", answer: TBC },
+      { question: "Can I choose a male or female therapist?", answer: TBC },
+      { question: "Can I book for two?", answer: TBC },
+    ],
+    consultationLed: false,
+    seo: seo.massage,
   },
-
-  // DRAFT COPY - client approval needed
-  intro: {
-    label: "Our approach",
-    body: "Choosing a skin treatment is a personal decision. So we do what Kikiewa always does: take our time, tell you the truth, and recommend only what is suitable for you.",
-  },
-
-  // DRAFT COPY - client approval needed
-  pathway: {
-    eyebrow: "Consultation first",
-    heading: "How it works",
-  },
-
-  // DRAFT COPY - client approval needed
-  steps: [
-    {
-      step: "01",
-      icon: "calendar",
-      title: "Consultation",
-      body: "We listen to what you'd like to address and take a short medical history.",
-    },
-    {
-      step: "02",
-      icon: "notes",
-      title: "Assessment & plan",
-      body: "We check suitability, explain your options, costs and what to expect, and agree a plan.",
-    },
-    {
-      step: "03",
-      icon: "medical",
-      title: "Treatment",
-      // Copy deck: "our clinical team" until practitioner roles are confirmed.
-      body: "Carried out by our clinical team, at a pace you're comfortable with.",
-    },
-    {
-      step: "04",
-      icon: "shield",
-      title: "Aftercare",
-      body: "Clear written aftercare and a follow-up where your treatment calls for one.",
-      note: { label: "Aftercare protocol", value: TBC },
-    },
-  ],
-
-  // DRAFT COPY - client approval needed
-  concernsIntro: {
-    eyebrow: "By concern",
-    heading: "What would you like to address?",
-    body: "Start with your concern. We'll recommend the right approach at your consultation.",
-    // The deck's "See treatments" waits until concerns link to treatments.
-    cardLink: "Find out more",
-  },
-
-  // DRAFT COPY - client approval needed
-  treatmentsIntro: {
-    eyebrow: "Price guide",
-    heading: "Treatments",
-    body: "Prices are a guide. Your final plan and cost are confirmed at consultation.",
-  },
-
-  treatmentTable: {
-    caption: "Skin and aesthetic treatments, with duration and starting price",
-    treatment: "Treatment",
-    duration: "Duration",
-    price: "From",
-    consultationTag: "Consultation required",
-  },
-
-  // DRAFT COPY - client approval needed
-  teamIntro: {
-    eyebrow: "Clinical team",
-    heading: "Your clinical team",
-    registrationLabel: "Registration",
-  },
-
-  // DRAFT COPY - client approval needed
-  credentialsIntro: {
-    eyebrow: "Licence & safety",
-    heading: "Our standards",
-    body: "Every treatment follows a consultation and suitability assessment. If a treatment isn't right for you, we'll tell you.",
-  },
-
-  credentials: [
-    { icon: "verified", label: "Facility licence", value: TBC },
-    { icon: "home", label: "Regulatory body", value: TBC },
-    { icon: "medical", label: "Medical oversight", value: TBC },
-  ],
-
-  // DRAFT COPY - client approval needed
-  faq: {
-    eyebrow: "FAQ",
-    heading: "Before your consultation",
-    items: [
+  {
+    slug: "aesthetics",
+    name: "Aesthetics",
+    href: serviceHref("aesthetics"),
+    icon: "sparkle",
+    cardLine: "Advanced skin treatments, always starting with a consultation.",
+    image: { alt: "Aesthetic skin consultation at Kikiewa, Ikorodu" },
+    heading: "Aesthetics",
+    line: "Advanced skin care, always starting with a consultation.",
+    intro:
+      "For concerns a facial can't reach, our aesthetic treatments go further. Every one begins with a consultation, so you only ever get what's right for your skin.",
+    expect: [
+      {
+        title: "Consultation",
+        body: "We listen to what you'd like to address and take a short medical history.",
+      },
+      {
+        title: "Assessment & plan",
+        body: "We check suitability, explain your options, costs and what to expect, and agree a plan.",
+      },
+      {
+        title: "Treatment",
+        body: "Carried out by our team, at a pace you're comfortable with.",
+      },
+      {
+        title: "Aftercare",
+        body: "Clear aftercare advice, and a follow-up where your treatment calls for one.",
+      },
+    ],
+    faqs: [
       {
         question: "What happens at a consultation?",
         answer:
           "We discuss your concerns and medical history, assess your skin, and explain suitable options, costs and aftercare. There's no obligation to go ahead.",
       },
-      // If the fee is credited against treatment, say so.
       { question: "Is there a consultation fee?", answer: TBC },
       {
-        question: "How should I prepare?",
-        answer:
-          "Come with clean skin if possible, and bring a list of any medication or skincare you use.",
-      },
-      {
         question: "Will I see results after one session?",
-        answer:
-          "Results vary from person to person. Some treatments need a course of sessions, and we'll talk you through what's realistic for you.",
-      },
-      {
-        question: "Is it suitable during pregnancy or breastfeeding?",
-        answer:
-          "Some treatments aren't. Please tell us at consultation and we'll advise you.",
+        answer: "Results vary from person to person; we'll talk you through what's realistic.",
       },
     ],
+    disclaimer:
+      "Treatments follow a consultation and suitability assessment. Results vary from person to person.",
+    consultationLed: true,
+    seo: seo.aesthetics,
   },
-
-  // DRAFT COPY - client approval needed
-  location: {
-    eyebrow: "Nitel location",
-    heading: "Visit us in Nitel, Ikorodu",
-    mapAlt: "Map showing Kikiewa, Nitel, Ikorodu",
-    whatsappLabel: "Chat on WhatsApp",
-    whatsappMessage: whatsappMessages.medical,
+  {
+    slug: "hair",
+    name: "Hair & Barbing",
+    href: serviceHref("hair"),
+    icon: "scissors",
+    cardLine: "Styling, treatments and clean, sharp cuts.",
+    image: { alt: "Hair styling at Kikiewa, Ikorodu" },
+    heading: "Hair & Barbing",
+    line: "Styled, cut and cared for.",
+    intro:
+      "From protective styles and treatments to clean, sharp cuts, our stylists and barbers take the time to get it right for your hair.",
+    expect: [
+      { title: "Consultation" },
+      { title: "Wash & prep" },
+      { title: "Style or cut" },
+      { title: "Finish & aftercare tips" },
+    ],
+    faqs: [],
+    consultationLed: false,
+    seo: seo.hair,
   },
+  {
+    slug: "nails",
+    name: "Nails",
+    href: serviceHref("nails"),
+    icon: "hand",
+    cardLine: "Manicures, pedicures and nail art, finished with precision.",
+    image: { alt: "Manicure at Kikiewa, Ikorodu" },
+    heading: "Nails",
+    line: "Finished with precision.",
+    intro:
+      "Clean shapes, neat cuticles and colour that lasts. Keep it simple or ask for nail art.",
+    faqs: [],
+    consultationLed: false,
+    seo: seo.nails,
+  },
+  {
+    slug: "makeup",
+    name: "Makeup",
+    href: serviceHref("makeup"),
+    icon: "brush",
+    cardLine: "For your big day, a night out, or a photoshoot.",
+    image: { alt: "Makeup artist at work at Kikiewa, Ikorodu" },
+    heading: "Makeup",
+    line: "For the moments you want to remember.",
+    intro:
+      "Bridal, events, photoshoots or just because. We match your makeup to your skin, your outfit and the occasion.",
+    faqs: [
+      { question: "Do you offer trials?", answer: TBC },
+      { question: "Can you come to my venue?", answer: TBC },
+      { question: "How early should I book for a wedding?", answer: TBC },
+    ],
+    consultationLed: false,
+    seo: seo.makeup,
+  },
+];
 
-  // DRAFT COPY - client approval needed
-  pageNote:
-    "Medical treatments are provided following consultation and assessment of suitability. Individual results vary.",
+export function findServiceCategory(slug: ServiceSlug): ServiceCategory {
+  const category = serviceCategories.find((item) => item.slug === slug);
+  if (!category) throw new Error(`Unknown service category: ${slug}`);
+  return category;
+}
+
+/** Services dropdown, footer column and gallery filters. */
+export const serviceLinks: NavLink[] = serviceCategories.map((category) => ({
+  label: category.name,
+  href: category.href,
+}));
+
+/**
+ * Menus, keyed by category. Every duration and price is TBC. Items with
+ * `confirmed: false` are the site plan's suggested names for the client to
+ * confirm or replace: shown (and marked) on previews, hidden in production.
+ *
+ * Aesthetics lists only treatments the client confirms in writing are
+ * licensed and safe to advertise. Until then: the consultation alone.
+ */
+// DRAFT COPY - client approval needed (all summaries)
+export const serviceMenus: Record<ServiceSlug, ServiceItem[]> = {
+  facials: [
+    {
+      slug: "deep-cleansing-facial",
+      name: "Deep-Cleansing Facial",
+      summary: "A thorough cleanse for congested or oily skin.",
+      durationMins: TBC,
+      priceFrom: TBC,
+      confirmed: false,
+    },
+    {
+      slug: "hydrating-facial",
+      name: "Hydrating Facial",
+      summary: "Moisture for dry, tight or tired-feeling skin.",
+      durationMins: TBC,
+      priceFrom: TBC,
+      confirmed: false,
+    },
+    {
+      slug: "glow-facial",
+      name: "Glow Facial",
+      summary: "A brightening facial for dull skin, before an event or just because.",
+      durationMins: TBC,
+      priceFrom: TBC,
+      confirmed: false,
+    },
+    {
+      slug: "facial-for-men",
+      name: "Facial for Men",
+      summary: "A facial suited to men's skin and shaving routines.",
+      durationMins: TBC,
+      priceFrom: TBC,
+      confirmed: false,
+    },
+  ],
+  massage: [
+    {
+      slug: "relaxing-massage",
+      name: "Relaxing Massage",
+      summary: "Gentle, flowing pressure to help you unwind.",
+      durationMins: TBC,
+      priceFrom: TBC,
+      confirmed: false,
+    },
+    {
+      slug: "deep-tissue-massage",
+      name: "Deep Tissue Massage",
+      summary: "Firmer pressure for tight, tired muscles.",
+      durationMins: TBC,
+      priceFrom: TBC,
+      confirmed: false,
+    },
+    {
+      slug: "couples-massage",
+      name: "Couples Massage",
+      summary: "Side by side, at the same time, for two.",
+      durationMins: TBC,
+      priceFrom: TBC,
+      confirmed: false,
+    },
+    {
+      slug: "body-scrub",
+      name: "Body Scrub",
+      summary: "Exfoliation that leaves skin smooth and soft.",
+      durationMins: TBC,
+      priceFrom: TBC,
+      confirmed: false,
+    },
+  ],
+  aesthetics: [
+    {
+      slug: "aesthetic-consultation",
+      name: "Aesthetic consultation",
+      summary: "Where every aesthetic treatment begins: your skin, your goals and what suits you.",
+      durationMins: TBC,
+      priceFrom: TBC,
+      confirmed: true,
+      requiresConsultation: true,
+    },
+  ],
+  hair: [
+    {
+      slug: "styling",
+      name: "Styling",
+      summary: "Wash, style and finish, talked through before we begin.",
+      durationMins: TBC,
+      priceFrom: TBC,
+      confirmed: false,
+    },
+    {
+      slug: "hair-treatment",
+      name: "Hair Treatment",
+      summary: "Treatments to nourish and care for your hair.",
+      durationMins: TBC,
+      priceFrom: TBC,
+      confirmed: false,
+    },
+    {
+      slug: "braids-protective-styles",
+      name: "Braids & Protective Styles",
+      summary: "Neat, comfortable protective styles.",
+      durationMins: TBC,
+      priceFrom: TBC,
+      confirmed: false,
+    },
+    {
+      slug: "haircut-barbing",
+      name: "Haircut & Barbing",
+      summary: "Clean, sharp cuts and line-ups.",
+      durationMins: TBC,
+      priceFrom: TBC,
+      confirmed: false,
+    },
+  ],
+  nails: [
+    {
+      slug: "manicure",
+      name: "Manicure",
+      summary: "Shaping, cuticle care and a finish of your choice.",
+      durationMins: TBC,
+      priceFrom: TBC,
+      confirmed: false,
+    },
+    {
+      slug: "pedicure",
+      name: "Pedicure",
+      summary: "Foot care and polish, at an unhurried pace.",
+      durationMins: TBC,
+      priceFrom: TBC,
+      confirmed: false,
+    },
+    {
+      slug: "gel-polish",
+      name: "Gel Polish",
+      summary: "A glossy gel finish on hands or feet.",
+      durationMins: TBC,
+      priceFrom: TBC,
+      confirmed: false,
+    },
+    {
+      slug: "nail-art",
+      name: "Nail Art",
+      summary: "Designs from a simple accent to a full set.",
+      durationMins: TBC,
+      priceFrom: TBC,
+      confirmed: false,
+    },
+  ],
+  makeup: [
+    {
+      slug: "bridal-makeup",
+      name: "Bridal Makeup",
+      summary: "Makeup for your wedding day, planned with you ahead of time.",
+      durationMins: TBC,
+      priceFrom: TBC,
+      confirmed: false,
+    },
+    {
+      slug: "event-makeup",
+      name: "Event Makeup",
+      summary: "For parties, celebrations and nights out.",
+      durationMins: TBC,
+      priceFrom: TBC,
+      confirmed: false,
+    },
+    {
+      slug: "photoshoot-makeup",
+      name: "Photoshoot Makeup",
+      summary: "Makeup that works on camera and in person.",
+      durationMins: TBC,
+      priceFrom: TBC,
+      confirmed: false,
+    },
+  ],
 };
 
-/** /medical-spa/[treatment] (copy deck: "Treatment detail"). */
+/** Where a menu item books: consultation-led items book the consultation. */
+export function serviceBookingHref(item: ServiceItem): string {
+  return item.requiresConsultation ? consultationHref : bookingHref + "?service=" + item.slug;
+}
+
+/** Labels for service pages. */
 // DRAFT COPY - client approval needed
-export const treatmentPage = {
-  eyebrow: "Skin & Aesthetics · Nitel",
-  facts: {
-    duration: "Duration",
-    price: "From",
-    location: "Location",
-    consultationTag: "Consultation required",
-  },
+export const servicePage = {
+  eyebrow: "Services",
+  menuHeading: "Menu",
+  duration: "Duration",
+  price: "From",
+  consultationTag: "Consultation required",
+  suggestedTag: "Suggested name, to confirm",
+  /** Shown when no menu item is confirmed yet. */
+  menuEmpty: "Our full menu is on its way. Message us on WhatsApp and we'll talk you through it.",
   expectHeading: "What to expect",
-  aftercareHeading: "Aftercare",
-  disclaimer: "Individual results vary. Suitability is assessed at consultation.",
-  consultationCta: "Book a consultation",
-  bookCta: "Book this service",
-  whatsappLabel: "Chat on WhatsApp",
+  workHeading: "Our work",
+  faqHeading: "Questions",
 } as const;
 
-/** /medical-spa/concerns/[concern] (copy deck: "Concern detail"). */
+/* ---------------------------------------------------------------------------
+   Brand
+--------------------------------------------------------------------------- */
+
+/** How we work: the three values, reused across the site. */
 // DRAFT COPY - client approval needed
-export const concernPage = {
-  eyebrow: "Skin & Aesthetics · By concern",
-  /** H1 is "{concern name} treatment in Ikorodu". */
-  headingSuffix: " treatment in Ikorodu",
-  /** Follows the concern summary in the intro. */
-  introSuffix:
-    "At your consultation, we'll look at the cause and recommend the approach that suits your skin.",
-  // "Treatments we may recommend" waits until concerns link to treatments.
-  next: {
-    heading: "Your first step: book a consultation",
-    body: "We discuss your concerns and medical history, assess your skin, and explain suitable options, costs and aftercare. There's no obligation to go ahead.",
-    cta: "Book a consultation",
-    more: { label: "Your consultation", href: "/medical-spa/consultation" },
+export const values: Point[] = [
+  {
+    title: "We take our time.",
+    body: "No rushing you to make room for the next booking.",
   },
-  othersHeading: "Other concerns",
+  {
+    title: "We're honest with you.",
+    body: "We tell you what will suit you, what it costs and what to expect.",
+  },
+  {
+    title: "We do it beautifully.",
+    body: "Careful work, and a finish you'll be proud to show.",
+  },
+];
+
+/* ---------------------------------------------------------------------------
+   Home (site plan, section 3)
+--------------------------------------------------------------------------- */
+
+export type HeroSlide = {
+  heading: string;
+  line: string;
+  cta: NavLink;
+  image: ImageSlot;
+};
+
+// DRAFT COPY - client approval needed
+export const hero: { label: string; slides: HeroSlide[] } = {
+  label: "Welcome to Kikiewa",
+  slides: [
+    {
+      heading: "Your beauty, seen and felt.",
+      line: "Everyone is beautiful in their own way. At Kikiewa, we bring it out.",
+      cta: { label: cta.book, href: bookingHref },
+      image: { alt: "A calm treatment room at Kikiewa, Ikorodu" },
+    },
+    {
+      heading: "Skin that feels as good as it looks.",
+      line: "Facials and skin treatments, matched to your skin.",
+      cta: { label: "Explore facials", href: serviceHref("facials") },
+      image: { alt: "Facial in progress at Kikiewa, Ikorodu" },
+    },
+    {
+      heading: "Switch off. Breathe out.",
+      line: "Massage and spa treatments to release the week.",
+      cta: { label: "Explore massage", href: serviceHref("massage") },
+      image: { alt: "Massage treatment at Kikiewa, Ikorodu" },
+    },
+    {
+      heading: "Finished to be seen.",
+      line: "Hair, barbing, nails and makeup, done with care.",
+      cta: { label: cta.viewServices, href: "/services" },
+      image: { alt: "Finished hair, nails and makeup at Kikiewa, Ikorodu" },
+    },
+  ],
+};
+
+// DRAFT COPY - client approval needed
+export const miniAbout = {
+  eyebrow: "About Kikiewa",
+  heading: "Everyone is beautiful in their own way.",
+  body: "Kikiewa exists to bring that beauty out. We bring expertise and professional know-how to every treatment, so your beauty can be seen and felt. Facials, massage, aesthetics, hair, nails and makeup, all under one name in Ikorodu, Lagos.",
+  link: { label: "More about us", href: "/about" },
+  valuesHeading: "How we work",
+  image: { alt: "A member of the Kikiewa team in Ikorodu" } as ImageSlot,
+};
+
+// DRAFT COPY - client approval needed
+export const whatWeDo = {
+  heading: "What we do",
+  intro: "Whatever brings you in, it's the same care and the same standards.",
+};
+
+export type WorkItem = { category: ServiceSlug; alt: string; image?: ImageAsset };
+
+/**
+ * Home "Our work" tiles. Each links to its service page. No client faces or
+ * before/afters without written consent (public/images/README.md).
+ */
+// DRAFT COPY - client approval needed
+export const ourWork: { heading: string; intro: string; link: NavLink; items: WorkItem[] } = {
+  heading: "Our work",
+  intro: "A few recent favourites from our team.",
+  link: { label: cta.seeWork, href: "/gallery" },
+  items: [
+    { category: "facials", alt: "Glowing skin after a facial at Kikiewa, Ikorodu" },
+    { category: "hair", alt: "Finished hairstyle at Kikiewa, Ikorodu" },
+    { category: "nails", alt: "Nail art at Kikiewa, Ikorodu" },
+    { category: "makeup", alt: "Event makeup at Kikiewa, Ikorodu" },
+    { category: "massage", alt: "Massage room at Kikiewa, Ikorodu" },
+    { category: "hair", alt: "Fresh haircut at Kikiewa, Ikorodu" },
+    { category: "aesthetics", alt: "Aesthetics treatment room at Kikiewa, Ikorodu" },
+    { category: "makeup", alt: "Bridal makeup at Kikiewa, Ikorodu" },
+  ],
+};
+
+export type ClassSlide = { alt: string; caption?: string; image?: ImageAsset };
+
+// DRAFT COPY - client approval needed
+export const academyHome = {
+  eyebrow: "Kikiewa Academy",
+  heading: "Learn the craft from the people who practise it.",
+  body: "Hands-on training in cosmetology and aesthetics, taught by the team behind Kikiewa.",
+  cta: { label: cta.seeCourses, href: "/academy" },
+  slideshowLabel: "Inside our classes",
+};
+
+/** Class photos, shared by Home and /academy. Captions are optional. */
+export const classSlides: ClassSlide[] = [
+  { alt: "Students practising at Kikiewa Academy, Ikorodu" },
+  { alt: "A hair styling class at Kikiewa Academy, Ikorodu" },
+  { alt: "A nails class at Kikiewa Academy, Ikorodu" },
+  { alt: "A facial training session at Kikiewa Academy, Ikorodu" },
+];
+
+export type Testimonial = {
+  quote: string;
+  /** First name and last initial: "Ada O." */
+  name: string;
+  service?: ServiceSlug;
+  /** Only when the review comes from Google. */
+  rating?: number;
+  source: "google" | "whatsapp" | "instagram";
+};
+
+/**
+ * Only real testimonials, shared with the customer's permission. While
+ * empty, previews show labelled placeholders and production hides the
+ * section (components/Testimonials.tsx).
+ */
+export const testimonials: Testimonial[] = [];
+
+/** Academy students, same rules. */
+export const studentTestimonials: Testimonial[] = [];
+
+// DRAFT COPY - client approval needed
+export const testimonialsSection = {
+  heading: "What our clients say",
+  label: "Client testimonials",
+  placeholder: "Client testimonial — to be supplied",
+  studentPlaceholder: "Student testimonial — to be supplied",
+  placeholderCount: 3,
 } as const;
 
-/** Breadcrumb trail roots for nested pages. */
+// DRAFT COPY - client approval needed
+export const locationsSection = {
+  heading: "Visit us in Ikorodu",
+  intro: "Two locations, the same Kikiewa. Choose whichever is closer.",
+};
+
+/** Closing band on every page (site plan, section 3.8). */
+// DRAFT COPY - client approval needed
+export const ctaBand = {
+  heading: "Come in. Leave in full feather.",
+  body: "Book in a few taps, or message us and we'll help you choose.",
+  cta: { label: cta.book, href: bookingHref },
+  secondaryCta: { label: cta.whatsapp, href: whatsappHref },
+} as const;
+
+/* ---------------------------------------------------------------------------
+   Navigation and footer
+--------------------------------------------------------------------------- */
+
+// DRAFT COPY - client approval needed
+export const primaryNav: NavItem[] = [
+  { label: "Home", href: "/" },
+  { label: "About", href: "/about" },
+  { label: "Services", href: "/services", children: serviceLinks },
+  { label: "Academy", href: "/academy" },
+  { label: "Gallery", href: "/gallery" },
+  { label: "Locations", href: "/locations" },
+  { label: "Contact", href: contactHref },
+];
+
+/** Desktop utility bar, above the header. */
+export const utilityBar = {
+  place: "Ikorodu, Lagos",
+  locations: "Ebute · Nitel",
+  hoursLink: { label: "Opening hours", href: "/locations" },
+} as const;
+
+// DRAFT COPY - client approval needed
+export const footer = {
+  tagline: "Your beauty, seen and felt.",
+  servicesHeading: "Services",
+  kikiewaHeading: "Kikiewa",
+  kikiewaLinks: [
+    { label: "About", href: "/about" },
+    { label: "Academy", href: "/academy" },
+    { label: "Gallery", href: "/gallery" },
+    { label: "Contact", href: contactHref },
+  ] as NavLink[],
+  visitHeading: "Visit",
+  followHeading: "Follow",
+  legalLinks: [
+    { label: "Booking policy", href: "/booking-policy" },
+    { label: "Privacy", href: "/privacy" },
+  ] as NavLink[],
+  note: "Aesthetic treatments follow a consultation and suitability assessment. Results vary from person to person.",
+};
+
+/** Breadcrumb roots for nested pages. */
 export const breadcrumbRoots = {
   home: { label: "Home", href: "/" },
-  skin: { label: "Skin & Aesthetics", href: "/medical-spa" },
-  concerns: { label: "By concern", href: "/medical-spa/concerns" },
-  treatments: { label: "Treatments", href: "/medical-spa/treatments" },
+  services: { label: "Services", href: "/services" },
+  academy: { label: "Academy", href: "/academy" },
+  locations: { label: "Locations", href: "/locations" },
 } as const satisfies Record<string, NavLink>;
 
 /* ---------------------------------------------------------------------------
-   /salon-spa
-   Warmer register than /medical-spa, same restraint on facts.
+   About (site plan, section 4)
 --------------------------------------------------------------------------- */
 
-export type ExpectationPoint = { icon: IconName; title: string; body: string };
+export type TeamMember = { name: string; role: string; image?: ImageAsset };
 
-export const salonSpa: {
-  hero: {
-    eyebrow: string;
-    heading: string;
-    body: string;
-    cta: NavLink;
-    secondaryCta: NavLink;
-    image: { alt: string; asset?: ImageAsset };
-  };
-  /** Large serif paragraph under the hero. */
-  intro: string;
-  categoriesIntro: { eyebrow: string; heading: string; body: string };
-  expectIntro: { eyebrow: string; heading: string; body?: string };
-  expectations: ExpectationPoint[];
-  gallery: { eyebrow: string; heading: string; items: GallerySlot[] };
-  location: LocationBlockCopy;
-} = {
-  // DRAFT COPY - client approval needed
-  hero: {
-    eyebrow: "Hair & Beauty · Ebute, Ikorodu",
-    heading: "Unhurried care, from the first wash to the final finish.",
-    body: "Hair, nails, makeup, massage and spa at Kikiewa in Ebute, Ikorodu. Come in for one service or stay for the afternoon.",
-    cta: {
-      label: "Book an appointment",
-      href: bookingHref + "?location=ebute&service=salon-spa",
-    },
-    secondaryCta: {
-      label: "Chat on WhatsApp",
-      href: whatsappLink(contact.whatsapp, whatsappMessages.salon),
-    },
-    image: {
-      alt: "Styling and treatment room at Kikiewa, Ebute, Ikorodu",
-    },
+// DRAFT COPY - client approval needed
+export const about = {
+  intro: {
+    eyebrow: "About Kikiewa",
+    heading: "Everyone is beautiful in their own way.",
+    body: "We exist to bring that beauty out.",
+  } satisfies PageCopy,
+  /** How Kikiewa started, the founder, the year, the name. Hidden while TBC. */
+  story: { heading: "Our story", paragraphs: TBC as OrTBC<string[]> },
+  vision: {
+    heading: "Our vision",
+    body: "A world where everyone sees the beauty they already have, and is helped to bring it out.",
   },
-
-  // DRAFT COPY - client approval needed
-  intro:
-    "Good beauty work takes time. We give it that time: a conversation before we begin, techniques suited to your hair and skin, and a finish you'll want to show off.",
-
-  // DRAFT COPY - client approval needed
-  categoriesIntro: {
-    eyebrow: "What we offer",
-    heading: "Services",
-    body: "Choose a category to see durations and starting prices.",
+  mission: {
+    heading: "Our mission",
+    body: "To bring expertise and professional know-how to every client, so their beauty can be seen and felt.",
   },
-
-  // DRAFT COPY - client approval needed
-  expectIntro: {
-    eyebrow: "What to expect",
-    heading: "Your visit, step by step",
-  },
-
-  // DRAFT COPY - client approval needed
-  expectations: [
-    {
-      icon: "home",
-      title: "Arrive and settle.",
-      body: "A warm welcome and a few minutes to unwind.",
-    },
-    {
-      icon: "notes",
-      title: "Talk it through.",
-      body: "We ask what you'd like and check what suits your hair or skin.",
-    },
-    {
-      icon: "scissors",
-      title: "Your service.",
-      body: "Careful, unhurried work, with no rushing to the next client.",
-    },
-    {
-      icon: "sparkle",
-      title: "The finish.",
-      body: "A final check together, plus simple tips for caring for it at home.",
-    },
-  ],
-
-  // DRAFT COPY - client approval needed
-  gallery: {
-    eyebrow: "Gallery",
-    heading: "Recent work",
-    items: [
-      { alt: "Reception and waiting area at Kikiewa, Ebute, Ikorodu" },
-      { alt: "Styling station at Kikiewa, Ebute, Ikorodu" },
-      { alt: "Manicure and pedicure area at Kikiewa, Ebute, Ikorodu" },
-      { alt: "Treatment room at Kikiewa, Ebute, Ikorodu" },
-    ],
-  },
-
-  // DRAFT COPY - client approval needed
-  location: {
-    eyebrow: "Ebute location",
-    heading: "Visit us in Ebute, Ikorodu",
-    mapAlt: "Map showing Kikiewa, Ebute, Ikorodu",
-    whatsappLabel: "Chat on WhatsApp",
-    whatsappMessage: whatsappMessages.salon,
+  valuesHeading: "How we work",
+  /** Hidden until real names and roles exist. */
+  team: { heading: "Our team", members: [] as TeamMember[] },
+  locations: {
+    heading: "Two locations, the same Kikiewa.",
+    body: "Ebute and Nitel, both in Ikorodu, both offering every service.",
+    link: { label: "Find us", href: "/locations" },
   },
 };
 
 /* ---------------------------------------------------------------------------
-   Other pages. Short, honest pages for routes linked from the navigation.
-   Metadata for every page lives in `seo` above.
+   /services hub (site plan, section 5)
 --------------------------------------------------------------------------- */
 
-export type PageCopy = {
-  eyebrow: string;
-  heading: string;
-  body: string;
+// DRAFT COPY - client approval needed
+export const servicesHub = {
+  intro: {
+    eyebrow: "Services",
+    heading: "Our services",
+    body: "Facials, massage, aesthetics, hair, nails and makeup, available at both our Ikorodu locations.",
+  } satisfies PageCopy,
+  help: {
+    heading: "Not sure what to book?",
+    body: "Tell us what you'd like and we'll recommend the right treatment.",
+    cta: cta.whatsapp,
+  },
 };
 
-// DRAFT COPY - client approval needed (all page copy below)
-export const locationsPage: PageCopy = {
-  eyebrow: "Visit us",
-  heading: "Visit us in Ikorodu",
-  body: "One Kikiewa, two locations, each set up for its own kind of care.",
+/* ---------------------------------------------------------------------------
+   Academy (site plan, section 6)
+--------------------------------------------------------------------------- */
+
+export type CourseSlug = "cosmetology" | "aesthetics";
+
+export type Course = {
+  slug: CourseSlug;
+  name: string;
+  href: string;
+  /** Short list for cards: "Hair, barbing, nails, makeup, manicure and pedicure". */
+  cardLine: string;
+  overview: string;
+  /** "What you'll learn". */
+  modules: string[];
+  duration: OrTBC<string>;
+  schedule: OrTBC<string>;
+  /** In naira. */
+  fee: OrTBC<number>;
+  nextIntake: OrTBC<string>;
+  certificate: OrTBC<string>;
+  seo: PageMeta;
 };
 
 // DRAFT COPY - client approval needed
-export const pages = {
-  salonServices: {
-    eyebrow: "Hair & Beauty · Ebute",
-    heading: "Services",
-    body: "Choose a category to see durations and starting prices.",
+export const courses: Course[] = [
+  {
+    slug: "cosmetology",
+    name: "Cosmetology",
+    href: "/academy/cosmetology",
+    cardLine: "Hair, barbing, nails, makeup, manicure and pedicure.",
+    overview:
+      "A hands-on course across the beauty services we offer every day, taught by the team behind Kikiewa.",
+    modules: [
+      "Hair dressing and styling",
+      "Barbing",
+      "Nails and nail artistry",
+      "Makeup",
+      "Manicure and pedicure",
+    ],
+    duration: TBC,
+    schedule: TBC,
+    fee: TBC,
+    nextIntake: TBC,
+    certificate: TBC,
+    seo: seo.cosmetology,
   },
-  treatments: {
-    eyebrow: "Skin & Aesthetics · Nitel",
-    heading: "Treatments",
-    body: "Prices are a guide. Your final plan and cost are confirmed at consultation.",
+  {
+    slug: "aesthetics",
+    name: "Aesthetics",
+    href: "/academy/aesthetics",
+    cardLine: "Facials and massage.",
+    overview:
+      "Practical training in facials and massage, taught by the people who give them at Kikiewa.",
+    modules: ["Facials", "Massage"],
+    duration: TBC,
+    schedule: TBC,
+    fee: TBC,
+    nextIntake: TBC,
+    certificate: TBC,
+    seo: seo.aestheticsCourse,
   },
-  concerns: {
-    eyebrow: "Skin & Aesthetics · Nitel",
-    heading: "What would you like to address?",
-    body: "Start with your concern. We'll recommend the right approach at your consultation.",
+];
+
+export function findCourse(slug: CourseSlug): Course {
+  const course = courses.find((item) => item.slug === slug);
+  if (!course) throw new Error(`Unknown course: ${slug}`);
+  return course;
+}
+
+// DRAFT COPY - client approval needed
+export const academy = {
+  intro: {
+    eyebrow: "Kikiewa Academy",
+    heading: "Learn the craft from the people who practise it.",
+    body: "Hands-on courses in cosmetology and aesthetics at Kikiewa, Ikorodu.",
+  } satisfies PageCopy,
+  whyHeading: "Why train with us",
+  /** `confirmed: false` points are hidden in production. */
+  why: [
+    { title: "Taught by working professionals", confirmed: true },
+    { title: "Hands-on, practical classes", confirmed: true },
+    { title: "Small groups", confirmed: false },
+  ],
+  coursesHeading: "Our courses",
+  classesHeading: "Inside our classes",
+  applyHeading: "How to apply",
+  apply: [
+    { title: "Choose your course" },
+    { title: "Visit or message us" },
+    { title: "Enrol" },
+  ] as Point[],
+  /** Entry requirements, shown under the apply steps once confirmed. */
+  requirements: TBC as OrTBC<string>,
+  testimonialsHeading: "What our students say",
+  faqHeading: "Questions",
+  faqs: [
+    { question: "Do I need experience?", answer: TBC },
+    { question: "Are classes weekdays or weekends?", answer: TBC },
+    { question: "Do I get a certificate?", answer: TBC },
+  ] as FaqItem[],
+  /** Course facts table labels. */
+  facts: {
+    duration: "Duration",
+    schedule: "Schedule",
+    fee: "Fee",
+    nextIntake: "Next intake",
+    certificate: "Certificate",
   },
-  consultation: {
-    eyebrow: "Skin & Aesthetics · Nitel",
-    heading: "Your consultation",
-    body: "We discuss your concerns and medical history, assess your skin, and explain suitable options, costs and aftercare. There's no obligation to go ahead.",
-  },
-  institute: {
-    eyebrow: "Kikiewa Beauty Institute · Ikorodu",
-    heading: "Learn the craft where it's practised.",
-    body: "Practical training at the Kikiewa Beauty Institute, from the people whose work you see in our salon, spa and clinic every day.",
-  },
-  courses: {
-    eyebrow: "Academy",
-    heading: "Courses",
-    body: "Compare courses at a glance. Every detail is confirmed at enrolment.",
-  },
-  admissions: {
-    eyebrow: "Academy",
-    heading: "How to apply",
-    body: "Choose a course and check the next intake date, then book a visit or call to ask questions and see where you'll train.",
-  },
-  gallery: {
+  learnHeading: "What you'll learn",
+  factsHeading: "Course details",
+};
+
+/* ---------------------------------------------------------------------------
+   Gallery (site plan, section 7)
+--------------------------------------------------------------------------- */
+
+export type GalleryCategory = ServiceSlug | "academy";
+
+export interface GalleryItem extends ImageAsset {
+  category: GalleryCategory;
+  caption?: string;
+}
+
+/**
+ * Gallery photographs. Empty until photography is supplied. No client faces
+ * or before/after images without written consent. Captions describe what is
+ * shown, never client names.
+ */
+export const gallery: GalleryItem[] = [];
+
+export const galleryFilters: { slug: GalleryCategory; label: string }[] = [
+  ...serviceCategories.map((category) => ({ slug: category.slug, label: category.name })),
+  { slug: "academy", label: "Academy" },
+];
+
+// DRAFT COPY - client approval needed
+export const galleryPage = {
+  intro: {
     eyebrow: "Gallery",
-    heading: "Made to be seen",
-    body: "Recent work, our spaces, and the moments in between.",
-  },
-  book: {
+    heading: "Our work",
+    body: "Recent work from our team.",
+  } satisfies PageCopy,
+  filtersLabel: "Filter our work",
+  all: "All",
+  empty: "New photographs are on the way.",
+};
+
+/* ---------------------------------------------------------------------------
+   Other pages (site plan, section 7)
+--------------------------------------------------------------------------- */
+
+// DRAFT COPY - client approval needed
+export const locationsPage: PageCopy = {
+  eyebrow: "Locations",
+  heading: "Visit us in Ikorodu",
+  body: "Two locations, the same Kikiewa.",
+};
+
+// DRAFT COPY - client approval needed
+export const bookPage = {
+  intro: {
     eyebrow: "Appointments",
     heading: "Book an appointment",
-    body: "Choose a service and your preferred time. We'll confirm on WhatsApp.",
-  },
-  contact: {
+    body: "Choose your treatment and a time that suits you. We'll confirm on WhatsApp.",
+  } satisfies PageCopy,
+  steps: [
+    "What would you like?",
+    "Which location suits you?",
+    "Preferred date & time",
+    "Your details",
+    "Review & send",
+  ],
+  consultationNote: "Aesthetic treatments start with a consultation. We'll book that first.",
+  whatsappHeading: "Book on WhatsApp",
+  whatsappBody: "Tell us the treatment, the location and a time that suits you.",
+  callHeading: "Or call a location",
+};
+
+// DRAFT COPY - client approval needed
+export const contactPage = {
+  intro: {
     eyebrow: "Contact",
     heading: "Contact us",
-    body: "The quickest way to reach us is WhatsApp. We reply during opening hours.",
-  },
-  licensing: {
-    eyebrow: "Licensing & Compliance",
-    heading: "Licensing & Compliance",
-    body: "Kikiewa publishes licence and registration details only once they are verified.",
-  },
+    body: "The quickest way to reach us is WhatsApp.",
+  } satisfies PageCopy,
+  whatsappLabel: "WhatsApp",
+  emailLabel: "Email",
+};
+
+// DRAFT COPY - client approval needed
+export const legalPages = {
+  bookingPolicy: {
+    eyebrow: "Booking policy",
+    heading: "Booking policy",
+    body: "How booking, rescheduling and cancellation work at Kikiewa.",
+  } satisfies PageCopy,
   privacy: {
     eyebrow: "Privacy",
-    heading: "Privacy Policy",
+    heading: "Privacy policy",
     body: "How we collect, use and protect your personal information.",
-  },
-} satisfies Record<string, PageCopy>;
-
-/** /beauty-institute: large serif paragraph under the hero. */
-// DRAFT COPY - client approval needed
-export const instituteIntro =
-  "Great beauty professionals are made with practice, patience and good teaching. Our courses combine all three, with time on real techniques and clear standards for every skill you learn.";
-
-/** /institute and /admissions actions (copy deck CTA library). */
-// DRAFT COPY - client approval needed
-export const instituteActions = {
-  viewCourses: { label: "View courses", href: "/beauty-institute/courses" },
-  bookVisit: { label: "Book a visit", href: "/beauty-institute/admissions" },
-  whatsappLabel: "Chat on WhatsApp",
-  whatsappMessage: whatsappMessages.institute,
-} as const;
-
-/** Sections of /gallery (copy deck filters: Hair & Beauty · Skin & Aesthetics · Academy). */
-// DRAFT COPY - client approval needed
-export const gallerySections: { division: DivisionSlug; title: string }[] = [
-  { division: "salon-spa", title: "Hair & Beauty" },
-  { division: "medical-spa", title: "Skin & Aesthetics" },
-  { division: "institute", title: "Academy" },
-];
+  } satisfies PageCopy,
+  /** The policy text itself must come from the client. */
+  pending: "The full policy is being prepared and will be published here.",
+};
 
 // DRAFT COPY - client approval needed
-export const galleryEmpty =
-  "New photographs are on the way. Follow us on Instagram for the latest.";
-
-/** Routes to the booking paths shown on /book. */
-// DRAFT COPY - client approval needed
-export const bookingPaths: {
-  title: string;
-  body: string;
-  location: LocationId | null;
-  whatsappMessage: string;
-  cta: string;
-}[] = [
-  {
-    title: "Hair, nails, makeup or spa",
-    body: "Tell us what you'd like and when, and we'll confirm on WhatsApp.",
-    location: "ebute",
-    whatsappMessage: whatsappMessages.salon,
-    cta: "Chat on WhatsApp",
-  },
-  {
-    title: "Skin or aesthetic treatment",
-    body: "Every skin and aesthetic treatment begins with a consultation.",
-    location: "nitel",
-    whatsappMessage: whatsappMessages.medical,
-    cta: "Book a consultation",
-  },
-  {
-    title: "Academy",
-    body: "Ask about a course, the next intake or a visit to see where you'll train.",
-    location: null,
-    whatsappMessage: whatsappMessages.institute,
-    cta: "Book a visit",
-  },
-];
+export const notFoundPage = {
+  eyebrow: "Page not found",
+  heading: "We couldn't find that page.",
+  body: "It may have moved. These will get you back on track.",
+  links: [
+    { label: "Home", href: "/" },
+    { label: "Services", href: "/services" },
+    { label: "Book", href: bookingHref },
+  ] as NavLink[],
+};

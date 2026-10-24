@@ -4,7 +4,7 @@ import { markMono } from "@/components/brand/paths";
  * The peacock mark, small and centred between two fine hairlines. Purely
  * decorative (aria-hidden); drawn in currentColor, the accent by default.
  *
- * Use it at most once per page, and never on the clinical medical spa pages:
+ * Use it at most once per page, and never on the aesthetics page:
  * the competitor study calls for no decorative flourishes there.
  */
 export function PeacockDivider({ className = "" }: { className?: string }) {

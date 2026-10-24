@@ -6,21 +6,14 @@ import { usePathname } from "next/navigation";
 import { Button } from "@/components/Button";
 import { Icon } from "@/components/Icon";
 import { useMenuState } from "@/components/MenuState";
-import {
-  bookingHref,
-  contact,
-  primaryNav,
-  whatsappGreeting,
-  type NavItem,
-} from "@/data/site";
-import { WHATSAPP_FALLBACK_HREF, whatsappLink } from "@/lib/whatsapp";
+import { bookingHref, cta, primaryNav, whatsappHref, type NavItem } from "@/data/site";
+import { WHATSAPP_FALLBACK_HREF } from "@/lib/whatsapp";
 
 type HeaderNavProps = {
   /** The logo, rendered on the server and passed in. */
   logo: React.ReactNode;
 };
 
-const whatsappHref = whatsappLink(contact.whatsapp, whatsappGreeting);
 const whatsappLabel =
   whatsappHref === WHATSAPP_FALLBACK_HREF
     ? "WhatsApp: number to be confirmed, opens the contact page"
@@ -29,8 +22,7 @@ const whatsappLabel =
 /**
  * Main header bar: logo, primary navigation, WhatsApp and Book.
  *
- * Desktop (lg+): Hair & Beauty, Skin & Aesthetics and Academy open
- * disclosure menus. Each is a button with aria-expanded; click or
+ * Desktop (lg+): Services opens a disclosure menu. Each is a button with aria-expanded; click or
  * Enter/Space toggles it, Escape closes it and returns focus to the button,
  * and it closes when focus or a click moves elsewhere. Nothing opens on
  * hover alone.
@@ -114,7 +106,7 @@ export function HeaderNav({ logo }: HeaderNavProps) {
         </Link>
 
         <nav ref={navRef} aria-label="Primary" className="hidden lg:block">
-          <ul className="flex items-center gap-7 xl:gap-9">
+          <ul className="flex items-center gap-5 xl:gap-8">
             {primaryNav.map((item) => {
               const current = isCurrentGroup(item);
               const linkClass = [
@@ -185,7 +177,7 @@ export function HeaderNav({ logo }: HeaderNavProps) {
                           onClick={closeAll}
                           className="group flex items-center justify-between gap-space-sm px-space-lg py-3 font-display text-title-lg text-primary transition-colors duration-200 hover:bg-surface aria-[current=page]:text-secondary"
                         >
-                          {item.label}
+                          All {item.label.toLowerCase()}
                           <Icon
                             name="arrowRight"
                             className="size-4 shrink-0 text-secondary transition-transform duration-300 ease-out-soft group-hover:translate-x-1"
@@ -223,7 +215,7 @@ export function HeaderNav({ logo }: HeaderNavProps) {
           </a>
 
           <Button href={bookingHref} size="sm" className="hidden sm:inline-flex">
-            Book
+            {cta.bookShort}
           </Button>
 
           <button
@@ -296,10 +288,10 @@ export function HeaderNav({ logo }: HeaderNavProps) {
           {/* Click bubbles up from the link, closing the menu on navigation */}
           <div onClick={closeAll} className="mt-auto flex flex-col gap-space-sm pt-space-xl">
             <Button href={bookingHref} size="lg" icon="arrowRight" className="w-full">
-              Book an appointment
+              {cta.book}
             </Button>
-            <Button href="/contact" size="lg" variant="subtle" className="w-full">
-              Contact &amp; opening hours
+            <Button href={whatsappHref} size="lg" variant="subtle" icon="whatsapp" iconPosition="leading" className="w-full">
+              {cta.whatsapp}
             </Button>
           </div>
         </nav>

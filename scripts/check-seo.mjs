@@ -1,12 +1,18 @@
 /**
  * npm run check:seo   (run after `npm run build`)
  *
- * Reads every prerendered page in .next/server/app and fails when any page's
- * title (or og:/twitter: title) is longer than 60 characters, any
- * description (or og:/twitter: description) is longer than 155, or any of
- * them contains "TBC" or "{{". Limits from reference/seo-plan.md.
+ * Checks the built site against reference/site-plan.md, sections 2 and 8:
  *
- * It checks the built HTML rather than data/site.ts, so whatever a search
+ * 1. Routes: every page in the site plan is prerendered, and no page exists
+ *    that the plan doesn't list.
+ * 2. Metadata: every page's title (and og:/twitter: title) is ≤ 60
+ *    characters, every description ≤ 155, and none contains "TBC" or "{{".
+ * 3. Redirects: each old URL redirects permanently (308) to its new home,
+ *    no redirect source is also a page, and every destination is a page.
+ * 4. Words: no page shows "branch", "head office", "division" or "house",
+ *    or anything the plan keeps off the website (section 0).
+ *
+ * It checks the built output rather than data/site.ts, so whatever a search
  * engine would see is what gets checked.
  */
 import { existsSync, readdirSync, readFileSync, statSync } from "node:fs";
@@ -15,18 +21,79 @@ import { fileURLToPath } from "node:url";
 
 const root = join(dirname(fileURLToPath(import.meta.url)), "..");
 const appDir = join(root, ".next", "server", "app");
+const routesManifest = join(root, ".next", "routes-manifest.json");
 
 const TITLE_MAX = 60;
 const DESCRIPTION_MAX = 155;
 const FORBIDDEN = ["TBC", "{{"];
-// Next's own error shell, not a site page.
-const SKIP = new Set(["_global-error.html"]);
-// Fallback shells for dynamic routes (e.g. medical-spa/[treatment].html).
-// They are templates, never served at that URL: real slugs are prerendered
-// and checked, and unknown slugs return a 404.
+
+/** Every page in the site plan (section 2). */
+const EXPECTED_ROUTES = [
+  "/",
+  "/about",
+  "/services",
+  "/services/facials",
+  "/services/massage",
+  "/services/aesthetics",
+  "/services/hair",
+  "/services/nails",
+  "/services/makeup",
+  "/academy",
+  "/academy/cosmetology",
+  "/academy/aesthetics",
+  "/gallery",
+  "/locations",
+  "/locations/ebute",
+  "/locations/nitel",
+  "/book",
+  "/contact",
+  "/booking-policy",
+  "/privacy",
+];
+
+/** Old URLs and where they must land (site plan, section 2, "Redirects"). */
+const EXPECTED_REDIRECTS = [
+  ["/salon-spa", "/services"],
+  ["/salon-spa/services", "/services"],
+  ["/medical-spa", "/services/aesthetics"],
+  ["/medical-spa/treatments", "/services/aesthetics"],
+  ["/medical-spa/concerns", "/services/aesthetics"],
+  ["/medical-spa/concerns/pigmentation", "/services/aesthetics"],
+  ["/medical-spa/consultation", "/services/aesthetics"],
+  ["/medical-spa/skin-treatment", "/services/aesthetics"],
+  ["/beauty-institute", "/academy"],
+  ["/beauty-institute/courses", "/academy"],
+  ["/beauty-institute/admissions", "/academy"],
+  ["/licensing", "/about"],
+];
+
+/**
+ * Words that must never reach the screen. One brand with equal locations
+ * (site plan, section 1), and nothing from "Not on the website" (section 0).
+ */
+const BANNED_WORDS = [
+  [/\bbranch(es)?\b/i, "branch"],
+  [/\bhead office\b/i, "head office"],
+  [/\bdivisions?\b/i, "division"],
+  [/\bhouse\b/i, "house"],
+  [/\binjectables?\b/i, "injectable"],
+  [/\bfillers?\b/i, "filler"],
+  [/\bweight[- ]loss\b/i, "weight loss"],
+  [/\bammunization\b/i, "face ammunization"],
+  [/\bguaranteed?\b/i, "guaranteed"],
+  [/\bpermanent\b/i, "permanent"],
+  [/\bpainless\b/i, "painless"],
+  [/\bworld[- ]class\b/i, "world-class"],
+  [/\bflawless\b/i, "flawless"],
+  [/\bmiracle\b/i, "miracle"],
+];
+
+// Next's own error shells, not site pages.
+const SKIP = new Set(["_global-error.html", "_not-found.html"]);
+// Fallback shells for dynamic routes. Templates, never served at that URL.
 const DYNAMIC_SHELL = /\[[^\]]+\]/;
 
-if (!existsSync(appDir)) {
+if (!existsSync(appDir) || !existsSync(routesManifest)) {
   console.error("check:seo: no build output found. Run `npm run build` first.");
   process.exit(1);
 }
@@ -54,6 +121,7 @@ function decode(text) {
     .replace(/&#x27;|&apos;/g, "'")
     .replace(/&lt;/g, "<")
     .replace(/&gt;/g, ">")
+    .replace(/&nbsp;/g, " ")
     .replace(/&amp;/g, "&");
 }
 
@@ -69,19 +137,33 @@ function metaContents(html, key) {
   return values;
 }
 
+/** What a visitor or screen reader gets: body text plus alt, aria-label and title. */
+function visibleText(html) {
+  const body = html.slice(html.indexOf("<body"));
+  const withoutCode = body.replace(/<(script|style|template)\b[\s\S]*?<\/\1>/g, " ");
+  const attributes = [...withoutCode.matchAll(/\b(?:alt|aria-label|title)="([^"]*)"/g)].map((m) => m[1]);
+  const text = withoutCode.replace(/<[^>]+>/g, " ");
+  return decode([text, ...attributes].join(" ")).replace(/\s+/g, " ");
+}
+
 function routeOf(file) {
   const path = relative(appDir, file).split(sep).join("/").replace(/\.html$/, "");
   return path === "index" ? "/" : "/" + path;
 }
 
 const pages = walk(appDir).sort();
-if (pages.length === 0) {
-  console.error("check:seo: no prerendered pages found in .next/server/app.");
-  process.exit(1);
-}
-
+const routes = new Set(pages.map(routeOf));
 const problems = [];
 
+// 1. Routes
+for (const route of EXPECTED_ROUTES) {
+  if (!routes.has(route)) problems.push(`${route}: in the site plan but not built`);
+}
+for (const route of routes) {
+  if (!EXPECTED_ROUTES.includes(route)) problems.push(`${route}: built, but not in the site plan`);
+}
+
+// 2. Metadata, 4. Words
 for (const file of pages) {
   const html = readFileSync(file, "utf8");
   const route = routeOf(file);
@@ -115,6 +197,33 @@ for (const file of pages) {
   };
   for (const [field, value] of titles) check(field, value, TITLE_MAX);
   for (const [field, value] of descriptions) check(field, value, DESCRIPTION_MAX);
+
+  const text = [visibleText(html), ...titles.map(([, v]) => v), ...descriptions.map(([, v]) => v)].join(" ");
+  for (const [pattern, word] of BANNED_WORDS) {
+    const match = text.match(pattern);
+    if (match) {
+      const at = text.indexOf(match[0]);
+      const context = text.slice(Math.max(0, at - 40), at + 40).trim();
+      problems.push(`${route}: shows "${word}": "…${context}…"`);
+    }
+  }
+}
+
+// 3. Redirects
+const manifest = JSON.parse(readFileSync(routesManifest, "utf8"));
+const redirects = (manifest.redirects ?? []).filter((rule) => !rule.internal);
+for (const [from, to] of EXPECTED_REDIRECTS) {
+  const rule = redirects.find((item) => new RegExp(item.regex).test(from));
+  if (!rule) problems.push(`${from}: no redirect (expected 308 to ${to})`);
+  else if (rule.destination !== to) problems.push(`${from}: redirects to ${rule.destination}, expected ${to}`);
+  else if (rule.statusCode !== 308) problems.push(`${from}: redirect is ${rule.statusCode}, expected 308`);
+  if (routes.has(from)) problems.push(`${from}: is a redirect source but still built as a page`);
+}
+for (const rule of redirects) {
+  if (!routes.has(rule.destination)) problems.push(`redirect ${rule.source}: destination ${rule.destination} is not a page`);
+  for (const route of routes) {
+    if (new RegExp(rule.regex).test(route)) problems.push(`${route}: page is shadowed by redirect ${rule.source}`);
+  }
 }
 
 if (problems.length) {
@@ -123,4 +232,8 @@ if (problems.length) {
   process.exit(1);
 }
 
-console.log(`check:seo: ${pages.length} pages OK (titles ≤ ${TITLE_MAX}, descriptions ≤ ${DESCRIPTION_MAX}, no TBC or {{).`);
+console.log(
+  `check:seo: ${pages.length} pages OK (all ${EXPECTED_ROUTES.length} site-plan routes built; ` +
+    `titles ≤ ${TITLE_MAX}, descriptions ≤ ${DESCRIPTION_MAX}, no TBC or {{; ` +
+    `${EXPECTED_REDIRECTS.length} old URLs redirect 308; no banned words).`,
+);

@@ -1,7 +1,7 @@
 /**
  * A row of label/value facts between two rules, like a record card:
  * "Duration · From · Location". Values may be <Confirmable> elements.
- * A two-column grid on phones, one row from md.
+ * A two-column grid on phones and tablets, one row from lg.
  */
 export type Fact = { label: string; value: React.ReactNode };
 
@@ -9,7 +9,7 @@ export function FactRow({ facts, className = "" }: { facts: Fact[]; className?: 
   return (
     <dl
       className={[
-        "grid grid-cols-2 border-y border-border-strong md:flex md:divide-x md:divide-border",
+        "grid grid-cols-2 border-y border-border-strong lg:flex lg:divide-x lg:divide-border",
         className,
       ].join(" ")}
     >
@@ -19,7 +19,7 @@ export function FactRow({ facts, className = "" }: { facts: Fact[]; className?: 
           <div
             key={fact.label}
             className={[
-              "py-space-md md:min-w-44 md:border-t-0 md:px-space-lg md:first:pl-0",
+              "py-space-md lg:min-w-44 lg:border-t-0 lg:border-l-0 lg:px-space-lg lg:first:pl-0",
               index >= 2 ? "border-t border-border" : "",
               index % 2 === 1 ? "border-l border-border pl-space-md" : "",
               lastOdd ? "col-span-2" : "",

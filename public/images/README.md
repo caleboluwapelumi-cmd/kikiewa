@@ -6,21 +6,20 @@ Photographs for the site. Everything here is served publicly, so only add files 
 
 | Folder | What goes in it |
 |---|---|
-| `home/` | Home page heroes and division cards |
-| `salon-spa/` | Ebute salon and spa: rooms, services, products |
-| `medical-spa/` | Nitel medical spa and makeover studio |
-| `institute/` | Beauty Institute teaching rooms and classes |
-| `locations/` | Building exteriors, reception areas, street views |
+| `home/` | Home hero slides and section images |
+| `services/` | The six services: facials, massage, aesthetics, hair, nails, makeup |
+| `academy/` | Academy classes and teaching rooms |
+| `locations/` | Building exteriors, reception areas, street views (Ebute and Nitel) |
 | `team/` | Team portraits |
-| `gallery/` | Gallery images that don't belong to one division |
-| `{division}/temp/` | **Temporary** images taken from Instagram (see below) |
+| `gallery/` | Our work |
+| `{folder}/temp/` | **Temporary** images taken from Instagram (see below) |
 
 ## Naming
 
-`{division}-{subject}-{detail}-{width}.jpg`, all lowercase, words joined with hyphens. For example:
+`{folder}-{subject}-{detail}-{width}.jpg`, all lowercase, words joined with hyphens. For example:
 
-- `salon-spa-styling-station-2400.jpg`
-- `medical-spa-consultation-room-1600.jpg`
+- `services-facial-treatment-2400.jpg`
+- `academy-nails-class-1600.jpg`
 - `team-portrait-01-1600.jpg`
 
 Use `.jpg` for photographs (next/image serves AVIF and WebP from it). Never put photographs in as `.svg`. SVGs are inlined as components, not served through next/image.
@@ -41,11 +40,10 @@ Images are wired up in `data/site.ts` as an `ImageAsset`:
 
 ```ts
 {
-  src: "/images/salon-spa/salon-spa-styling-station-2400.jpg",
-  alt: "A styling station at the Kikiewa Ebute salon",
+  src: "/images/services/services-facial-treatment-2400.jpg",
+  alt: "Facial treatment at Kikiewa, Ikorodu",
   width: 2400,
   height: 3000,
-  division: "salon-spa",
 }
 ```
 
@@ -55,7 +53,7 @@ Write alt text that describes the photograph for someone who cannot see it. Neve
 
 Until the photoshoot, an approved Instagram photo can stand in:
 
-1. Put it in `public/images/{division}/temp/`.
+1. Put it in `public/images/{folder}/temp/`.
 2. Tag it in `data/site.ts` with `source: "instagram-temp"`.
 3. `npm run check:images` lists every temporary image still in use. It exits with an error when `NEXT_PUBLIC_SITE_ENV=production`, so temporary images can't ship to the live site unnoticed.
 

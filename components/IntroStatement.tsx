@@ -1,8 +1,7 @@
 /**
- * The large serif paragraph that follows a page hero (copy deck: "Intro").
+ * The large serif paragraph that follows a page hero (the service intro).
  * Set in the display face as an editorial lead. With a `label`, the label
- * sits in a narrow column beside it, like a margin note: the clinical
- * pages use this.
+ * sits in a narrow column beside it, like a margin note.
  */
 type IntroStatementProps = {
   text: string;

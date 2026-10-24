@@ -1,64 +1,57 @@
 import type { Metadata } from "next";
 import { CtaBand } from "@/components/CtaBand";
-import { ImageFrame } from "@/components/ImageFrame";
+import { GalleryGrid } from "@/components/GalleryGrid";
 import { PageIntro } from "@/components/PageIntro";
-import { gallery, galleryEmpty, gallerySections, pages, seo } from "@/data/site";
+import { gallery, galleryFilters, galleryPage, seo } from "@/data/site";
 import { pageMetadata } from "@/lib/seo";
 
 export const metadata: Metadata = pageMetadata(seo.gallery);
 
+/**
+ * Our work (site plan, section 7). Interactive filters and the <dialog>
+ * lightbox come with the next step; for now each filter jumps to its
+ * section, and sections without photographs are left out.
+ */
 export default function GalleryPage() {
+  const sections = galleryFilters
+    .map((filter) => ({ ...filter, items: gallery.filter((item) => item.category === filter.slug) }))
+    .filter((section) => section.items.length > 0);
+
   return (
     <>
-      <PageIntro copy={pages.gallery}>
-        <nav aria-label="Gallery sections" className="flex flex-wrap gap-x-space-lg gap-y-space-sm">
-          {gallerySections.map((section) => (
-            <a
-              key={section.division}
-              href={"#" + section.division}
-              className="link-rule py-1 text-label-md uppercase text-primary hover:text-secondary"
-            >
-              {section.title}
-            </a>
-          ))}
-        </nav>
+      <PageIntro copy={galleryPage.intro}>
+        {sections.length ? (
+          <nav aria-label={galleryPage.filtersLabel} className="flex flex-wrap gap-x-space-lg gap-y-space-sm">
+            {sections.map((section) => (
+              <a
+                key={section.slug}
+                href={"#" + section.slug}
+                className="link-rule py-1 text-label-md uppercase text-primary hover:text-secondary"
+              >
+                {section.label}
+              </a>
+            ))}
+          </nav>
+        ) : (
+          <p className="max-w-[56ch] text-pretty text-body-md text-muted">{galleryPage.empty}</p>
+        )}
       </PageIntro>
 
-      {gallerySections.map((section) => {
-        const items = gallery.filter((item) => item.division === section.division);
-        return (
-          <section
-            key={section.division}
-            id={section.division}
-            aria-labelledby={section.division + "-heading"}
-            className="w-full border-t border-border bg-background py-space-2xl lg:py-space-3xl"
-          >
-            <div className="shell">
-              <h2 id={section.division + "-heading"} className="text-headline-md text-primary">
-                {section.title}
-              </h2>
-              {items.length ? (
-                <ul className="mt-space-xl grid grid-cols-2 gap-space-sm md:gap-gutter lg:grid-cols-3">
-                  {items.map((item) => (
-                    <li key={item.src}>
-                      <ImageFrame
-                        image={item}
-                        alt={item.alt}
-                        ratio="aspect-[4/5]"
-                        sizes="(max-width: 1024px) 50vw, 33vw"
-                      />
-                    </li>
-                  ))}
-                </ul>
-              ) : (
-                <p className="mt-space-md max-w-[56ch] text-pretty text-body-md text-muted">
-                  {galleryEmpty}
-                </p>
-              )}
-            </div>
-          </section>
-        );
-      })}
+      {sections.map((section) => (
+        <section
+          key={section.slug}
+          id={section.slug}
+          aria-labelledby={section.slug + "-heading"}
+          className="w-full border-t border-border bg-background py-space-2xl lg:py-space-3xl"
+        >
+          <div className="shell">
+            <h2 id={section.slug + "-heading"} className="mb-space-xl text-headline-md text-primary">
+              {section.label}
+            </h2>
+            <GalleryGrid items={section.items} />
+          </div>
+        </section>
+      ))}
       <CtaBand />
     </>
   );

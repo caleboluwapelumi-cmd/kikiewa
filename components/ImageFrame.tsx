@@ -17,14 +17,16 @@ import type { ImageAsset } from "@/data/site";
  * share the same finished edge.
  */
 
-export type ImageTone = "neutral" | "warm";
+export type ImageTone = "neutral" | "warm" | "dark";
 
 /** Surface behind the placeholder drawing. */
 const tones: Record<ImageTone, string> = {
-  // Clinical and default: the cool end of the cream scale
+  // Default: the cool end of the cream scale
   neutral: "bg-surface-2",
-  // Salon & spa: cream with a soft accent wash
+  // Cream with a soft accent wash
   warm: "bg-surface-warm",
+  // Plum, for frames that carry light text on top (the hero slides)
+  dark: "bg-primary",
 };
 
 type ImageFrameProps = {
@@ -45,6 +47,8 @@ type ImageFrameProps = {
   children?: React.ReactNode;
   /** Slow, slight zoom when an ancestor `group` is hovered. */
   zoomOnHover?: boolean;
+  /** Full-bleed: no rounding and no inset hairline (the hero). */
+  bleed?: boolean;
 };
 
 export function ImageFrame({
@@ -58,7 +62,9 @@ export function ImageFrame({
   className = "",
   children,
   zoomOnHover = false,
+  bleed = false,
 }: ImageFrameProps) {
+  const dark = tone === "dark";
   if (image && /\.svg($|[?#])/i.test(image.src)) {
     throw new Error(
       `ImageFrame: "${image.src}" is an SVG. SVGs must not go through next/image; inline them as components instead.`,
@@ -72,7 +78,8 @@ export function ImageFrame({
   return (
     <div
       className={[
-        "relative w-full overflow-hidden rounded-xs",
+        "relative w-full overflow-hidden",
+        bleed ? "" : "rounded-xs",
         tones[tone],
         ratio,
         className,
@@ -95,20 +102,30 @@ export function ImageFrame({
           <PlaceholderArch
             orientation={orientation}
             alt={alt}
-            className={["absolute inset-0 size-full", zoom].join(" ")}
+            className={["absolute inset-0 size-full", dark ? "stroke-on-primary" : "stroke-primary", zoom].join(" ")}
           />
-          <span className="absolute inset-x-6 top-6 flex items-start justify-end gap-2 text-right text-label-sm uppercase text-muted md:inset-x-7 md:top-7">
-            <span aria-hidden="true" className="mt-[0.4rem] inline-block h-px w-4 shrink-0 bg-muted/60" />
+          <span
+            className={[
+              "absolute inset-x-6 top-6 flex items-start justify-end gap-2 text-right text-label-sm uppercase md:inset-x-7 md:top-7",
+              dark ? "text-on-primary/75" : "text-muted",
+            ].join(" ")}
+          >
+            <span
+              aria-hidden="true"
+              className={["mt-[0.4rem] inline-block h-px w-4 shrink-0", dark ? "bg-on-primary/50" : "bg-muted/60"].join(" ")}
+            />
             Image to be supplied
           </span>
         </>
       )}
 
       {/* Inset hairline frame */}
-      <span
-        aria-hidden="true"
-        className="pointer-events-none absolute inset-3 border border-primary/10 md:inset-4"
-      />
+      {bleed ? null : (
+        <span
+          aria-hidden="true"
+          className="pointer-events-none absolute inset-3 border border-primary/10 md:inset-4"
+        />
+      )}
 
       {children}
     </div>
@@ -136,7 +153,7 @@ function PlaceholderArch({
       preserveAspectRatio="xMidYMid slice"
       role="img"
       aria-label={alt}
-      className={["fill-none stroke-primary", className].join(" ")}
+      className={["fill-none", className].join(" ")}
       strokeWidth={1.25}
     >
       {portrait ? (

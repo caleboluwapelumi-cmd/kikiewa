@@ -2,7 +2,7 @@
  * npm run check:images
  *
  * Lists temporary Instagram images the site still uses: any path under
- * /images/{division}/temp/ and any asset tagged source: "instagram-temp" in
+ * /images/{folder}/temp/ and any asset tagged source: "instagram-temp" in
  * data/, app/ or components/. Also lists temp files on disk that nothing
  * uses, and tags pointing outside a temp/ folder.
  *

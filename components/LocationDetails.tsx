@@ -1,23 +1,25 @@
-import { Confirmable } from "@/components/Confirmable";
+import { Confirmable, TbcLabel } from "@/components/Confirmable";
 import { Icon, type IconName } from "@/components/Icon";
-import { site, type Location } from "@/data/site";
+import { isTBC, locationLabels, site, type Location } from "@/data/site";
 import { telHref } from "@/lib/phone";
 
 /**
  * A location's address, hours and phone as hairline-ruled rows. Unconfirmed
  * values show the "To be confirmed" label; the phone becomes a tel: link once
- * it is confirmed.
+ * it is confirmed. `withLandmark` adds the landmark row (location pages).
  */
 
 type LocationDetailsProps = {
   location: Location;
-  /** Stronger outer rules for the full-width location block. */
+  withLandmark?: boolean;
+  /** Stronger outer rules for location pages. */
   strong?: boolean;
   className?: string;
 };
 
 export function LocationDetails({
   location,
+  withLandmark = false,
   strong = false,
   className = "",
 }: LocationDetailsProps) {
@@ -26,7 +28,7 @@ export function LocationDetails({
   const rows: { icon: IconName; label: string; value: React.ReactNode }[] = [
     {
       icon: "home",
-      label: "Address",
+      label: locationLabels.address,
       value: (
         <span className="flex flex-col gap-space-xs">
           <span>
@@ -38,14 +40,38 @@ export function LocationDetails({
         </span>
       ),
     },
+    ...(withLandmark
+      ? [
+          {
+            icon: "pin" as const,
+            label: locationLabels.landmark,
+            value: <Confirmable value={location.landmark} />,
+          },
+        ]
+      : []),
     {
       icon: "clock",
-      label: "Opening hours",
-      value: <Confirmable value={location.hours} />,
+      label: locationLabels.hours,
+      value: isTBC(location.hours) ? (
+        <TbcLabel />
+      ) : (
+        <table className="w-full max-w-sm text-left">
+          <tbody>
+            {location.hours.map((row) => (
+              <tr key={row.days}>
+                <th scope="row" className="py-0.5 pr-space-md font-normal text-muted">
+                  {row.days}
+                </th>
+                <td className="py-0.5">{row.time}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      ),
     },
     {
       icon: "phone",
-      label: location.phoneLabel,
+      label: locationLabels.phone,
       value: tel ? (
         <a href={tel} className="link-rule hover:text-secondary">
           {location.phone}
@@ -64,8 +90,8 @@ export function LocationDetails({
         className,
       ].join(" ")}
     >
-      {/* dt and dd sit directly in each row (no wrapper), so the list keeps
-          its term/value semantics; the icon lives inside the dt. */}
+      {/* dt and dd sit directly in each row, so the list keeps its
+          term/value semantics; the icon lives inside the dt. */}
       {rows.map((row) => (
         <div key={row.label} className="py-space-md">
           <dt className="flex items-center gap-x-space-md text-label-sm uppercase text-muted">
