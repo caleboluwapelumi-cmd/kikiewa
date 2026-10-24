@@ -994,6 +994,7 @@ export const about = {
     heading: "Everyone is beautiful in their own way.",
     body: "We exist to bring that beauty out.",
   } satisfies PageCopy,
+  image: { alt: "Inside Kikiewa, Ikorodu, Lagos" } as ImageSlot,
   /** How Kikiewa started, the founder, the year, the name. Hidden while TBC. */
   story: { heading: "Our story", paragraphs: TBC as OrTBC<string[]> },
   vision: {
@@ -1005,9 +1006,15 @@ export const about = {
     body: "To bring expertise and professional know-how to every client, so their beauty can be seen and felt.",
   },
   valuesHeading: "How we work",
+  valuesImage: { alt: "A Kikiewa treatment in progress in Ikorodu" } as ImageSlot,
   /** Hidden until real names and roles exist. */
-  team: { heading: "Our team", members: [] as TeamMember[] },
+  team: {
+    heading: "Our team",
+    body: "The people who'll look after you.",
+    members: [] as TeamMember[],
+  },
   locations: {
+    eyebrow: "Visit us",
     heading: "Two locations, the same Kikiewa.",
     body: "Ebute and Nitel, both in Ikorodu, both offering every service.",
     link: { label: "Find us", href: "/locations" },
@@ -1026,6 +1033,7 @@ export const servicesHub = {
     body: "Facials, massage, aesthetics, hair, nails and makeup, available at both our Ikorodu locations.",
   } satisfies PageCopy,
   help: {
+    eyebrow: "Need a hand?",
     heading: "Not sure what to book?",
     body: "Tell us what you'd like and we'll recommend the right treatment.",
     cta: cta.whatsapp,
@@ -1044,6 +1052,7 @@ export type Course = {
   href: string;
   /** Short list for cards: "Hair, barbing, nails, makeup, manicure and pedicure". */
   cardLine: string;
+  image: ImageSlot;
   overview: string;
   /** "What you'll learn". */
   modules: string[];
@@ -1063,6 +1072,7 @@ export const courses: Course[] = [
     name: "Cosmetology",
     href: "/academy/cosmetology",
     cardLine: "Hair, barbing, nails, makeup, manicure and pedicure.",
+    image: { alt: "A cosmetology class at Kikiewa Academy, Ikorodu" },
     overview:
       "A hands-on course across the beauty services we offer every day, taught by the team behind Kikiewa.",
     modules: [
@@ -1084,6 +1094,7 @@ export const courses: Course[] = [
     name: "Aesthetics",
     href: "/academy/aesthetics",
     cardLine: "Facials and massage.",
+    image: { alt: "An aesthetics class at Kikiewa Academy, Ikorodu" },
     overview:
       "Practical training in facials and massage, taught by the people who give them at Kikiewa.",
     modules: ["Facials", "Massage"],
@@ -1109,6 +1120,7 @@ export const academy = {
     heading: "Learn the craft from the people who practise it.",
     body: "Hands-on courses in cosmetology and aesthetics at Kikiewa, Ikorodu.",
   } satisfies PageCopy,
+  image: { alt: "A class in progress at Kikiewa Academy, Ikorodu" } as ImageSlot,
   whyHeading: "Why train with us",
   /** `confirmed: false` points are hidden in production. */
   why: [
@@ -1143,6 +1155,15 @@ export const academy = {
   },
   learnHeading: "What you'll learn",
   factsHeading: "Course details",
+  overviewLabel: "Overview",
+  /** Closing call to action on each course page. */
+  courseCta: {
+    heading: "Ask us about this course.",
+    body: "Message us on WhatsApp, or visit either location, and we'll talk you through how to enrol.",
+    secondary: { label: "Find us", href: "/locations" },
+  },
+  /** Link to the other course at the foot of a course page. */
+  otherCourse: "Also at the Academy",
 };
 
 /* ---------------------------------------------------------------------------

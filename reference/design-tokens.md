@@ -17,7 +17,7 @@ Brand colours were sampled from the logo (`public/brand/kikiewa-logo.svg`) on 24
 | background | #FAF8F5 | Page background | |
 | surface | #F3F0EB | Section bands | |
 | surface-2 / surface-3 | #EDEAE4 / #E7E3DC | Image frames, deeper bands | |
-| surface-warm | accent 10% into background | Salon & Spa wash | |
+| surface-warm | accent 10% into background | Warm wash behind image placeholders | |
 | clinical / clinical-2 / clinical-3 | #F5F6F6 / #ECEEEE / #E4E7E7 | Cool off-white scale for skin & aesthetics: page, bands, frames | |
 | clinical-rule | #DADEDE | Hairlines on the cool scale | |
 | foreground | #1A1A18 | Body text | 16.4:1 |
@@ -25,7 +25,7 @@ Brand colours were sampled from the logo (`public/brand/kikiewa-logo.svg`) on 24
 
 **Restraint:** the logo colours go on the logo, buttons and small accents only. Cream surfaces and photography carry the pages.
 
-**The clinical dial:** every `/medical-spa` page is wrapped in the `tone-clinical` utility (`app/medical-spa/layout.tsx`). Inside it, `background`, `surface`, `surface-2/3`, `border` and `border-strong` point at the cool scale, so shared components cool down on their own. Plum, type, buttons, the header, footer and closing band don't change: same brand, cooler room. Muted text stays above 4.5:1 on every cool surface (lowest: 4.8:1 on clinical-3).
+**The clinical dial:** the aesthetics service page (`/services/aesthetics`) is wrapped in the `tone-clinical` utility (`components/ServicePage.tsx`). Inside it, `background`, `surface`, `surface-2/3`, `border` and `border-strong` point at the cool scale, so shared components cool down on their own. Plum, type, buttons, the header, footer and closing band don't change: same brand, cooler room. Muted text stays above 4.5:1 on every cool surface (lowest: 4.8:1 on clinical-3).
 
 ## Logo
 
@@ -48,4 +48,4 @@ Brand colours were sampled from the logo (`public/brand/kikiewa-logo.svg`) on 24
 - No invented credentials, statistics, prices, treatment claims or testimonials
 - Unconfirmed values are stored as `'TBC'` in `data/site.ts` and render as a small muted "To be confirmed" label. Raw bracketed placeholders never appear on screen.
 - Marketing copy written before client sign-off is marked `// DRAFT COPY - client approval needed`
-- Locations: Ebute = Salon & Spa. Nitel = Medical Spa & Makeover
+- Locations: Ebute and Nitel are equals offering every service (reference/site-plan.md, section 2)

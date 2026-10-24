@@ -14,6 +14,7 @@ import {
   bookingHref,
   breadcrumbRoots,
   consultationHref,
+  contact,
   cta,
   findServiceCategory,
   gallery,
@@ -21,7 +22,6 @@ import {
   testimonials,
   whatsappHref,
   whatsappMessages,
-  contact,
   type ServiceSlug,
 } from "@/data/site";
 import { serviceJsonLd } from "@/lib/jsonld";
@@ -33,31 +33,29 @@ import { whatsappLink } from "@/lib/whatsapp";
  * (confirmed answers only), testimonials (same rules as Home), the
  * disclaimer where there is one, closing band.
  *
- * Aesthetics books a consultation, never a treatment, and sits in the
- * cooler register (tone-clinical in app/globals.css).
+ * Aesthetics books a consultation, never a treatment: the hero, menu and
+ * closing band all say "Book a consultation". It sits in the cooler
+ * register (tone-clinical in app/globals.css) and carries no peacock.
  */
 export function ServicePage({ slug }: { slug: ServiceSlug }) {
   const category = findServiceCategory(slug);
   const work = gallery.filter((item) => item.category === slug);
   const reviews = testimonials.filter((item) => item.service === slug);
-  const primary = category.consultationLed
+  const clinical = category.consultationLed;
+
+  const primary = clinical
     ? { label: cta.consultation, href: consultationHref }
     : { label: cta.book, href: bookingHref + "?service=" + slug };
-  const chat = category.consultationLed
-    ? whatsappLink(contact.whatsapp, whatsappMessages.consultation)
-    : whatsappHref;
+  const chat = clinical ? whatsappLink(contact.whatsapp, whatsappMessages.consultation) : whatsappHref;
 
   return (
-    <div className={category.consultationLed ? "tone-clinical" : undefined}>
+    <div className={clinical ? "tone-clinical" : undefined}>
       <JsonLd data={serviceJsonLd(category)} />
       <PageHero
         copy={{ eyebrow: servicePage.eyebrow, heading: category.heading, body: category.line }}
-        breadcrumbs={[
-          breadcrumbRoots.home,
-          breadcrumbRoots.services,
-          { label: category.name, href: category.href },
-        ]}
+        breadcrumbs={[breadcrumbRoots.home, breadcrumbRoots.services, { label: category.name, href: category.href }]}
         image={category.image}
+        imageTone={clinical ? "neutral" : "warm"}
       >
         <div className="flex flex-wrap items-center gap-x-space-xl gap-y-space-sm">
           <Button href={primary.href} size="lg" icon="arrowRight">
@@ -79,7 +77,12 @@ export function ServicePage({ slug }: { slug: ServiceSlug }) {
       {work.length ? (
         <section className="section-y w-full border-t border-border bg-background">
           <div className="shell">
-            <SectionHeading heading={servicePage.workHeading} className="mb-space-2xl" />
+            <div className="mb-space-2xl flex flex-col gap-space-lg md:flex-row md:items-end md:justify-between">
+              <SectionHeading heading={servicePage.workHeading} />
+              <Button href={"/gallery#" + slug} variant="quiet" icon="arrowRight" className="self-start md:self-auto">
+                {cta.seeWork}
+              </Button>
+            </div>
             <GalleryGrid items={work} />
           </div>
         </section>
@@ -88,7 +91,7 @@ export function ServicePage({ slug }: { slug: ServiceSlug }) {
       <Faq heading={servicePage.faqHeading} items={category.faqs} />
       <Testimonials items={reviews} />
       {category.disclaimer ? <PageNote text={category.disclaimer} /> : null}
-      <CtaBand />
+      <CtaBand primary={clinical ? primary : undefined} secondary={clinical ? { label: cta.whatsapp, href: chat } : undefined} />
     </div>
   );
 }

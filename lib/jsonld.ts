@@ -76,15 +76,31 @@ export function serviceJsonLd(category: ServiceCategory): JsonLdObject {
   };
 }
 
-/** Course for a course page. */
+/**
+ * Course for a course page. The modules come from the client's brief; the
+ * certificate, fee and schedule are added only once confirmed.
+ */
 export function courseJsonLd(course: Course): JsonLdObject {
   return {
     "@context": "https://schema.org",
     "@type": "Course",
     name: course.name,
-    description: course.seo.description,
+    description: course.overview,
     url: absolute(course.href),
     provider: organizationRef,
+    teaches: course.modules,
+    ...(isTBC(course.certificate) ? {} : { educationalCredentialAwarded: course.certificate }),
+    ...(isTBC(course.fee)
+      ? {}
+      : { offers: { "@type": "Offer", category: "Fees", price: course.fee, priceCurrency: "NGN" } }),
+    ...(isTBC(course.schedule)
+      ? {}
+      : {
+          hasCourseInstance: {
+            "@type": "CourseInstance",
+            courseSchedule: { "@type": "Schedule", description: course.schedule },
+          },
+        }),
   };
 }
 

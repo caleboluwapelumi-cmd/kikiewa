@@ -1,14 +1,22 @@
 import { Button } from "@/components/Button";
 import { Logo } from "@/components/brand/Logo";
 import { SectionHeading } from "@/components/SectionHeading";
-import { ctaBand } from "@/data/site";
+import { ctaBand, type NavLink } from "@/data/site";
 
 /**
  * Closing call to action. Full-bleed plum that runs straight into the plum
  * footer, separated only by a hairline — one confident dark finale on every
  * page rather than another light band. The mono logo signs it off in cream.
+ *
+ * Aesthetics swaps both actions for their consultation versions: that page
+ * never offers "Book an appointment".
  */
-export function CtaBand() {
+type CtaBandProps = {
+  primary?: NavLink;
+  secondary?: NavLink;
+};
+
+export function CtaBand({ primary = ctaBand.cta, secondary = ctaBand.secondaryCta }: CtaBandProps = {}) {
   return (
     <section
       data-tone="dark"
@@ -30,21 +38,21 @@ export function CtaBand() {
             </p>
             <div className="flex flex-wrap items-center gap-space-md">
               <Button
-                href={ctaBand.cta.href}
+                href={primary.href}
                 variant="inverse"
                 size="lg"
                 icon="calendar"
               >
-                {ctaBand.cta.label}
+                {primary.label}
               </Button>
               <Button
-                href={ctaBand.secondaryCta.href}
+                href={secondary.href}
                 variant="inverseOutline"
                 size="lg"
                 icon="whatsapp"
                 iconPosition="leading"
               >
-                {ctaBand.secondaryCta.label}
+                {secondary.label}
               </Button>
             </div>
           </div>

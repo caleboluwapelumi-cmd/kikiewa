@@ -1,21 +1,23 @@
 import { Breadcrumbs } from "@/components/Breadcrumbs";
-import { ImageFrame } from "@/components/ImageFrame";
+import { ImageFrame, type ImageTone } from "@/components/ImageFrame";
 import { SectionHeading } from "@/components/SectionHeading";
 import type { ImageSlot, NavLink, PageCopy } from "@/data/site";
 
 /**
  * Opening section for service and course pages: breadcrumbs, eyebrow, the
  * page's H1, one line and actions, beside one photograph (eager, as it is
- * above the fold).
+ * above the fold). Aesthetics passes the neutral tone so the placeholder
+ * stays in the cooler register.
  */
 type PageHeroProps = {
   copy: PageCopy;
   breadcrumbs: NavLink[];
   image: ImageSlot;
+  imageTone?: ImageTone;
   children?: React.ReactNode;
 };
 
-export function PageHero({ copy, breadcrumbs, image, children }: PageHeroProps) {
+export function PageHero({ copy, breadcrumbs, image, imageTone = "warm", children }: PageHeroProps) {
   return (
     <section className="w-full bg-background pt-space-lg pb-space-2xl md:pt-space-xl lg:pb-space-3xl">
       <div className="shell">
@@ -30,7 +32,7 @@ export function PageHero({ copy, breadcrumbs, image, children }: PageHeroProps) 
               image={image.image}
               alt={image.alt}
               ratio="aspect-[4/3] lg:aspect-[5/4]"
-              tone="warm"
+              tone={imageTone}
               priority
               sizes="(max-width: 1024px) 100vw, 50vw"
             />
