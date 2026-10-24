@@ -1,4 +1,4 @@
-# Kikiewa — Copy Deck (v1, draft)
+# Kikiewa — Copy Deck (v2, draft)
 
 Status: **DRAFT for client approval.** Written 24 Oct 2026 from the competitor study and the project brief.
 
@@ -11,41 +11,87 @@ Status: **DRAFT for client approval.** Written 24 Oct 2026 from the competitor s
 5. **Sentence case** for headings and buttons. Uppercase only for small eyebrow labels, done in CSS.
 6. **One idea per paragraph.** Keep card text to two sentences.
 
-Facts confirmed in the brief: name **Kikiewa**; divisions **Salon & Spa**, **Medical Spa & Makeover**, **Beauty Institute**; locations **Ebute** (Salon & Spa) and **Nitel** (Medical Spa & Makeover); both in **Ikorodu, Lagos State**. Nothing else is confirmed.
+Facts confirmed in the brief: name **Kikiewa**; services covering hair and beauty, spa, skin and aesthetics (the Medical Spa & Makeover), and training (the Beauty Institute); locations **Ebute** (hair, nails and spa) and **Nitel** (skin, aesthetics and makeover); both in **Ikorodu, Lagos State**. Nothing else is confirmed.
+
+---
+
+## The brand idea
+
+**Kikiewa is one brand, not three businesses.** Hair, nails, makeup, spa, skin and aesthetic treatments, and training are all part of one promise. The two locations are just where you go for each service.
+
+### The line
+# Beauty, in good hands.
+
+The line works because the brand's work is literally done by hand: the stylist, the therapist, the clinician and the tutor. It promises care and skill together, and it holds for everything she offers, from a pedicure to a clinical skin treatment to a course.
+
+### Positioning (internal: guides the copy, not published)
+For women and men in Ikorodu who want to look and feel their best, Kikiewa is the one beauty destination where everything, from your hair to your skin, is done carefully, honestly and beautifully. Unlike the rush-in, rush-out salon, Kikiewa takes its time, tells you the truth about what will suit you, and backs its everyday beauty with clinical skin care and a training institute.
+
+### Three promises (the proof points under the line)
+1. **Unhurried.** Time is part of the treatment. Nobody rushes you to make room for the next booking.
+2. **Honest.** We tell you what will suit you, what it costs and what to expect, including when something isn't right for you.
+3. **Beautifully done.** Careful work, and a finish you'll want to show off.
+
+These run through every page. A heading, a FAQ answer or a service description should always prove at least one of them.
+
+### The peacock, in words
+The logo is a peacock: the bird that's made to be seen. Use that idea **once per page at most**, never as a pun in every heading:
+- "Made to be seen" (gallery)
+- "Leave in full feather" (closing CTA)
+- "Show it off" (finish and aftercare moments)
+
+### What we stole, and from where
+| Move | Taken from | How we changed it |
+|---|---|---|
+| One promise over many services | milk + honey ("feel elevated, stay grounded" above spa, medSPA and salon) | Our line is about hands and care, not mood, because Kikiewa's difference is skill |
+| A short, ownable line instead of a description | Hershesons ("Great Hair Made Easy") | Same length, but warmer and covering more than hair |
+| Philosophy before services | Bamford (calm philosophy paragraph first) | Shorter, and turned into three promises a client can check |
+| Everything under one roof, with help choosing | Trosuit ("Not sure where to start?" plus WhatsApp) | Same helpfulness, without the eight-category mall menu |
+| The name as a story | ORÍKÌ (explains its Yoruba name) | Waiting on the client: see the note below |
+
+**About the name:** *ẹwà* is Yoruba for "beauty". If "Kikiewa" comes from it, that's the most ownable story the brand has, and the About section should be built on it. **Ask the client what the name means before using this.** Don't publish it as a guess.
 
 ---
 
 ## Brand voice
 
-**Professional, warm, reassuring. Calm confidence, never hype.**
+**Warm, assured, unhurried. A trusted expert who also happens to be kind.**
 
 | We sound like | We never sound like |
 |---|---|
-| A trusted practitioner explaining what happens next | An advert shouting "best in Lagos" |
+| Someone who has done this a thousand times and still cares | An advert shouting "best in Lagos" |
 | Specific: what, how long, what it costs | Vague: "luxury experience like no other" |
-| Unhurried, short sentences | Exclamation marks, emoji, ALL CAPS |
-| "Results vary; we'll assess suitability first" (medical) | "Flawless skin guaranteed" |
-| Warm and sensory (salon) | Clinical in the salon, chatty in the clinic |
+| Short sentences with room to breathe | Exclamation marks, emoji, ALL CAPS |
+| "We'll check it suits your skin first" | "Flawless skin guaranteed" |
+| The same voice everywhere, a little more precise on skin treatments | A salon voice here and a hospital voice there |
 
-**Banned words:** best, No. 1, world-class, guaranteed, flawless, perfect, miracle, painless, risk-free, permanent (medical), cheap, affordable luxury, "slay".
+**One voice, one dial.** Kikiewa speaks the same way on every page. On skin and aesthetic pages, the dial turns up on precision (consultation, assessment, aftercare), but the warmth stays. It's the same people, being careful.
 
-**House vocabulary:** care, considered, unhurried, finish, ritual (salon); consultation, assessment, plan, aftercare, suitability (clinic); craft, practice, pathway, certified (institute, when true).
+**Banned words:** best, No. 1, world-class, guaranteed, flawless, perfect, miracle, painless, risk-free, permanent (medical), cheap, affordable luxury, "slay", "house"/"houses" (for parts of the business), "division" (on screen).
+
+**Say this, not that:**
+| Not | Instead |
+|---|---|
+| Our Salon & Spa division | Hair, nails and spa at Kikiewa |
+| Our Medical Spa house | Skin & aesthetics at Kikiewa |
+| Visit our three brands | Everything under one name |
+| Medical Spa clients | You (the same client, booking a skin treatment) |
 
 ### CTA library (use these exact labels)
-
 | Situation | Label |
 |---|---|
 | Primary booking, anywhere | Book an appointment |
 | Short, header and mobile bar | Book |
-| Any Medical Spa treatment | Book a consultation |
+| Any skin or aesthetic treatment | Book a consultation |
 | WhatsApp | Chat on WhatsApp |
-| Phone | Call {{location}} |
-| Division card | Explore Salon & Spa / Explore the Medical Spa / Explore the Institute |
+| Help choosing | Help me choose (opens WhatsApp) |
+| Phone | Call us |
+| Service area link | See hair services / See skin treatments / See our courses |
 | Service row | Book this service |
 | Course card | View course |
 | Institute enquiry | Book a visit |
 | Directions | Get directions |
-| Gallery | View the gallery |
+| Gallery | See more work |
 
 ---
 
@@ -53,32 +99,31 @@ Facts confirmed in the brief: name **Kikiewa**; divisions **Salon & Spa**, **Med
 
 ### Header
 - Logo: Kikiewa (accessible name)
-- Nav: Salon & Spa · Medical Spa · Beauty Institute · Gallery · Locations
-- Dropdown labels:
-  - **Salon & Spa:** Services · Gallery · Ebute location
-  - **Medical Spa:** Treatments · Concerns · Your consultation · Nitel location
-  - **Beauty Institute:** Courses · Admissions
+- **Nav:** Hair & Beauty · Skin & Aesthetics · Academy · Gallery · Visit us
+  - These are the labels people see. URLs stay `/salon-spa`, `/medical-spa` and `/beauty-institute` for SEO.
+- Dropdowns:
+  - **Hair & Beauty:** Hair · Nails · Makeup · Spa & massage · Facials · Brows & lashes
+  - **Skin & Aesthetics:** Treatments · By concern · Your consultation
+  - **Academy:** Courses · How to apply
 - Buttons: **Book** · WhatsApp (icon, accessible name "Chat on WhatsApp")
-- Utility bar: `Salon & Spa — Ebute · {{ebute.phone}}` · `Medical Spa — Nitel · {{nitel.phone}}` · `Opening hours`
+- Utility bar (desktop): `Ikorodu, Lagos · {{phone}} · Opening hours · Contact`
 
 ### Mobile action bar
-Book · WhatsApp · Call
-
-The Call button opens a small sheet titled "Which location?" with two rows: Salon & Spa, Ebute / Medical Spa, Nitel.
+Book · WhatsApp · Call. The Call button opens "Which location?": **Ebute** (hair, nails & spa) / **Nitel** (skin & aesthetics).
 
 ### Footer
-- Line under the logo: **Care, considered. Salon & Spa, Medical Spa & Makeover, and Beauty Institute, Ikorodu, Lagos.**
+- Under the logo: **Beauty, in good hands.** Ikorodu, Lagos.
 - Columns:
-  - **Visit:** Ebute: {{ebute.address}} · {{ebute.hours}} | Nitel: {{nitel.address}} · {{nitel.hours}}
-  - **Explore:** Salon & Spa · Medical Spa · Beauty Institute · Gallery · Journal
+  - **Visit:** Ebute, Ikorodu: {{ebute.address}} · {{ebute.hours}} | Nitel, Ikorodu: {{nitel.address}} · {{nitel.hours}}
+  - **Explore:** Hair & Beauty · Skin & Aesthetics · Academy · Gallery · Journal
   - **Help:** Book an appointment · Contact · Booking & cancellation policy · Privacy
   - **Follow:** {{instagram}} · {{tiktok}} · {{facebook}}
-- Legal line: © {year} Kikiewa. All rights reserved.
-- Medical line (Medical Spa pages and footer): *Medical treatments are provided following consultation and assessment of suitability. Individual results vary.*
+- Legal: © {year} Kikiewa. All rights reserved.
+- Skin-treatment note (footer and Skin & Aesthetics pages): *Skin and aesthetic treatments follow a consultation and suitability assessment. Individual results vary.*
 
 ### Closing CTA band (all pages)
-- **Heading:** Your appointment, at your pace.
-- **Body:** Book online in a few steps, or message us and we'll help you choose.
+- **Heading:** Come in. Leave in full feather.
+- **Body:** Book online in a minute, or message us and we'll help you choose.
 - **Buttons:** Book an appointment · Chat on WhatsApp
 
 ---
@@ -86,56 +131,81 @@ The Call button opens a small sheet titled "Which location?" with two rows: Salo
 ## 1. Home `/`
 
 **Hero**
-- Eyebrow: Salon & Spa · Medical Spa · Beauty Institute
-- **H1:** Three houses of care. One standard.
-- Sub: A salon and spa in Ebute, a medical spa in Nitel, and an institute training the next generation, all in Ikorodu, Lagos.
-- Buttons: Book an appointment · Chat on WhatsApp
+- Eyebrow: Kikiewa · Ikorodu, Lagos
+- **H1:** Beauty, in good hands.
+- Sub: Hair, nails, spa, skin and aesthetic care, all under one name in Ikorodu, from people who take your beauty as seriously as you do.
+- Buttons: Book an appointment · Help me choose
 
-**Division split** (section H2: *Choose your Kikiewa*)
+**Promise** (straight after the hero: large serif statement, three short columns below)
+- Statement: *We believe beauty shouldn't be rushed, oversold or left to chance. So we take our time, we tell you the truth, and we do the work beautifully.*
+- Columns: **Unhurried** · **Honest** · **Beautifully done** (use the three promises' copy)
 
-| Card | Eyebrow | Heading | Body | Link |
-|---|---|---|---|---|
-| Salon & Spa | Ebute | Unhurried beauty, beautifully finished | Hair, nails, massage and spa rituals in a space designed for you to slow down. | Explore Salon & Spa |
-| Medical Spa | Nitel | Clinical care, gently delivered | Consultation-led skin and aesthetic treatments, planned around you and explained at every step. | Explore the Medical Spa |
-| Beauty Institute | Training | Learn the craft where it's practised | Practical beauty training shaped by a working salon, spa and clinic. | Explore the Institute |
+**Everything you come to us for** (H2: *All of you, under one roof*)
+- Intro: Book one thing or make a day of it. Whatever brings you in, it's the same care, the same standards and the same people.
+- Tiles (image, name, one line, link):
 
-**Experience** (image left, text right)
-- Eyebrow: The Kikiewa experience
+| Tile | Line | Links to |
+|---|---|---|
+| Hair | Cuts, colour, styling and treatments for every texture. | `/salon-spa#hair` |
+| Nails | Manicures and pedicures, finished with precision. | `/salon-spa#nails` |
+| Makeup | For the big day, the big night and everything between. | `/salon-spa#makeup` |
+| Spa & massage | Massages and body rituals to help you fully switch off. | `/salon-spa#spa` |
+| Facials | Relaxing, results-minded facials for healthy, glowing skin. | `/salon-spa#facials` |
+| Skin & aesthetics | Clinical skin treatments, always starting with a consultation. | `/medical-spa` |
+
+(The client must confirm which categories exist. Remove any that don't.)
+
+**Skin & aesthetics feature** (split image/text: this is where the med spa lives on Home, as part of the brand, not a separate one)
+- Eyebrow: Skin & aesthetics
+- **H2:** When your skin needs more than a facial.
+- Body: For pigmentation, breakouts, texture and more, our skin and aesthetic treatments bring clinical care into the same caring hands. Every treatment starts with a consultation, so you only ever get what's right for your skin.
+- Small print: At our Nitel location, Ikorodu.
+- Button: Book a consultation
+
+**The finish** (experience section, image left)
+- Eyebrow: Your visit
 - **H2:** Time set aside, just for you.
-- Body: Lagos moves fast. Your appointment shouldn't. Every visit starts with a conversation about what you want, and moves at a pace that lets you enjoy it.
-- Body 2: From the welcome to the final finish, we explain what we're doing and why, so you leave knowing exactly how to care for the result.
+- Body: Lagos moves fast. Your appointment shouldn't. Every visit starts with a conversation about what you'd like, and ends with a finish you'll want to show off, plus simple advice on keeping it that way.
 
-**Signature services** (H2: *Signature services*)
-- Intro: A few of the treatments our guests ask for most.
-- Cards are pulled from data. Medical rows show "Book a consultation".
+**Signature services** (H2: *What our guests come back for*)
+- Pulled from data, mixing both locations. Skin treatments show "Book a consultation".
+- Note: "come back for" claims popularity. Use this heading only once the client confirms which services are most booked. Until then use *A few favourites*.
 
-**Gallery strip** (H2: *Inside Kikiewa*)
-- Line: A look at our spaces, our work and the care behind it.
-- Link: View the gallery
+**Gallery strip** (H2: *Made to be seen*)
+- Line: Recent work, our spaces, and the moments in between.
+- Link: See more work
 
-**Reviews:** hidden until real, approved reviews exist. Draft heading for later: *In their words.*
+**Academy** (narrow band)
+- Eyebrow: Kikiewa Beauty Institute
+- **H2:** We teach what we practise.
+- Body: Our institute trains the next generation of beauty professionals to the same standards our clients see every day.
+- Button: See our courses
 
-**Locations** (H2: *Two locations in Ikorodu*)
-- Ebute card: "Salon & Spa" · {{ebute.address}} · {{ebute.hours}} · Get directions · Call Ebute
-- Nitel card: "Medical Spa & Makeover" · {{nitel.address}} · {{nitel.hours}} · Get directions · Call Nitel
+**Visit us** (H2: *Find us in Ikorodu*)
+- Intro: Two locations in Ikorodu, each set up for its own kind of care.
+- **Ebute:** Hair, nails, makeup and spa · {{ebute.address}} · {{ebute.hours}} · Get directions
+- **Nitel:** Skin, aesthetics and makeover · {{nitel.address}} · {{nitel.hours}} · Get directions
 
-**About strip** (only once the client supplies the story)
-- **H2:** The story behind the name
-- Body: {{brand.story — origin and meaning of "Kikiewa", founder, year}}
-- Note: like ORÍKÌ's name story, this is a strong differentiator. Ask the client for it.
+**Reviews:** hidden until real, approved reviews exist. Heading for later: *In their words.*
+
+**Our story** (only once the client supplies it)
+- **H2:** What's in a name
+- Body: {{brand.story: the meaning of "Kikiewa", the founder, the year founded}}
+
+**Closing CTA band** (global)
 
 ---
 
-## 2. Salon & Spa `/salon-spa`
+## 2. Hair & Beauty `/salon-spa` (nav label: Hair & Beauty)
 
 **Hero**
-- Eyebrow: Salon & Spa · Ebute
+- Eyebrow: Hair & Beauty · Ebute, Ikorodu
 - **H1:** Unhurried care, from the first wash to the final finish.
-- Sub: Hair, nails, massage and spa rituals in Ebute, Ikorodu. Come in for one service or stay for the afternoon.
+- Sub: Hair, nails, makeup, massage and spa at Kikiewa in Ebute, Ikorodu. Come in for one service or stay for the afternoon.
 - Buttons: Book an appointment · Chat on WhatsApp
 
 **Intro** (large serif paragraph)
-> Good beauty work takes time. We give it that time, with a consultation before we begin, techniques suited to your hair and skin, and a finish you'll want to keep.
+> Good beauty work takes time. We give it that time: a conversation before we begin, techniques suited to your hair and skin, and a finish you'll want to show off.
 
 **Services** (H2: *Services*)
 - Intro: Choose a category to see durations and starting prices.
@@ -188,16 +258,16 @@ The Call button opens a small sheet titled "Which location?" with two rows: Salo
 
 ---
 
-## 3. Medical Spa `/medical-spa`
+## 3. Skin & Aesthetics `/medical-spa` (nav label: Skin & Aesthetics; SEO term: medical spa)
 
 **Hero** (cool and restrained)
-- Eyebrow: Medical Spa & Makeover · Nitel
+- Eyebrow: Skin & Aesthetics · Kikiewa Medical Spa, Nitel, Ikorodu
 - **H1:** Every treatment begins with a conversation.
-- Sub: Consultation-led skin and aesthetic care in Nitel, Ikorodu. We assess, explain and plan with you before any treatment begins.
+- Sub: The same Kikiewa care, with clinical standards. We assess, explain and plan with you before any treatment begins.
 - Buttons: Book a consultation · Chat on WhatsApp
 
 **Intro** (large serif paragraph)
-> Choosing a treatment is a personal decision. We take time to understand your concerns, your skin and your expectations, then recommend only what is suitable for you.
+> Choosing a skin treatment is a personal decision. So we do what Kikiewa always does: take our time, tell you the truth, and recommend only what is suitable for you.
 
 **How it works** (H2: *How it works*)
 1. **Consultation.** We listen to what you'd like to address and take a short medical history.
@@ -263,12 +333,12 @@ The Call button opens a small sheet titled "Which location?" with two rows: Salo
 
 ---
 
-## 4. Beauty Institute `/beauty-institute`
+## 4. Academy `/beauty-institute` (nav label: Academy; full name: Kikiewa Beauty Institute)
 
 **Hero**
 - Eyebrow: Kikiewa Beauty Institute · Ikorodu
 - **H1:** Learn the craft where it's practised.
-- Sub: Practical beauty training from people who do this work every day.
+- Sub: Practical training at the Kikiewa Beauty Institute, from the people whose work you see in our salon, spa and clinic every day.
 - Buttons: View courses · Book a visit
 
 **Intro** (large serif paragraph)
@@ -304,28 +374,28 @@ The Call button opens a small sheet titled "Which location?" with two rows: Salo
 ---
 
 ## 5. Gallery `/gallery`
-- **H1:** Inside Kikiewa
-- Sub: Our spaces, our work and the moments in between.
-- Filters: All · Salon & Spa · Medical Spa · Institute
+- **H1:** Made to be seen
+- Sub: Recent work, our spaces, and the moments in between.
+- Filters: All · Hair & Beauty · Skin & Aesthetics · Academy
 - Empty state: New photographs are on the way. Follow us on Instagram for the latest.
 - Caption rule: describe what's shown, e.g. "Treatment room at our Nitel medical spa". No client names.
 
 ---
 
 ## 6. Locations `/locations`
-- **H1:** Our locations
-- Sub: Two locations in Ikorodu, Lagos, each focused on what it does best.
-- Ebute card: Salon & Spa · hair, nails, massage and spa · address · hours · Get directions
-- Nitel card: Medical Spa & Makeover · consultation-led skin and aesthetic care · address · hours · Get directions
+- **H1:** Visit us in Ikorodu
+- Sub: One Kikiewa, two locations, each set up for its own kind of care.
+- Ebute card: **Ebute** · hair, nails, makeup and spa · address · hours · Get directions
+- Nitel card: **Nitel** · skin, aesthetics and makeover · address · hours · Get directions
 
 ### `/locations/ebute`
 - **H1:** Salon & Spa in Ebute, Ikorodu
-- Intro: Our Ebute location is home to the Kikiewa Salon & Spa: hair, nails, massage and spa rituals, delivered without rushing.
+- Intro: Kikiewa in Ebute is where you'll find our hair, nails, makeup and spa services, delivered without rushing.
 - Blocks: Address & directions {{landmark, parking, nearest bus stop}} · Opening hours table · Services at this location (links) · Photo strip · CTA
 
 ### `/locations/nitel`
 - **H1:** Medical Spa in Nitel, Ikorodu
-- Intro: Our Nitel location is home to the Kikiewa Medical Spa & Makeover, where every treatment begins with a consultation.
+- Intro: Kikiewa in Nitel is home to our Medical Spa & Makeover: skin and aesthetic treatments that always begin with a consultation.
 - Blocks: same as Ebute, with treatments in place of services
 
 ---
@@ -334,7 +404,7 @@ The Call button opens a small sheet titled "Which location?" with two rows: Salo
 - **H1:** Book an appointment
 - Sub: Choose a service and your preferred time. We'll confirm on WhatsApp.
 - Step headings: 1 Choose a location · 2 Choose a service · 3 Preferred date & time · 4 Your details · 5 Review & send
-- Step 1 options: **Salon & Spa, Ebute** (hair, nails, massage and spa) / **Medical Spa, Nitel** (consultation-led skin and aesthetic care)
+- Step 1 is **What would you like?**, not "which location". Options: **Hair, nails, makeup or spa** (at Ebute) / **Skin or aesthetic treatment** (at Nitel, starts with a consultation). The location follows from the choice.
 - Medical note (step 2): Medical treatments begin with a consultation. Choose the treatment you're interested in and we'll book your consultation first.
 - Step 3 helper: These are preferred times. We'll confirm availability before your booking is final.
 - Step 4 labels: Full name · Phone number · Email (optional) · Anything we should know? (helper: allergies, sensitivities or special requests)
@@ -364,7 +434,7 @@ The Call button opens a small sheet titled "Which location?" with two rows: Salo
 - Sub: The quickest way to reach us is WhatsApp. We reply during opening hours.
 - Two cards (Ebute / Nitel): phone · WhatsApp · email · address · hours
 - Form heading: Send us a message
-- Form labels: Name · Phone · Email (optional) · Which team? (Salon & Spa / Medical Spa / Beauty Institute / Something else) · Message
+- Form labels: Name · Phone · Email (optional) · What's it about? (Hair & beauty / Skin & aesthetics / Academy / Something else) · Message
 - Submit: Send message
 - Success: Thanks for getting in touch. We'll reply as soon as we can during opening hours.
 
@@ -380,14 +450,14 @@ The Call button opens a small sheet titled "Which location?" with two rows: Salo
 ## 10. 404
 - **H1:** We couldn't find that page.
 - Body: It may have moved. Try one of these instead.
-- Links: Home · Salon & Spa · Medical Spa · Book an appointment
+- Links: Home · Hair & Beauty · Skin & Aesthetics · Book an appointment
 
 ---
 
 ## 11. Image alt text pattern
-`{{what is shown}} at Kikiewa {{division}}, {{location}}, Ikorodu`
-- Good: "Treatment room with a reclining bed at Kikiewa Medical Spa, Nitel, Ikorodu"
-- Good: "Stylist finishing a silk press at Kikiewa Salon & Spa, Ebute, Ikorodu"
+`{{what is shown}} at Kikiewa, {{location}}, Ikorodu`
+- Good: "Treatment room with a reclining bed at Kikiewa, Nitel, Ikorodu"
+- Good: "Stylist finishing a silk press at Kikiewa, Ebute, Ikorodu"
 - Never: "image1", "beautiful salon", or keyword stuffing.
 
 ---

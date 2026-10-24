@@ -34,7 +34,7 @@ Title ≤ 60 characters, meta description ≤ 155. One H1 per page, matching the
 
 | URL | Primary intent | Title | Meta description |
 |---|---|---|---|
-| `/` | Kikiewa brand; salon, spa and med spa in Ikorodu | Kikiewa \| Salon, Spa & Medical Spa in Ikorodu, Lagos | Salon & Spa in Ebute, a consultation-led Medical Spa in Nitel and a Beauty Institute, all in Ikorodu, Lagos. Book online or on WhatsApp. |
+| `/` | Kikiewa brand; salon, spa and med spa in Ikorodu | Kikiewa \| Salon, Spa & Medical Spa in Ikorodu, Lagos | Beauty, in good hands. Hair, nails, spa, skin and aesthetic care at Kikiewa in Ikorodu, Lagos. Book online or chat on WhatsApp. |
 | `/salon-spa` | salon and spa in Ikorodu | Salon & Spa in Ikorodu, Lagos \| Kikiewa | Hair, nails, massage and spa rituals at Kikiewa Salon & Spa, Ebute, Ikorodu. See services and prices, then book online or on WhatsApp. |
 | `/salon-spa/[service]` | [service] in Ikorodu | {{Service}} in Ikorodu, Lagos \| Kikiewa | {{Service}} at Kikiewa Salon & Spa, Ebute, Ikorodu. {{Duration}}, from {{price}}. Book online or chat with us on WhatsApp. |
 | `/medical-spa` | medical spa in Ikorodu | Medical Spa in Ikorodu, Lagos \| Kikiewa | Consultation-led skin and aesthetic treatments at Kikiewa Medical Spa, Nitel, Ikorodu. Book a consultation online or on WhatsApp. |
@@ -104,6 +104,7 @@ Create **two separate profiles**, one per location. Use the same name format on 
 | Website link | https://kikiewa.com/locations/ebute | https://kikiewa.com/locations/nitel |
 | Booking link | https://kikiewa.com/book?division=salon-spa | https://kikiewa.com/book?division=medical-spa |
 
+- Business Profile names must match the **real signage** at each location. If both signs just say "Kikiewa", use "Kikiewa" on both profiles and let the categories do the work.
 - The **name, address and phone must be character-for-character identical** on the website, the Business Profile, Instagram bio and any directories. Even inconsistent abbreviations ("St." vs "Street") weaken the match.
 - Upload 10+ real photos per profile (interiors, exterior with signage, team, work).
 - Ask happy clients for Google reviews after every visit. Use a short link printed at reception and sent with the WhatsApp booking confirmation. Reply to every review.
