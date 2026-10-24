@@ -32,7 +32,8 @@ export type IconName =
   | "sparkle"
   | "spa"
   | "syringe"
-  | "verified";
+  | "verified"
+  | "whatsapp";
 
 const paths: Record<IconName, React.ReactNode> = {
   arrowRight: (
@@ -200,6 +201,13 @@ const paths: Record<IconName, React.ReactNode> = {
     <>
       <path d="m12 3 2.2 2.1 3-.4.6 3 2.6 1.5-1.4 2.7 1.4 2.7-2.6 1.5-.6 3-3-.4L12 21l-2.2-2.1-3 .4-.6-3L3.6 12.8 5 10.1 3.6 7.4l2.6-1.5.6-3 3 .4z" />
       <path d="m9 12 2 2 4-4" />
+    </>
+  ),
+  // Chat bubble with a handset: reads as WhatsApp without using its logo
+  whatsapp: (
+    <>
+      <path d="M12 3.5a8.5 8.5 0 0 0-7.3 12.8L3.5 20.5l4.3-1.1A8.5 8.5 0 1 0 12 3.5z" />
+      <path d="M9.2 8.6c.2-.3.5-.4.8-.3l.9 1.6c.1.2 0 .5-.1.7l-.5.6a5.5 5.5 0 0 0 2.6 2.6l.6-.5c.2-.1.5-.2.7-.1l1.6.9c.1.3 0 .6-.3.8a2.4 2.4 0 0 1-2.4.4 7.6 7.6 0 0 1-4.3-4.3 2.4 2.4 0 0 1 .4-2.4z" />
     </>
   ),
 };
