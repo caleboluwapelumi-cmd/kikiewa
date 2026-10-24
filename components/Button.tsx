@@ -53,6 +53,11 @@ const quietSizes: Record<ButtonSize, string> = {
   lg: "h-14",
 };
 
+/** The same classes for a real <button> (forms), so both look identical. */
+export function buttonClass(variant: ButtonVariant = "primary", size: ButtonSize = "md", className = ""): string {
+  return [base, variants[variant], variant === "quiet" ? quietSizes[size] : sizes[size], className].join(" ");
+}
+
 type ButtonProps = {
   href: string;
   children: React.ReactNode;
@@ -86,12 +91,7 @@ export function Button({
   return (
     <Link
       href={href}
-      className={[
-        base,
-        variants[variant],
-        variant === "quiet" ? quietSizes[size] : sizes[size],
-        className,
-      ].join(" ")}
+      className={buttonClass(variant, size, className)}
     >
       {icon && iconPosition === "leading" ? glyph : null}
       <span>{children}</span>

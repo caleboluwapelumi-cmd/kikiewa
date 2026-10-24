@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { Logo } from "@/components/brand/Logo";
 import { Confirmable, TbcLabel } from "@/components/Confirmable";
+import { formatOpeningHours } from "@/lib/format";
 import { footer, isTBC, locations, serviceLinks, site, socials } from "@/data/site";
 
 /**
@@ -59,7 +60,7 @@ export function Footer() {
                     {isTBC(location.hours) ? (
                       <TbcLabel>Hours to be confirmed</TbcLabel>
                     ) : (
-                      location.hours.map((row) => `${row.days} ${row.time}`).join(" · ")
+                      location.hours.map(formatOpeningHours).join(" · ")
                     )}
                   </span>
                 </div>

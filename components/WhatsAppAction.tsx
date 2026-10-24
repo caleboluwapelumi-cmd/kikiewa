@@ -10,12 +10,14 @@ type WhatsAppActionProps = {
   label: string;
   message: string;
   variant?: ButtonVariant;
+  /** A specific number (a location's); defaults to the business number. */
+  number?: string | null;
 };
 
-export function WhatsAppAction({ label, message, variant = "primary" }: WhatsAppActionProps) {
+export function WhatsAppAction({ label, message, variant = "primary", number }: WhatsAppActionProps) {
   return (
     <Button
-      href={whatsappLink(contact.whatsapp, message)}
+      href={whatsappLink(number ?? contact.whatsapp, message)}
       variant={variant}
       icon="whatsapp"
       iconPosition="leading"

@@ -49,6 +49,9 @@
   /* Muted ink, darkened from #706E68 so secondary text clears WCAG AA
      (4.5:1) on every surface, including surface-3. */
   --color-muted: #66635D;
+  /* Form errors: a deep red, kept apart from the brand magenta so an error
+     never reads as an accent. 7.4:1 on background. Always paired with text. */
+  --color-error: #a3123a;
 
   /* Type families — the CSS variables come from next/font in app/layout.tsx */
   --font-display: var(--font-bodoni-moda), "Bodoni Moda", Didot, Georgia, serif;

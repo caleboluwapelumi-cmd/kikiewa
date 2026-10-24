@@ -7,6 +7,7 @@ import {
   type Location,
   type NavLink,
   type ServiceCategory,
+  type Weekday,
 } from "@/data/site";
 
 /**
@@ -42,11 +43,26 @@ export function organizationJsonLd(): JsonLdObject {
   };
 }
 
-/** BeautySalon for one location page. Town and region are confirmed; the rest waits. */
+const SCHEMA_DAY: Record<Weekday, string> = {
+  monday: "https://schema.org/Monday",
+  tuesday: "https://schema.org/Tuesday",
+  wednesday: "https://schema.org/Wednesday",
+  thursday: "https://schema.org/Thursday",
+  friday: "https://schema.org/Friday",
+  saturday: "https://schema.org/Saturday",
+  sunday: "https://schema.org/Sunday",
+};
+
+/**
+ * BeautySalon for one location page. Town and region are confirmed; the
+ * street address, phone, map and opening hours are added only once each is
+ * confirmed. No geo, image, priceRange or reviews until they are real.
+ */
 export function locationJsonLd(location: Location): JsonLdObject {
   return {
     "@context": "https://schema.org",
     "@type": "BeautySalon",
+    "@id": absolute(location.href) + "#location",
     name: location.title,
     url: absolute(location.href),
     parentOrganization: organizationRef,
@@ -59,6 +75,16 @@ export function locationJsonLd(location: Location): JsonLdObject {
     },
     ...(isTBC(location.phone) ? {} : { telephone: location.phone }),
     ...(isTBC(location.mapUrl) ? {} : { hasMap: location.mapUrl }),
+    ...(isTBC(location.hours)
+      ? {}
+      : {
+          openingHoursSpecification: location.hours.map((row) => ({
+            "@type": "OpeningHoursSpecification",
+            dayOfWeek: row.days.map((day) => SCHEMA_DAY[day]),
+            opens: row.opens,
+            closes: row.closes,
+          })),
+        }),
   };
 }
 

@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { site, type PageMeta } from "@/data/site";
+import { isProductionSite } from "@/lib/env";
 
 /** The default share image (app/opengraph-image.png). */
 const shareImage = { url: "/opengraph-image.png", width: 1200, height: 630, alt: site.name };
@@ -14,8 +15,11 @@ const shareImage = { url: "/opengraph-image.png", width: 1200, height: 630, alt:
  * otherwise reaches the home page only.
  */
 
-export function pageMetadata(page: PageMeta): Metadata {
+export function pageMetadata(page: PageMeta, options: { noindex?: boolean } = {}): Metadata {
   return {
+    // Kept out of search even in production (policy pages awaiting their
+    // text). Links are still followed there; previews stay nofollow.
+    ...(options.noindex ? { robots: { index: false, follow: isProductionSite } } : {}),
     title: { absolute: page.title },
     description: page.description,
     alternates: { canonical: page.path },

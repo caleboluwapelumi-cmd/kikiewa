@@ -79,7 +79,7 @@ export function ServicePage({ slug }: { slug: ServiceSlug }) {
           <div className="shell">
             <div className="mb-space-2xl flex flex-col gap-space-lg md:flex-row md:items-end md:justify-between">
               <SectionHeading heading={servicePage.workHeading} />
-              <Button href={"/gallery#" + slug} variant="quiet" icon="arrowRight" className="self-start md:self-auto">
+              <Button href={"/gallery?service=" + slug} variant="quiet" icon="arrowRight" className="self-start md:self-auto">
                 {cta.seeWork}
               </Button>
             </div>

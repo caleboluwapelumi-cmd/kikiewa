@@ -266,7 +266,22 @@ export const seo = {
 
 export type LocationId = "ebute" | "nitel";
 
-export type OpeningHours = { days: string; time: string };
+export type Weekday =
+  | "monday"
+  | "tuesday"
+  | "wednesday"
+  | "thursday"
+  | "friday"
+  | "saturday"
+  | "sunday";
+
+/**
+ * One row of opening hours: the days it covers, and 24-hour "HH:MM" times.
+ * Structured so the hours table, the booking times and the BeautySalon
+ * JSON-LD all read the same confirmed values.
+ * Example: { days: ["monday", "tuesday"], opens: "09:00", closes: "18:00" }
+ */
+export type OpeningHours = { days: Weekday[]; opens: string; closes: string };
 
 export type Location = {
   id: LocationId;
@@ -282,6 +297,11 @@ export type Location = {
   landmark: OrTBC<string>;
   hours: OrTBC<OpeningHours[]>;
   phone: OrTBC<string>;
+  /**
+   * WhatsApp number for booking requests at this location, in international
+   * form (+234…). While TBC, requests use the business number, then /contact.
+   */
+  whatsapp: OrTBC<string>;
   /** Google Maps link for "Get directions". */
   mapUrl: OrTBC<string>;
   href: string;
@@ -299,6 +319,7 @@ export const ebuteLocation: Location = {
   landmark: TBC,
   hours: TBC,
   phone: TBC,
+  whatsapp: TBC,
   mapUrl: TBC,
   href: "/locations/ebute",
   bookHref: bookingHref + "?location=ebute",
@@ -315,6 +336,7 @@ export const nitelLocation: Location = {
   landmark: TBC,
   hours: TBC,
   phone: TBC,
+  whatsapp: TBC,
   mapUrl: TBC,
   href: "/locations/nitel",
   bookHref: bookingHref + "?location=nitel",
@@ -343,6 +365,10 @@ export const locationLabels = {
   phone: "Phone",
   directionsTbc: "Directions to be confirmed",
   servicesHeading: "Services at this location",
+  call: "Call this location",
+  otherHeading: "Also in Ikorodu",
+  otherLink: "Visit page",
+  closed: "Closed",
 } as const;
 
 /* ---------------------------------------------------------------------------
@@ -1230,6 +1256,20 @@ export const galleryPage = {
   filtersLabel: "Filter our work",
   all: "All",
   empty: "New photographs are on the way.",
+  emptyBody: "In the meantime, see what we offer or book a visit.",
+  /** A shared ?service= link for a filter with no photographs yet. */
+  filterEmpty: "No photographs here yet.",
+  seeAll: "See all our work",
+  /** Tile button label: "View larger: {alt}". */
+  viewLarger: "View larger",
+  lightbox: {
+    label: "Photo viewer",
+    close: "Close",
+    previous: "Previous photo",
+    next: "Next photo",
+    /** "3 of 12" */
+    of: "of",
+  },
 };
 
 /* ---------------------------------------------------------------------------
@@ -1250,18 +1290,121 @@ export const bookPage = {
     heading: "Book an appointment",
     body: "Choose your treatment and a time that suits you. We'll confirm on WhatsApp.",
   } satisfies PageCopy,
+  /** Step headings (site plan, section 7) and their short progress labels. */
   steps: [
-    "What would you like?",
-    "Which location suits you?",
-    "Preferred date & time",
-    "Your details",
-    "Review & send",
+    { heading: "What would you like?", short: "Service" },
+    { heading: "Which location suits you?", short: "Location" },
+    { heading: "Preferred date & time", short: "Date & time" },
+    { heading: "Your details", short: "Details" },
+    { heading: "Review & send", short: "Review" },
   ],
-  consultationNote: "Aesthetic treatments start with a consultation. We'll book that first.",
-  whatsappHeading: "Book on WhatsApp",
-  whatsappBody: "Tell us the treatment, the location and a time that suits you.",
-  callHeading: "Or call a location",
+  progressLabel: "Booking progress",
+  /** "Step 2 of 5" */
+  stepWord: "Step",
+  ofWord: "of",
+  completed: "completed",
+  continue: "Continue",
+  back: "Back",
+  change: "Change",
+  /** Shown before the form has loaded. */
+  loading: "Loading the booking form…",
+  noscript: "The booking form needs JavaScript. You can book on WhatsApp or by phone instead.",
+  service: {
+    categoryLegend: "Choose a service",
+    treatmentLegend: "Choose a treatment",
+    notSure: "Not sure yet",
+    notSureHint: "We'll help you choose when we confirm.",
+    menuComing: "We'll talk you through the menu when we confirm your booking.",
+    consultationNote: "This starts with a consultation. We'll book that first.",
+  },
+  location: {
+    legend: "Choose a location",
+    hint: "Both offer every service. Choose whichever is closer.",
+  },
+  dateTime: {
+    dateLegend: "Preferred date",
+    timeLegend: "Preferred time",
+    hint: "These are your preferred times. We'll confirm availability on WhatsApp.",
+    /** Shown while the location's opening hours are TBC. */
+    exampleTimes: "Example times until opening hours are confirmed",
+    chooseDateFirst: "Choose a date to see times.",
+    noTimes: "No times left on this day. Please choose another date.",
+    today: "Today",
+    tomorrow: "Tomorrow",
+  },
+  details: {
+    name: "Your name",
+    phone: "Phone number",
+    phoneHint: "A Nigerian number, starting with 0 or +234. We'll reply on WhatsApp.",
+    email: "Email",
+    notes: "Anything we should know?",
+    notesHint: "For example, a style you'd like, or anything about your skin.",
+    optional: "optional",
+    /** Where details are kept until sent. */
+    privacyNote: "Your details stay in this browser tab until you send them.",
+  },
+  review: {
+    summaryHeading: "Your booking",
+    service: "Service",
+    location: "Location",
+    dateTime: "Preferred time",
+    name: "Name",
+    phone: "Phone",
+    email: "Email",
+    notes: "Notes",
+    consent: "I agree to Kikiewa using these details to arrange my appointment.",
+    policiesBefore: "Read our ",
+    bookingPolicy: "booking policy",
+    policiesAnd: " and ",
+    privacy: "privacy policy",
+    policiesAfter: ".",
+    send: "Send on WhatsApp",
+    sendNote: "WhatsApp opens with your request filled in. Nothing is sent until you press send there.",
+  },
+  errors: {
+    summary: "Please check the following",
+    service: "Choose a service.",
+    location: "Choose a location.",
+    date: "Choose a preferred date.",
+    time: "Choose a preferred time.",
+    name: "Enter your name.",
+    phoneRequired: "Enter your phone number.",
+    phoneInvalid: "Enter a Nigerian mobile number: 11 digits starting with 0, or +234 and 10 digits.",
+    email: "Enter a valid email address, or leave it blank.",
+    consent: "Tick the box to agree before sending.",
+  },
+  sent: {
+    heading: "Your request is ready to send",
+    body: "WhatsApp should have opened with your request filled in. Press send there and we'll reply to confirm your appointment.",
+    reopen: "Open WhatsApp again",
+    /** While the WhatsApp number is TBC: */
+    fallbackHeading: "Almost there",
+    fallbackBody: "Online requests open once our WhatsApp number is confirmed. For now, please contact us with the details below.",
+    fallbackCta: "Contact us",
+    another: "Make another booking",
+  },
+  callHeading: "Prefer to talk?",
+  callBody: "Call either location and we'll book you in.",
 };
+
+/**
+ * The booking request as it reaches WhatsApp. One line per detail; empty
+ * optional lines are left out. Keep it short: it is read on a phone.
+ */
+// DRAFT COPY - client approval needed
+export const bookingMessage = {
+  greeting: "Hello Kikiewa, I'd like to request an appointment.",
+  service: "Service",
+  helpChoose: "help me choose",
+  location: "Location",
+  preferred: "Preferred",
+  name: "Name",
+  phone: "Phone",
+  email: "Email",
+  notes: "Notes",
+} as const;
+
+export type ContactTopic = "services" | "academy" | "other";
 
 // DRAFT COPY - client approval needed
 export const contactPage = {
@@ -1272,22 +1415,94 @@ export const contactPage = {
   } satisfies PageCopy,
   whatsappLabel: "WhatsApp",
   emailLabel: "Email",
+  locationsHeading: "Our locations",
+  form: {
+    eyebrow: "Message us",
+    heading: "Send us a message",
+    body: "Write your message here and we'll open WhatsApp with it ready to send.",
+    topicLegend: "What's it about?",
+    topics: [
+      { value: "services", label: "Services" },
+      { value: "academy", label: "Academy" },
+      { value: "other", label: "Something else" },
+    ] as { value: ContactTopic; label: string }[],
+    name: "Your name",
+    phone: "Phone number",
+    phoneHint: "A Nigerian number, starting with 0 or +234.",
+    message: "Your message",
+    send: "Send on WhatsApp",
+    privacyBefore: "We use your details only to reply. See our ",
+    privacyLink: "privacy policy",
+    privacyAfter: ".",
+    /** Shown while the WhatsApp number is TBC. */
+    whatsappTbc: "WhatsApp number to be confirmed. For now, please call or visit either location.",
+    opened: "WhatsApp should have opened with your message. Press send there and we'll reply.",
+    reopen: "Open WhatsApp again",
+    errors: {
+      summary: "Please check the following",
+      topic: "Choose what your message is about.",
+      name: "Enter your name.",
+      phoneRequired: "Enter your phone number.",
+      phoneInvalid: "Enter a Nigerian mobile number: 11 digits starting with 0, or +234 and 10 digits.",
+      message: "Enter your message.",
+    },
+  },
+  /** The WhatsApp message: greeting, then labelled lines. */
+  message: {
+    greeting: "Hello Kikiewa.",
+    topic: "About",
+    name: "Name",
+    phone: "Phone",
+  },
 };
 
-// DRAFT COPY - client approval needed
+/**
+ * Policy pages (site plan, section 7: headings only, content from the
+ * client). Each section's body is TBC until supplied: previews show
+ * "To be supplied", production hides the empty block, and the page stays
+ * noindex while any section is TBC.
+ */
+export type PolicySection = { heading: string; paragraphs: OrTBC<string[]> };
+export type PolicyPage = { intro: PageCopy; sections: PolicySection[] };
+
+// DRAFT COPY - client approval needed (headings; the text comes from the client)
 export const legalPages = {
   bookingPolicy: {
-    eyebrow: "Booking policy",
-    heading: "Booking policy",
-    body: "How booking, rescheduling and cancellation work at Kikiewa.",
-  } satisfies PageCopy,
+    intro: {
+      eyebrow: "Booking policy",
+      heading: "Booking policy",
+      body: "How booking, rescheduling and cancellation work at Kikiewa.",
+    },
+    sections: [
+      { heading: "Booking and confirmation", paragraphs: TBC },
+      { heading: "Payment", paragraphs: TBC },
+      { heading: "Rescheduling", paragraphs: TBC },
+      { heading: "Cancellations", paragraphs: TBC },
+      { heading: "Late arrivals and missed appointments", paragraphs: TBC },
+      { heading: "Aesthetic consultations", paragraphs: TBC },
+      { heading: "Questions about your booking", paragraphs: TBC },
+    ],
+  } satisfies PolicyPage,
   privacy: {
-    eyebrow: "Privacy",
-    heading: "Privacy policy",
-    body: "How we collect, use and protect your personal information.",
-  } satisfies PageCopy,
+    intro: {
+      eyebrow: "Privacy",
+      heading: "Privacy policy",
+      body: "How we collect, use and protect your personal information.",
+    },
+    sections: [
+      { heading: "Who we are", paragraphs: TBC },
+      { heading: "What we collect", paragraphs: TBC },
+      { heading: "How we use your information", paragraphs: TBC },
+      { heading: "WhatsApp and other services we use", paragraphs: TBC },
+      { heading: "How long we keep it", paragraphs: TBC },
+      { heading: "Your rights", paragraphs: TBC },
+      { heading: "Contact us about your data", paragraphs: TBC },
+    ],
+  } satisfies PolicyPage,
   /** The policy text itself must come from the client. */
   pending: "The full policy is being prepared and will be published here.",
+  /** Previews only, in place of each section's text. */
+  toBeSupplied: "To be supplied",
 };
 
 // DRAFT COPY - client approval needed

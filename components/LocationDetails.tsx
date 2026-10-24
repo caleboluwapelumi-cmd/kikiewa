@@ -1,6 +1,7 @@
 import { Confirmable, TbcLabel } from "@/components/Confirmable";
 import { Icon, type IconName } from "@/components/Icon";
 import { isTBC, locationLabels, site, type Location } from "@/data/site";
+import { formatDays, formatTimeRange } from "@/lib/format";
 import { telHref } from "@/lib/phone";
 
 /**
@@ -58,11 +59,11 @@ export function LocationDetails({
         <table className="w-full max-w-sm text-left">
           <tbody>
             {location.hours.map((row) => (
-              <tr key={row.days}>
+              <tr key={row.days.join("-")}>
                 <th scope="row" className="py-0.5 pr-space-md font-normal text-muted">
-                  {row.days}
+                  {formatDays(row.days)}
                 </th>
-                <td className="py-0.5">{row.time}</td>
+                <td className="py-0.5 tabular-nums">{formatTimeRange(row)}</td>
               </tr>
             ))}
           </tbody>

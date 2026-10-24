@@ -12,18 +12,26 @@ import {
   breadcrumbRoots,
   cta,
   locationLabels,
+  locations,
   serviceCategories,
+  site,
   whatsappMessages,
   type Location,
 } from "@/data/site";
+import { bookingWhatsappNumber } from "@/lib/booking/submit";
 import { locationJsonLd } from "@/lib/jsonld";
+import { telHref } from "@/lib/phone";
 
 /**
  * One location per page (/locations/ebute, /locations/nitel). Both use this
  * exact layout: they are equals, and differ only in their details. Every
- * service is listed at both unless a service says otherwise.
+ * service is listed at both unless a service says otherwise. The foot of
+ * each page links to the other, the same way.
  */
 export function LocationPage({ location }: { location: Location }) {
+  const tel = telHref(location.phone);
+  const others = locations.filter((entry) => entry.id !== location.id);
+
   return (
     <>
       <JsonLd data={locationJsonLd(location)} />
@@ -33,7 +41,7 @@ export function LocationPage({ location }: { location: Location }) {
             trail={[breadcrumbRoots.home, breadcrumbRoots.locations, { label: location.title, href: location.href }]}
             className="mb-space-xl lg:mb-space-2xl"
           />
-          <SectionHeading heading={location.heading} as="h1" size="xl" className="mb-space-2xl" />
+          <SectionHeading eyebrow={site.area} heading={location.heading} as="h1" size="xl" className="mb-space-2xl" />
 
           <div className="grid grid-cols-1 items-start gap-space-2xl lg:grid-cols-2 lg:gap-16">
             <div className="flex flex-col">
@@ -42,7 +50,17 @@ export function LocationPage({ location }: { location: Location }) {
                 <Button href={location.bookHref} icon="arrowRight">
                   {cta.bookHere}
                 </Button>
-                <WhatsAppAction label={cta.whatsapp} variant="subtle" message={whatsappMessages.general} />
+                {tel ? (
+                  <Button href={tel} variant="subtle" icon="phone" iconPosition="leading">
+                    {locationLabels.call}
+                  </Button>
+                ) : null}
+                <WhatsAppAction
+                  label={cta.whatsapp}
+                  variant="subtle"
+                  message={whatsappMessages.general}
+                  number={bookingWhatsappNumber(location)}
+                />
                 <DirectionsAction location={location} />
               </div>
             </div>
@@ -72,6 +90,27 @@ export function LocationPage({ location }: { location: Location }) {
               </ul>
             </div>
           </div>
+        </div>
+      </section>
+
+      <section aria-labelledby="other-location-heading" className="w-full border-t border-border bg-surface py-space-2xl">
+        <div className="shell flex flex-col gap-space-md md:flex-row md:items-center md:justify-between">
+          <h2 id="other-location-heading" className="font-body text-label-sm uppercase text-secondary">
+            {locationLabels.otherHeading}
+          </h2>
+          <ul className="flex flex-col gap-space-sm">
+            {others.map((other) => (
+              <li key={other.id}>
+                <Link
+                  href={other.href}
+                  className="group inline-flex items-center gap-space-md font-display text-headline-md text-primary hover:text-secondary"
+                >
+                  {other.title}
+                  <Icon name="arrowRight" className="size-5 transition-transform duration-300 ease-out-soft group-hover:translate-x-1" />
+                </Link>
+              </li>
+            ))}
+          </ul>
         </div>
       </section>
       <CtaBand />
