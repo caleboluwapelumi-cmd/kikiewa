@@ -18,7 +18,7 @@ export default function BookPage() {
       <PageIntro copy={pages.book} />
       <section className="w-full border-t border-border bg-surface pb-space-3xl">
         <div className="shell">
-          <ul className="grid grid-cols-1 gap-gutter pt-space-2xl md:grid-cols-3 lg:gap-gutter-desktop">
+          <ul className="grid grid-cols-1 gap-gutter pt-space-2xl xl:grid-cols-3 lg:gap-gutter-desktop">
             {bookingPaths.map((path) => {
               const location = locations.find((item) => item.id === path.location);
               const tel = telHref(location?.phone);

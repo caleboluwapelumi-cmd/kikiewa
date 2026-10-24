@@ -22,7 +22,8 @@ function fields(course: Course): { label: string; value: React.ReactNode }[] {
 
 export function CourseCards() {
   return (
-    <ul className="grid grid-cols-1 gap-gutter md:grid-cols-2 lg:grid-cols-3 lg:gap-gutter-desktop">
+    // Three-up only from xl: below that the cards are too narrow for the action.
+    <ul className="grid grid-cols-1 gap-gutter md:grid-cols-2 lg:gap-gutter-desktop xl:grid-cols-3">
       {courses.map((course) => (
         <li
           key={course.slug}

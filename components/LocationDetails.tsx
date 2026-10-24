@@ -64,16 +64,17 @@ export function LocationDetails({
         className,
       ].join(" ")}
     >
+      {/* dt and dd sit directly in each row (no wrapper), so the list keeps
+          its term/value semantics; the icon lives inside the dt. */}
       {rows.map((row) => (
-        <div
-          key={row.label}
-          className="grid grid-cols-[1rem_1fr] gap-x-space-md py-space-md"
-        >
-          <Icon name={row.icon} className="mt-0.5 size-4 shrink-0 text-secondary" />
-          <div>
-            <dt className="text-label-sm uppercase text-muted">{row.label}</dt>
-            <dd className="mt-space-xs text-body-md text-foreground">{row.value}</dd>
-          </div>
+        <div key={row.label} className="py-space-md">
+          <dt className="flex items-center gap-x-space-md text-label-sm uppercase text-muted">
+            <Icon name={row.icon} className="size-4 shrink-0 text-secondary" />
+            {row.label}
+          </dt>
+          <dd className="mt-space-xs pl-[calc(1rem+var(--spacing-space-md))] text-body-md text-foreground">
+            {row.value}
+          </dd>
         </div>
       ))}
     </dl>
