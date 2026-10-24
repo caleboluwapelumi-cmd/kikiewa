@@ -53,6 +53,7 @@ export function Hero() {
           {/* Visual column — asymmetric 5 of 12 */}
           <div className="relative lg:col-span-5">
             <ImageFrame
+              image={hero.image.asset}
               alt={hero.image.alt}
               ratio="aspect-[4/5]"
               orientation="portrait"

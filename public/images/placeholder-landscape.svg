@@ -1,9 +1,0 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 550" width="800" height="550" role="img">
-  <!-- Transparent placeholder: a hairline arch and floor line. The frame
-       behind it supplies the surface tone. -->
-  <g fill="none" stroke="#5A1F5E" stroke-width="1.25" vector-effect="non-scaling-stroke">
-    <path d="M330 420V260a70 70 0 0 1 140 0v160" opacity="0.22"/>
-    <path d="M344 420V260a56 56 0 0 1 112 0v160" opacity="0.12"/>
-    <path d="M0 420h800" opacity="0.14"/>
-  </g>
-</svg>

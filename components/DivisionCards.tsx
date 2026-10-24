@@ -28,6 +28,7 @@ export function DivisionCards() {
               className="group relative flex flex-col border border-border bg-card transition-[box-shadow,border-color,transform] duration-300 ease-out-soft focus-within:border-border-strong hover:-translate-y-0.5 hover:border-border-strong hover:shadow-lift"
             >
               <ImageFrame
+                image={division.image}
                 alt={division.imageAlt}
                 ratio="aspect-[4/3]"
                 sizes="(max-width: 768px) 100vw, (max-width: 1024px) 50vw, 33vw"

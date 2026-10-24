@@ -37,6 +37,7 @@ export function MedicalSpaHero() {
 
           <div className="lg:col-span-5">
             <ImageFrame
+              image={hero.image.asset}
               alt={hero.image.alt}
               ratio="aspect-[4/5]"
               orientation="portrait"

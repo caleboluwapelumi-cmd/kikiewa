@@ -42,6 +42,7 @@ export function SalonSpaHero() {
               className="absolute inset-0 translate-x-4 translate-y-4 border border-accent md:translate-x-6 md:translate-y-6"
             />
             <ImageFrame
+              image={hero.image.asset}
               alt={hero.image.alt}
               ratio="aspect-[4/5]"
               orientation="portrait"

@@ -4,8 +4,8 @@ import { salonSpa } from "@/data/site";
 
 /**
  * Gallery of the Ebute space, set as an editorial mosaic: one large frame,
- * one wide, two small. Photography has not been commissioned yet, so every
- * frame is a placeholder that says so — the alt text is already the real one.
+ * one wide, two small. Each slot shows its photograph once data/site.ts has
+ * one, and a placeholder that says so until then.
  *
  * Layout per position (mobile 2 columns, desktop 4 columns × 2 rows). On
  * desktop the grid itself holds a 2:1 shape and every frame fills its area,
@@ -56,6 +56,7 @@ export function GalleryStrip() {
             return (
               <li key={item.alt} className={slot.item}>
                 <ImageFrame
+                  image={item.image}
                   alt={item.alt}
                   ratio={slot.ratio}
                   orientation={slot.orientation}

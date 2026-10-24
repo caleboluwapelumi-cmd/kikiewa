@@ -1,13 +1,17 @@
 import Image from "next/image";
+import type { ImageAsset } from "@/data/site";
 
 /**
  * Photography frame.
  *
- * The design calls for commissioned photography that does not exist yet, so
- * each frame holds a quiet local placeholder (a hairline arch) at the correct
- * aspect ratio and says so on the page. Swap `src` for the real asset and
- * drop the placeholder caption once photography lands — the alt text is
- * already the real one.
+ * - With an `image` (an ImageAsset from data/site.ts): renders it through
+ *   next/image, filling the frame at the given aspect ratio, with `sizes`
+ *   so the browser picks the right width.
+ * - Without one: a quiet placeholder, a hairline arch drawn inline, labelled
+ *   "Image to be supplied". The `alt` text is already the real one.
+ *
+ * SVGs never go through next/image (and images.dangerouslyAllowSVG stays
+ * off): an ImageAsset pointing at an .svg fails loudly instead.
  *
  * Every frame carries an inset hairline, so placeholders and real photographs
  * share the same finished edge.
@@ -15,20 +19,25 @@ import Image from "next/image";
 
 export type ImageTone = "neutral" | "warm";
 
-/** Surface behind the (transparent) placeholder drawing. */
+/** Surface behind the placeholder drawing. */
 const tones: Record<ImageTone, string> = {
-  // Clinical and default: the cool end of the alabaster scale
+  // Clinical and default: the cool end of the cream scale
   neutral: "bg-surface-2",
-  // Salon & spa: alabaster with a soft accent wash
+  // Salon & spa: cream with a soft accent wash
   warm: "bg-surface-warm",
 };
 
 type ImageFrameProps = {
+  /** The photograph. Leave out to show the placeholder. */
+  image?: ImageAsset;
+  /** Alt text for the placeholder. A real image uses its own `alt`. */
   alt: string;
   /** Tailwind aspect-ratio utility, e.g. "aspect-[4/5]". */
   ratio: string;
   orientation?: "portrait" | "landscape";
+  /** next/image `sizes`: how wide the frame renders at each breakpoint. */
   sizes: string;
+  /** Above the fold (heroes): load eagerly at high fetch priority. */
   priority?: boolean;
   tone?: ImageTone;
   className?: string;
@@ -39,6 +48,7 @@ type ImageFrameProps = {
 };
 
 export function ImageFrame({
+  image,
   alt,
   ratio,
   orientation = "landscape",
@@ -49,6 +59,16 @@ export function ImageFrame({
   children,
   zoomOnHover = false,
 }: ImageFrameProps) {
+  if (image && /\.svg($|[?#])/i.test(image.src)) {
+    throw new Error(
+      `ImageFrame: "${image.src}" is an SVG. SVGs must not go through next/image; inline them as components instead.`,
+    );
+  }
+
+  const zoom = zoomOnHover
+    ? "transition-transform duration-700 ease-out-soft group-hover:scale-[1.03]"
+    : "";
+
   return (
     <div
       className={[
@@ -58,23 +78,31 @@ export function ImageFrame({
         className,
       ].join(" ")}
     >
-      <Image
-        src={
-          orientation === "portrait"
-            ? "/images/placeholder-portrait.svg"
-            : "/images/placeholder-landscape.svg"
-        }
-        alt={alt}
-        fill
-        sizes={sizes}
-        priority={priority}
-        className={[
-          "object-cover",
-          zoomOnHover
-            ? "transition-transform duration-700 ease-out-soft group-hover:scale-[1.03]"
-            : "",
-        ].join(" ")}
-      />
+      {image ? (
+        <Image
+          src={image.src}
+          alt={image.alt}
+          fill
+          sizes={sizes}
+          // `priority` is deprecated in Next 16; eager + high fetch priority
+          // is the recommended way to load an above-the-fold image first.
+          loading={priority ? "eager" : undefined}
+          fetchPriority={priority ? "high" : undefined}
+          className={["object-cover", zoom].join(" ")}
+        />
+      ) : (
+        <>
+          <PlaceholderArch
+            orientation={orientation}
+            alt={alt}
+            className={["absolute inset-0 size-full", zoom].join(" ")}
+          />
+          <span className="absolute inset-x-6 top-6 flex items-start justify-end gap-2 text-right text-label-sm uppercase text-muted md:inset-x-7 md:top-7">
+            <span aria-hidden="true" className="mt-[0.4rem] inline-block h-px w-4 shrink-0 bg-muted/60" />
+            Image to be supplied
+          </span>
+        </>
+      )}
 
       {/* Inset hairline frame */}
       <span
@@ -82,12 +110,48 @@ export function ImageFrame({
         className="pointer-events-none absolute inset-3 border border-primary/10 md:inset-4"
       />
 
-      <span className="absolute inset-x-6 top-6 flex items-start justify-end gap-2 text-right text-label-sm uppercase text-muted md:inset-x-7 md:top-7">
-        <span aria-hidden="true" className="mt-[0.4rem] inline-block h-px w-4 shrink-0 bg-muted/60" />
-        Image to be supplied
-      </span>
-
       {children}
     </div>
+  );
+}
+
+/**
+ * The placeholder drawing: a hairline arch and floor line in the primary
+ * colour at low opacity, cropped like object-cover. Carries the alt text so
+ * the frame still describes the photograph it is waiting for.
+ */
+function PlaceholderArch({
+  orientation,
+  alt,
+  className,
+}: {
+  orientation: "portrait" | "landscape";
+  alt: string;
+  className: string;
+}) {
+  const portrait = orientation === "portrait";
+  return (
+    <svg
+      viewBox={portrait ? "0 0 800 1000" : "0 0 800 550"}
+      preserveAspectRatio="xMidYMid slice"
+      role="img"
+      aria-label={alt}
+      className={["fill-none stroke-primary", className].join(" ")}
+      strokeWidth={1.25}
+    >
+      {portrait ? (
+        <>
+          <path d="M270 780V420a130 130 0 0 1 260 0v360" opacity={0.22} vectorEffect="non-scaling-stroke" />
+          <path d="M292 780V420a108 108 0 0 1 216 0v360" opacity={0.12} vectorEffect="non-scaling-stroke" />
+          <path d="M0 780h800" opacity={0.14} vectorEffect="non-scaling-stroke" />
+        </>
+      ) : (
+        <>
+          <path d="M330 420V260a70 70 0 0 1 140 0v160" opacity={0.22} vectorEffect="non-scaling-stroke" />
+          <path d="M344 420V260a56 56 0 0 1 112 0v160" opacity={0.12} vectorEffect="non-scaling-stroke" />
+          <path d="M0 420h800" opacity={0.14} vectorEffect="non-scaling-stroke" />
+        </>
+      )}
+    </svg>
   );
 }

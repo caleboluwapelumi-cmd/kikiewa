@@ -60,6 +60,7 @@ export default function GalleryPage() {
                   {items.map((item) => (
                     <li key={item.src}>
                       <ImageFrame
+                        image={item}
                         alt={item.alt}
                         ratio="aspect-[4/5]"
                         sizes="(max-width: 1024px) 50vw, 33vw"
