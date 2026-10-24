@@ -236,7 +236,7 @@ export const seo = {
     path: "/salon-spa",
     title: "Salon & Spa in Ikorodu, Lagos | Kikiewa",
     description:
-      "Hair, nails, massage and spa rituals at Kikiewa, Ebute, Ikorodu. See services and prices, then book online or on WhatsApp.",
+      "Hair, nails, massage and spa rituals at Kikiewa Salon & Spa, Ebute, Ikorodu. See services and prices, then book online or on WhatsApp.",
   },
   salonServices: {
     path: "/salon-spa/services",
@@ -248,7 +248,7 @@ export const seo = {
     path: "/medical-spa",
     title: "Medical Spa in Ikorodu, Lagos | Kikiewa",
     description:
-      "Consultation-led skin and aesthetic treatments at Kikiewa, Nitel, Ikorodu. Book a consultation online or on WhatsApp.",
+      "Consultation-led skin and aesthetic treatments at Kikiewa Medical Spa, Nitel, Ikorodu. Book a consultation online or on WhatsApp.",
   },
   treatments: {
     path: "/medical-spa/treatments",
