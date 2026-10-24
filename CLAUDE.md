@@ -10,3 +10,8 @@ Stack: Next.js (App Router), TypeScript, Tailwind v4, npm.
 - Use next/image, semantic HTML, alt text, mobile-first responsive layouts.
 - Do not invent business facts. Use visible placeholders.
 - Build in small steps. Stop and wait for approval after each page.
+
+## Design reference
+reference/site-plan.md is the source of truth for structure, copy and SEO. If any other
+reference file disagrees with it, site-plan.md wins. competitor-study.md is for design
+direction only; ignore its sitemap and any 'divisions' language.
