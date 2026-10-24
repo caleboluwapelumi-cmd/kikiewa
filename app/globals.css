@@ -134,6 +134,12 @@
 
   --container-shell: 1360px;
 
+  /* Fixed chrome. Header: 80px bar, plus a 36px utility bar from lg up.
+     Mobile action bar: 64px, below md only (plus the safe-area inset). */
+  --spacing-header: 5rem;
+  --spacing-header-desktop: 7.25rem;
+  --spacing-action-bar: 4rem;
+
   /* Editorial lead paragraph, set in the display face */
   --text-lead: 24px;
   --text-lead--line-height: 36px;
@@ -159,8 +165,14 @@
 @layer base {
   html {
     color-scheme: light;
-    /* Anchor targets clear the fixed 80px header */
-    scroll-padding-top: 6rem;
+    /* Anchor targets clear the fixed header */
+    scroll-padding-top: calc(var(--spacing-header) + 1rem);
+  }
+
+  @media (width >= 64rem) {
+    html {
+      scroll-padding-top: calc(var(--spacing-header-desktop) + 1rem);
+    }
   }
 
   @media (prefers-reduced-motion: no-preference) {

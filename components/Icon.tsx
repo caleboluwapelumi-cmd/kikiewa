@@ -12,6 +12,7 @@ export type IconName =
   | "book"
   | "brush"
   | "calendar"
+  | "chevronDown"
   | "close"
   | "clock"
   | "compass"
@@ -67,6 +68,7 @@ const paths: Record<IconName, React.ReactNode> = {
       <path d="M3 10h18M8 3v4M16 3v4" />
     </>
   ),
+  chevronDown: <path d="m6 9 6 6 6-6" />,
   close: (
     <>
       <path d="m6 6 12 12" />
