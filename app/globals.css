@@ -29,9 +29,9 @@
 
   /* Ink */
   --color-foreground: #1a1a18;
-  /* Muted ink, darkened from #706e68 so secondary text clears WCAG AA
+  /* Muted ink, darkened from #706E68 so secondary text clears WCAG AA
      (4.5:1) on every surface, including surface-3. */
-  --color-muted: #66635d;
+  --color-muted: #66635D;
 
   /* Type families — the CSS variables come from next/font in app/layout.tsx */
   --font-display: var(--font-bodoni-moda), "Bodoni Moda", Didot, Georgia, serif;
@@ -266,14 +266,4 @@
   &[aria-current="page"] {
     background-size: 100% 1px;
   }
-}
-
-@utility placeholder-hatch {
-  /* Fine diagonal hatching for image frames awaiting photography */
-  background-color: var(--color-surface);
-  background-image: repeating-linear-gradient(
-    135deg,
-    transparent 0 11px,
-    color-mix(in oklab, var(--color-primary) 7%, transparent) 11px 12px
-  );
 }

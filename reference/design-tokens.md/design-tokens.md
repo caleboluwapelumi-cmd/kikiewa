@@ -7,7 +7,7 @@
 - background: #FAF8F5
 - surface: #F3F0EB
 - foreground: #1A1A18
-- muted: #706E68
+- muted: #66635D (darkened from #706E68 so muted text clears WCAG AA 4.5:1 on every surface)
 
 Note: hex values were picked by eye from the logo. If Stitch's design system card or the logo shows different values, overwrite these.
 

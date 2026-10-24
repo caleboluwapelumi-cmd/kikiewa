@@ -7,6 +7,8 @@ import { divisions, divisionsIntro } from "@/data/site";
 /**
  * The three divisions. Hairline cards, flat at rest; the whole card is the
  * link target (the link's ::after covers it), and hover lifts it slightly.
+ * One link per card, named by its CTA text. The focus ring is drawn on the
+ * stretched ::after so it outlines the whole clickable card.
  */
 export function DivisionCards() {
   return (
@@ -48,7 +50,7 @@ export function DivisionCards() {
 
                 <Link
                   href={division.href}
-                  className="mt-auto flex items-center justify-between border-t border-border pt-space-md text-label-md uppercase text-primary transition-colors duration-200 after:absolute after:inset-0 group-hover:text-secondary"
+                  className="mt-auto flex items-center justify-between border-t border-border pt-space-md text-label-md uppercase text-primary transition-colors duration-200 after:absolute after:inset-0 group-hover:text-secondary focus-visible:outline-none focus-visible:after:outline-2 focus-visible:after:outline-offset-3 focus-visible:after:outline-secondary"
                 >
                   <span>{division.cta}</span>
                   <Icon

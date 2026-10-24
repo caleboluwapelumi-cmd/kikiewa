@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { Button } from "@/components/Button";
@@ -9,24 +9,36 @@ import { bookingHref, navLinks, site } from "@/data/site";
 
 export function Header() {
   const [open, setOpen] = useState(false);
+  const toggleRef = useRef<HTMLButtonElement>(null);
   const pathname = usePathname();
 
   const isCurrent = (href: string) =>
     pathname === href || pathname.startsWith(href + "/");
 
-  // Keep the page behind the open menu from scrolling, and allow Escape to close.
+  // While the menu is open: lock page scroll, close on Escape (sending focus
+  // back to the toggle, as the menu turns inert), and close if the viewport
+  // widens past the breakpoint where the menu is hidden.
   useEffect(() => {
     if (!open) return;
 
     const onKeyDown = (event: KeyboardEvent) => {
-      if (event.key === "Escape") setOpen(false);
+      if (event.key !== "Escape") return;
+      setOpen(false);
+      toggleRef.current?.focus();
+    };
+
+    const desktop = window.matchMedia("(width >= 64rem)");
+    const onBreakpoint = () => {
+      if (desktop.matches) setOpen(false);
     };
 
     document.addEventListener("keydown", onKeyDown);
+    desktop.addEventListener("change", onBreakpoint);
     document.body.style.overflow = "hidden";
 
     return () => {
       document.removeEventListener("keydown", onKeyDown);
+      desktop.removeEventListener("change", onBreakpoint);
       document.body.style.overflow = "";
     };
   }, [open]);
@@ -72,6 +84,7 @@ export function Header() {
           </Button>
 
           <button
+            ref={toggleRef}
             type="button"
             onClick={() => setOpen((value) => !value)}
             aria-expanded={open}
