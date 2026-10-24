@@ -1,4 +1,5 @@
 import { ImageFrame } from "@/components/ImageFrame";
+import { PeacockDivider } from "@/components/brand/PeacockDivider";
 import { SectionHeading } from "@/components/SectionHeading";
 import { salonSpa } from "@/data/site";
 
@@ -44,6 +45,8 @@ export function GalleryStrip() {
   return (
     <section className="section-y w-full bg-background">
       <div className="shell">
+        {/* The salon page's one peacock divider */}
+        <PeacockDivider className="mb-space-2xl lg:mb-space-3xl" />
         <SectionHeading
           eyebrow={gallery.eyebrow}
           heading={gallery.heading}
