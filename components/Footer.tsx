@@ -1,10 +1,12 @@
 import Link from "next/link";
+import { Logo } from "@/components/brand/Logo";
 import { footer, site } from "@/data/site";
 
 /**
  * Plum footer, per the brand tokens ("primary: buttons, key accents,
- * footer"). Text sits at white or white/75 — both clear AA on plum — and
- * `data-tone="dark"` switches the focus ring to white.
+ * footer"). The mono logo sits in cream; text sits at white or white/75 —
+ * both clear AA on plum — and `data-tone="dark"` switches the focus ring
+ * to white.
  */
 
 const columnHeading =
@@ -19,9 +21,9 @@ export function Footer() {
       <div className="shell">
         <div className="grid grid-cols-1 gap-space-xl border-y border-on-primary/15 pt-space-2xl pb-space-2xl md:grid-cols-2 lg:grid-cols-12 lg:gap-gutter-desktop lg:pt-space-3xl">
           <div className="flex flex-col gap-space-md lg:col-span-4">
-            <span className="font-display text-headline-md uppercase tracking-[0.2em]">
-              {site.name}
-            </span>
+            <Link href="/" className="-ml-1 w-fit p-1">
+              <Logo variant="mono" className="h-16 w-auto text-cream" />
+            </Link>
             <p className="max-w-sm text-pretty text-body-md text-on-primary/75">
               {footer.blurb}
             </p>

@@ -1,11 +1,12 @@
 import { Button } from "@/components/Button";
+import { Logo } from "@/components/brand/Logo";
 import { SectionHeading } from "@/components/SectionHeading";
 import { ctaBand } from "@/data/site";
 
 /**
  * Closing call to action. Full-bleed plum that runs straight into the plum
  * footer, separated only by a hairline — one confident dark finale on every
- * page rather than another light band.
+ * page rather than another light band. The mono logo signs it off in cream.
  */
 export function CtaBand() {
   return (
@@ -24,6 +25,7 @@ export function CtaBand() {
           />
 
           <div className="flex flex-col items-start gap-space-lg lg:col-span-4 lg:col-start-9 lg:border-l lg:border-on-primary/20 lg:pl-gutter-desktop">
+            <Logo variant="mono" className="h-12 w-auto text-cream" />
             <p className="text-pretty text-body-lg text-on-primary/80">
               {ctaBand.body}
             </p>
