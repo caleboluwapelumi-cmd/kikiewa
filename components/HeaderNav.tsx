@@ -5,7 +5,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { Button } from "@/components/Button";
 import { Icon } from "@/components/Icon";
-import { bookingHref, navLinks } from "@/data/site";
+import { bookingHref, primaryNav } from "@/data/site";
 
 type HeaderNavProps = {
   /** The logo, rendered on the server and passed in. */
@@ -60,7 +60,7 @@ export function HeaderNav({ logo }: HeaderNavProps) {
         </Link>
 
         <nav aria-label="Primary" className="hidden items-center gap-8 lg:flex">
-          {navLinks.map((link) => {
+          {primaryNav.map((link) => {
             const current = isCurrent(link.href);
             return (
               <Link
@@ -115,7 +115,7 @@ export function HeaderNav({ logo }: HeaderNavProps) {
           className="shell flex min-h-full flex-col py-space-lg"
         >
           <ul className="border-t border-border">
-            {navLinks.map((link) => {
+            {primaryNav.map((link) => {
               const current = isCurrent(link.href);
               return (
                 <li key={link.href} className="border-b border-border">

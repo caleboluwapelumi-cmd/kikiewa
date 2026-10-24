@@ -1,8 +1,10 @@
 import { Button } from "@/components/Button";
+import { TbcLabel } from "@/components/Confirmable";
 import { Icon } from "@/components/Icon";
 import { ImageFrame, type ImageTone } from "@/components/ImageFrame";
+import { LocationDetails } from "@/components/LocationDetails";
 import { SectionHeading } from "@/components/SectionHeading";
-import { TBC, type Location, type LocationBlockCopy } from "@/data/site";
+import { contact, type Location, type LocationBlockCopy } from "@/data/site";
 import { WHATSAPP_FALLBACK_HREF, whatsappLink } from "@/lib/whatsapp";
 
 /**
@@ -39,7 +41,7 @@ const tones: Record<
 };
 
 type LocationBlockProps = {
-  /** Branch record — title, address, hours, phone, directions. */
+  /** Branch record — title, address, hours, phone, page link. */
   location: Location;
   /** Section copy for this page, including its heading and button label. */
   copy: LocationBlockCopy;
@@ -51,7 +53,7 @@ export function LocationBlock({
   copy,
   tone = "clinical",
 }: LocationBlockProps) {
-  const whatsappHref = whatsappLink(TBC.whatsapp, copy.whatsappMessage);
+  const whatsappHref = whatsappLink(contact.whatsapp, copy.whatsappMessage);
   const isFallback = whatsappHref === WHATSAPP_FALLBACK_HREF;
   const toneClasses = tones[tone];
 
@@ -81,44 +83,20 @@ export function LocationBlock({
           >
             <h3 className="text-headline-sm text-primary">{location.title}</h3>
 
-            <dl className="mt-space-lg divide-y divide-border border-y border-border-strong">
-              {location.details.map((detail) => (
-                <div
-                  key={detail.label}
-                  className="grid grid-cols-[1rem_1fr] gap-x-space-md py-space-md"
-                >
-                  <Icon
-                    name={detail.icon}
-                    className="mt-1 size-4 shrink-0 text-secondary"
-                  />
-                  <div>
-                    <dt className="text-label-sm uppercase text-muted">
-                      {detail.label}
-                    </dt>
-                    <dd className="mt-space-xs text-body-md text-foreground">
-                      {detail.value}
-                    </dd>
-                  </div>
-                </div>
-              ))}
-            </dl>
+            <LocationDetails location={location} strong className="mt-space-lg" />
 
             <div className="mt-space-lg flex flex-wrap items-center gap-x-space-xl gap-y-space-xs">
               <Button href={whatsappHref} icon="phone" iconPosition="leading">
                 {copy.whatsappLabel}
               </Button>
-              <Button
-                href={location.directionsHref}
-                variant="quiet"
-                icon="compass"
-              >
-                Directions
+              <Button href={location.href} variant="quiet" icon="compass">
+                {location.name} details
               </Button>
             </div>
 
             {isFallback ? (
               <p className="mt-space-md text-body-sm text-muted">
-                {TBC.whatsapp}. {copy.fallbackNote}
+                WhatsApp number: <TbcLabel />. {copy.fallbackNote}
               </p>
             ) : null}
           </div>
@@ -132,9 +110,8 @@ export function LocationBlock({
             >
               <div className="absolute inset-x-6 bottom-6 flex items-center gap-space-sm border border-border bg-background/95 p-space-md md:inset-x-8 md:bottom-8">
                 <Icon name="pin" className="size-4 shrink-0 text-secondary" />
-                <span className="text-label-sm uppercase text-muted">
-                  {copy.mapCaption}
-                </span>
+                <span className="text-label-sm uppercase text-foreground">Map</span>
+                <TbcLabel />
               </div>
             </ImageFrame>
           </div>

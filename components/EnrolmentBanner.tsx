@@ -1,11 +1,13 @@
 import { Button } from "@/components/Button";
+import { Confirmable } from "@/components/Confirmable";
 import { Icon } from "@/components/Icon";
-import { enrolment } from "@/data/site";
+import { courses, enrolment } from "@/data/site";
 
 /**
  * Beauty Institute admissions. A single framed panel with a plum top rule —
  * aspirational in scale, credible in restraint: no decorative washes, and
- * the programme list is set like a prospectus contents page.
+ * the course list is set like a prospectus contents page and reads from the
+ * same course records as the institute pages.
  */
 export function EnrolmentBanner() {
   return (
@@ -15,7 +17,9 @@ export function EnrolmentBanner() {
           <div className="flex flex-col lg:col-span-7">
             <p className="mb-space-lg inline-flex w-fit items-center gap-space-sm border border-accent bg-accent/10 px-space-sm py-space-xs text-label-sm uppercase text-primary">
               <span aria-hidden="true" className="size-1.5 shrink-0 bg-secondary" />
-              {enrolment.flag}
+              {enrolment.flagLabel}
+              <span aria-hidden="true">·</span>
+              <Confirmable value={enrolment.flag} />
             </p>
 
             <h2 className="text-balance text-headline-lg-mobile text-primary lg:text-headline-lg">
@@ -33,8 +37,7 @@ export function EnrolmentBanner() {
                 href={enrolment.secondaryCta.href}
                 size="lg"
                 variant="subtle"
-                icon="download"
-                iconPosition="leading"
+
               >
                 {enrolment.secondaryCta.label}
               </Button>
@@ -46,21 +49,22 @@ export function EnrolmentBanner() {
               {enrolment.programmesTitle}
             </h3>
             <ol className="mt-space-md border-t border-border">
-              {enrolment.programmes.map((programme) => (
+              {courses.map((course) => (
                 <li
-                  key={programme.name}
+                  key={course.slug}
                   className="flex items-start gap-space-md border-b border-border py-space-md"
                 >
                   <Icon
-                    name={programme.icon}
+                    name="notes"
                     className="mt-1 size-4 shrink-0 text-secondary"
                   />
                   <span className="flex flex-col gap-space-xs">
                     <span className="font-display text-title-lg text-primary">
-                      {programme.name}
+                      {course.name}
                     </span>
-                    <span className="text-body-sm text-muted">
-                      {programme.meta}
+                    <span className="flex flex-wrap items-baseline gap-x-space-sm text-body-sm text-muted">
+                      Duration
+                      <Confirmable value={course.duration} />
                     </span>
                   </span>
                 </li>

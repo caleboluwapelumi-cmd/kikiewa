@@ -1,10 +1,12 @@
+import { Confirmable } from "@/components/Confirmable";
 import { Icon } from "@/components/Icon";
 import { SectionHeading } from "@/components/SectionHeading";
 import { medicalSpa } from "@/data/site";
 
 /**
- * Licence and credentials. Every value is a placeholder by design — the page
- * states what will be published here rather than implying it already is.
+ * Licence and credentials. Every value stays "To be confirmed" until it is
+ * verified — the page states what will be published here rather than
+ * implying it already is.
  * Set as a two-column record (label | value), like a register entry.
  */
 export function CredentialsBlock() {
@@ -35,7 +37,7 @@ export function CredentialsBlock() {
                   {credential.label}
                 </dt>
                 <dd className="text-body-md text-primary">
-                  {credential.value}
+                  <Confirmable value={credential.value} />
                 </dd>
               </div>
             ))}

@@ -1,11 +1,11 @@
 /**
  * WhatsApp deep links.
  *
- * The business WhatsApp number is not confirmed yet (see `TBC.whatsapp` in
- * data/site.ts), so this helper refuses to build a wa.me link out of a
+ * The business WhatsApp number is not confirmed yet (`contact.whatsapp` in
+ * data/site.ts is TBC), so this helper refuses to build a wa.me link out of a
  * placeholder. Anything that is not a usable international number falls back
  * to the contact page, which means no broken wa.me links can ship while the
- * number is still a bracketed placeholder.
+ * number is still TBC.
  */
 
 /** Where a WhatsApp action points when the number is not usable yet. */
@@ -16,7 +16,7 @@ const MIN_DIGITS = 8;
 
 /**
  * True when `number` is a confirmed, dialable international number rather than
- * a placeholder such as "[WhatsApp number to be confirmed]".
+ * a placeholder such as TBC.
  */
 export function isUsableWhatsAppNumber(number: string | undefined): boolean {
   if (!number) return false;

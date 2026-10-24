@@ -1,3 +1,4 @@
+import { Confirmable } from "@/components/Confirmable";
 import { Icon } from "@/components/Icon";
 import { SectionHeading } from "@/components/SectionHeading";
 import { credibility, credibilityIntro } from "@/data/site";
@@ -29,6 +30,10 @@ export function CredibilityStrip() {
               <h3 className="mt-space-lg text-title-lg text-primary">{item.title}</h3>
               <p className="mt-space-sm text-pretty text-body-sm text-muted">
                 {item.body}
+              </p>
+              <p className="mt-space-md flex flex-wrap items-baseline gap-x-space-sm gap-y-space-xs border-t border-border pt-space-sm text-label-sm uppercase text-foreground">
+                {item.detailLabel}
+                <Confirmable value={item.detail} />
               </p>
             </li>
           ))}

@@ -1,3 +1,4 @@
+import { Confirmable } from "@/components/Confirmable";
 import { Icon } from "@/components/Icon";
 import { medicalSpa } from "@/data/site";
 
@@ -24,7 +25,7 @@ export function MedicalSpaIntro() {
               {intro.licenceLabel}
             </p>
             <p className="mt-space-md text-title-lg text-primary">
-              {intro.licenceValue}
+              <Confirmable value={intro.licenceValue} />
             </p>
             <p className="mt-space-md border-t border-border pt-space-md text-body-sm text-muted">
               {intro.note}

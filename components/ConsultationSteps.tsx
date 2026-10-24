@@ -1,3 +1,4 @@
+import { Confirmable } from "@/components/Confirmable";
 import { Icon } from "@/components/Icon";
 import { SectionHeading } from "@/components/SectionHeading";
 import { medicalSpa } from "@/data/site";
@@ -43,6 +44,12 @@ export function ConsultationSteps() {
               <p className="mt-space-sm max-w-[42ch] text-pretty text-body-md text-muted">
                 {step.body}
               </p>
+              {step.note ? (
+                <p className="mt-space-md flex flex-wrap items-baseline gap-x-space-sm gap-y-space-xs text-label-sm uppercase text-foreground">
+                  {step.note.label}
+                  <Confirmable value={step.note.value} />
+                </p>
+              ) : null}
             </li>
           ))}
         </ol>

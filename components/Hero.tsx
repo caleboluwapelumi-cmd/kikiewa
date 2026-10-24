@@ -1,4 +1,5 @@
 import { Button } from "@/components/Button";
+import { Confirmable } from "@/components/Confirmable";
 import { Icon } from "@/components/Icon";
 import { ImageFrame } from "@/components/ImageFrame";
 import { hero } from "@/data/site";
@@ -42,7 +43,7 @@ export function Hero() {
                     {stat.value}
                   </dt>
                   <dd className="text-label-sm uppercase text-muted">
-                    {stat.label}
+                    <Confirmable value={stat.label} />
                   </dd>
                 </div>
               ))}
@@ -74,7 +75,9 @@ export function Hero() {
               <span className="font-display text-title-lg text-primary">
                 {hero.badge.title}
               </span>
-              <span className="text-body-sm text-muted">{hero.badge.body}</span>
+              <span className="text-body-sm text-muted">
+                <Confirmable value={hero.badge.body} />
+              </span>
             </div>
           </div>
         </div>

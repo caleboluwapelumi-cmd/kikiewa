@@ -1,5 +1,6 @@
 import { Button } from "@/components/Button";
 import { Icon } from "@/components/Icon";
+import { LocationDetails } from "@/components/LocationDetails";
 import type { Location } from "@/data/site";
 
 /**
@@ -36,34 +37,14 @@ export function LocationCard({
         {location.body}
       </p>
 
-      <dl className="mt-space-lg divide-y divide-border border-y border-border">
-        {location.details.map((detail) => (
-          <div
-            key={detail.label}
-            className="grid grid-cols-[1rem_1fr] gap-x-space-md py-space-md"
-          >
-            <Icon
-              name={detail.icon}
-              className="mt-0.5 size-4 shrink-0 text-secondary"
-            />
-            <div>
-              <dt className="text-label-sm uppercase text-muted">
-                {detail.label}
-              </dt>
-              <dd className="mt-space-xs text-body-md text-foreground">
-                {detail.value}
-              </dd>
-            </div>
-          </div>
-        ))}
-      </dl>
+      <LocationDetails location={location} className="mt-space-lg" />
 
       <div className="mt-auto flex flex-wrap items-center gap-x-space-xl gap-y-space-xs pt-space-lg">
         <Button href={location.primaryCta.href}>
           {location.primaryCta.label}
         </Button>
-        <Button href={location.directionsHref} variant="quiet" icon="compass">
-          Directions
+        <Button href={location.href} variant="quiet" icon="compass">
+          {location.name} details
         </Button>
       </div>
     </article>

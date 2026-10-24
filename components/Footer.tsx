@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { Logo } from "@/components/brand/Logo";
-import { footer, site } from "@/data/site";
+import { Confirmable } from "@/components/Confirmable";
+import { contact, footer, hoursLink, locations, site } from "@/data/site";
 
 /**
  * Plum footer, per the brand tokens ("primary: buttons, key accents,
@@ -28,8 +29,9 @@ export function Footer() {
               {footer.blurb}
             </p>
             <div className="pt-space-xs">
-              <span className="inline-block border border-on-primary/30 px-space-sm py-space-xs text-label-sm uppercase text-on-primary/80">
-                {footer.licenceChip}
+              <span className="inline-flex flex-wrap items-baseline gap-x-space-sm border border-on-primary/30 px-space-sm py-space-xs text-label-sm uppercase text-on-primary/80">
+                {footer.licence.label}
+                <Confirmable value={footer.licence.value} />
               </span>
             </div>
           </div>
@@ -49,11 +51,19 @@ export function Footer() {
 
           <div className="flex flex-col gap-space-md lg:col-span-3">
             <h2 className={columnHeading}>Lagos Practices</h2>
-            {footer.practices.map((practice) => (
-              <div key={practice.name} className="flex flex-col gap-space-xs">
-                <span className="text-title-md">{practice.name}</span>
+            {locations.map((location) => (
+              <div key={location.id} className="flex flex-col gap-space-xs">
+                <Link
+                  href={location.href}
+                  className="link-rule w-fit text-title-md hover:text-on-primary"
+                >
+                  {location.name}
+                </Link>
                 <span className="text-body-sm text-on-primary/75">
-                  {practice.detail}
+                  {location.services}
+                </span>
+                <span className="text-body-sm text-on-primary/75">
+                  <Confirmable value={location.address} />
                 </span>
               </div>
             ))}
@@ -62,12 +72,25 @@ export function Footer() {
           <div className="flex flex-col gap-space-sm lg:col-span-2">
             <h2 className={columnHeading}>Inquiries</h2>
             <span className="text-body-sm text-on-primary/75">
-              {footer.inquiries.label}
+              {footer.inquiriesLabel}
             </span>
-            <span className="text-body-md">{footer.inquiries.email}</span>
-            <span className="pt-space-xs text-body-sm text-on-primary/75">
-              {footer.inquiries.hours}
+            <span className="flex flex-col gap-space-xs text-body-md">
+              <span className="text-label-sm uppercase text-on-primary/75">Email</span>
+              <Confirmable
+                value={contact.email}
+                format={(email) => (
+                  <a href={"mailto:" + email} className="link-rule hover:text-on-primary">
+                    {email}
+                  </a>
+                )}
+              />
             </span>
+            <Link
+              href={hoursLink.href}
+              className="link-rule w-fit pt-space-xs text-body-sm text-on-primary/80 hover:text-on-primary"
+            >
+              {hoursLink.label}
+            </Link>
           </div>
         </div>
 
