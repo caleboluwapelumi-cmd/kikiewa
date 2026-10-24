@@ -1,15 +1,34 @@
 # Kikiewa Design Tokens
 
-## Colours
-- primary: #5A1F5E (buttons, key accents, footer)
-- secondary: #8E3F8F (links, hover, highlights)
-- accent: #C98BB9 (tints, dividers, soft backgrounds only, never text)
-- background: #FAF8F5
-- surface: #F3F0EB
-- foreground: #1A1A18
-- muted: #66635D (darkened from #706E68 so muted text clears WCAG AA 4.5:1 on every surface)
+The live values are in `app/globals.css`. This file records what they are and why.
 
-Note: hex values were picked by eye from the logo. If Stitch's design system card or the logo shows different values, overwrite these.
+## Colours
+
+Brand colours were sampled from the logo (`public/brand/kikiewa-logo.svg`) on 24 Oct 2026. They replace the earlier values picked by eye.
+
+| Token | Value | Use | Contrast on background #FAF8F5 |
+|---|---|---|---|
+| primary | #5B0F53 | Logo plum (tail). Buttons, key accents, footer and CTA band | 12.1:1, any text |
+| primary-hover | #4A0C44 | Hover state for primary buttons | 13.9:1 with cream |
+| secondary | #8A2174 | Logo magenta (wordmark, crest). Links, labels, icons, hover | 7.8:1, any text |
+| accent | #C868A3 | Logo orchid (neck, inner feathers). Hairlines, tints, icons only | 3.3:1, **never text** |
+| on-primary | #FFFFFF | Text on plum | 12.8:1 on primary |
+| cream | = background | Mono logo and marks on plum surfaces | 12.1:1 on primary |
+| background | #FAF8F5 | Page background | |
+| surface | #F3F0EB | Section bands | |
+| surface-2 / surface-3 | #EDEAE4 / #E7E3DC | Image frames, deeper bands | |
+| surface-warm | accent 10% into background | Salon & Spa wash | |
+| foreground | #1A1A18 | Body text | 16.4:1 |
+| muted | #66635D | Secondary text. Lowest pair is 4.7:1 on surface-3, so it clears AA 4.5:1 on every surface | 5.7:1 |
+
+**Restraint:** the logo colours go on the logo, buttons and small accents only. Cream surfaces and photography carry the pages.
+
+## Logo
+
+- `components/brand/Logo.tsx` inlines the logo SVGs. The full-colour logo reads its fills from the primary, secondary and accent tokens, so it always matches the theme.
+- Header: full colour. Footer and plum CTA band: mono variant in cream.
+- SVGs never go through `next/image`, and `images.dangerouslyAllowSVG` stays off.
+- `components/brand/PeacockDivider.tsx`: the mono peacock between fine hairlines. At most once per page.
 
 ## Typography
 - Headings: Bodoni Moda (serif, editorial)
@@ -23,5 +42,6 @@ Note: hex values were picked by eye from the logo. If Stitch's design system car
 
 ## Content rules
 - No invented credentials, statistics, prices, treatment claims or testimonials
-- Unverified info shown as placeholders, e.g. "[Licence details to be confirmed]"
+- Unconfirmed values are stored as `'TBC'` in `data/site.ts` and render as a small muted "To be confirmed" label. Raw bracketed placeholders never appear on screen.
+- Marketing copy written before client sign-off is marked `// DRAFT COPY - client approval needed`
 - Locations: Ebute = Salon & Spa. Nitel = Medical Spa & Makeover

@@ -2,27 +2,36 @@
 
 /* ---------------------------------------------------------------------------
    Kikiewa design tokens
-   Source: reference/design-tokens.md + the Stitch design-system card.
-   Palette: clinical plum on warm alabaster. Light scheme only — the design
-   has no dark variant, so we opt out rather than invent one.
+   Source: reference/design-tokens.md. Brand colours sampled from the logo
+   (public/brand/kikiewa-logo.svg). Palette: logo plum on warm cream. Light
+   scheme only — the design has no dark variant, so we opt out rather than
+   invent one.
+
+   Restraint: the brand colours belong on the logo, buttons and small
+   accents. Cream surfaces and photography carry the pages.
 --------------------------------------------------------------------------- */
 
 @theme {
-  /* Brand */
-  --color-primary: #5a1f5e;
-  --color-primary-hover: #48184b;
+  /* Brand — sampled from the logo */
+  --color-primary: #5b0f53; /* deep plum (tail). 12.1:1 on background */
+  --color-primary-hover: #4a0c44;
   --color-on-primary: #ffffff;
-  --color-secondary: #8e3f8f;
-  --color-accent: #c98bb9;
+  --color-secondary: #8a2174; /* magenta (wordmark, crest). 7.8:1 on background */
+  /* Orchid (neck, inner feathers). 3.3:1 on background: hairlines, tints
+     and icons only, never body text. */
+  --color-accent: #c868a3;
 
-  /* Warm alabaster surface scale, lightest to deepest */
+  /* Warm cream surface scale, lightest to deepest */
   --color-card: #ffffff;
   --color-background: #faf8f5;
+  /* Cream ink for logos and marks on plum surfaces */
+  --color-cream: var(--color-background);
   --color-surface: #f3f0eb;
   --color-surface-2: #edeae4;
   --color-surface-3: #e7e3dc;
-  /* Warm wash for the salon & spa: accent folded into the background, opaque */
-  --color-surface-warm: color-mix(in oklab, var(--color-accent) 16%, var(--color-background));
+  /* Warm wash for the salon & spa: accent folded into the background, opaque.
+     Kept light because the logo orchid is more saturated than the old accent. */
+  --color-surface-warm: color-mix(in oklab, var(--color-accent) 10%, var(--color-background));
   --color-border: #e5dfd7;
   /* Stronger hairline for clinical rules and active states */
   --color-border-strong: color-mix(in oklab, var(--color-primary) 22%, var(--color-border));
