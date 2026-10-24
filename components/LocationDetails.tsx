@@ -1,17 +1,17 @@
 import { Confirmable } from "@/components/Confirmable";
 import { Icon, type IconName } from "@/components/Icon";
-import type { Location } from "@/data/site";
+import { site, type Location } from "@/data/site";
 import { telHref } from "@/lib/phone";
 
 /**
- * A branch's address, hours and phone as hairline-ruled rows. Unconfirmed
+ * A location's address, hours and phone as hairline-ruled rows. Unconfirmed
  * values show the "To be confirmed" label; the phone becomes a tel: link once
  * it is confirmed.
  */
 
 type LocationDetailsProps = {
   location: Location;
-  /** Stronger outer rules for the full-width branch block. */
+  /** Stronger outer rules for the full-width location block. */
   strong?: boolean;
   className?: string;
 };
@@ -33,14 +33,14 @@ export function LocationDetails({
             <Confirmable value={location.address} />
           </span>
           <span>
-            {location.name}, Lagos, Nigeria
+            {location.name}, {site.area}
           </span>
         </span>
       ),
     },
     {
       icon: "clock",
-      label: "Opening Hours",
+      label: "Opening hours",
       value: <Confirmable value={location.hours} />,
     },
     {

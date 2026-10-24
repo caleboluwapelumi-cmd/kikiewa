@@ -3,9 +3,10 @@ import { Button } from "@/components/Button";
 import { CtaBand } from "@/components/CtaBand";
 import { PageIntro } from "@/components/PageIntro";
 import { ServiceMenu } from "@/components/ServiceMenu";
-import { pages } from "@/data/site";
+import { pages, seo } from "@/data/site";
+import { pageMetadata } from "@/lib/seo";
 
-export const metadata: Metadata = pages.treatments.meta;
+export const metadata: Metadata = pageMetadata(seo.treatments);
 
 export default function TreatmentsPage() {
   return (

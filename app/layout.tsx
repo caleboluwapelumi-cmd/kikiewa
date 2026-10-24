@@ -4,7 +4,8 @@ import { Header } from "@/components/Header";
 import { Footer } from "@/components/Footer";
 import { MenuStateProvider } from "@/components/MenuState";
 import { MobileActionBar } from "@/components/MobileActionBar";
-import { site } from "@/data/site";
+import { seo, site } from "@/data/site";
+import { isProductionSite } from "@/lib/env";
 import "./globals.css";
 
 const bodoniModa = Bodoni_Moda({
@@ -21,19 +22,31 @@ const plusJakartaSans = Plus_Jakarta_Sans({
   display: "swap",
 });
 
+/**
+ * Site-wide defaults. Each page sets its own title, description, canonical
+ * and Open Graph through lib/seo.ts; no canonical here, so pages without one
+ * (such as the 404) never point at the home page.
+ */
 export const metadata: Metadata = {
-  title: {
-    default: site.name + " — Aesthetics, Lagos",
-    template: "%s · " + site.name,
+  metadataBase: new URL(site.url),
+  title: seo.home.title,
+  description: seo.home.description,
+  openGraph: {
+    type: "website",
+    siteName: site.name,
+    locale: site.ogLocale,
+    title: seo.home.title,
+    description: seo.home.description,
   },
-  description:
-    "Elevated beauty, clinical precision, and transformative aesthetic wellness in Lagos. Salon & spa, medical spa & makeover, and the Kikiewa Beauty Institute.",
+  robots: isProductionSite
+    ? { index: true, follow: true }
+    : { index: false, follow: false },
 };
 
 export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
     <html
-      lang="en"
+      lang={site.lang}
       className={`${bodoniModa.variable} ${plusJakartaSans.variable} h-full antialiased`}
     >
       {/* Below md the body reserves the mobile action bar's height (plus the

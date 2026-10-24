@@ -1,7 +1,6 @@
 import { Button } from "@/components/Button";
-import { Confirmable } from "@/components/Confirmable";
 import { Icon } from "@/components/Icon";
-import { courses, enrolment } from "@/data/site";
+import { courses, enrolment, isTBC } from "@/data/site";
 
 /**
  * Beauty Institute admissions. A single framed panel with a plum top rule —
@@ -15,12 +14,14 @@ export function EnrolmentBanner() {
       <div className="shell">
         <div className="grid grid-cols-1 gap-space-2xl border border-t-2 border-border border-t-primary bg-card p-space-lg md:p-14 lg:grid-cols-12 lg:gap-gutter-desktop lg:p-16">
           <div className="flex flex-col lg:col-span-7">
-            <p className="mb-space-lg inline-flex w-fit items-center gap-space-sm border border-accent bg-accent/10 px-space-sm py-space-xs text-label-sm uppercase text-primary">
-              <span aria-hidden="true" className="size-1.5 shrink-0 bg-secondary" />
-              {enrolment.flagLabel}
-              <span aria-hidden="true">·</span>
-              <Confirmable value={enrolment.flag} />
-            </p>
+            {isTBC(enrolment.flag) ? null : (
+              <p className="mb-space-lg inline-flex w-fit items-center gap-space-sm border border-accent bg-accent/10 px-space-sm py-space-xs text-label-sm uppercase text-primary">
+                <span aria-hidden="true" className="size-1.5 shrink-0 bg-secondary" />
+                {enrolment.flagLabel}
+                <span aria-hidden="true">·</span>
+                <span>{enrolment.flag}</span>
+              </p>
+            )}
 
             <h2 className="text-balance text-headline-lg-mobile text-primary lg:text-headline-lg">
               {enrolment.heading}
@@ -37,7 +38,6 @@ export function EnrolmentBanner() {
                 href={enrolment.secondaryCta.href}
                 size="lg"
                 variant="subtle"
-
               >
                 {enrolment.secondaryCta.label}
               </Button>
@@ -62,10 +62,12 @@ export function EnrolmentBanner() {
                     <span className="font-display text-title-lg text-primary">
                       {course.name}
                     </span>
-                    <span className="flex flex-wrap items-baseline gap-x-space-sm text-body-sm text-muted">
-                      Duration
-                      <Confirmable value={course.duration} />
-                    </span>
+                    {isTBC(course.duration) ? null : (
+                        <span className="flex flex-wrap items-baseline gap-x-space-sm text-body-sm text-muted">
+                          Duration
+                          <span>{course.duration}</span>
+                        </span>
+                    )}
                   </span>
                 </li>
               ))}

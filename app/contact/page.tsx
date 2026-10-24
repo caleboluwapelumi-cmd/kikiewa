@@ -2,10 +2,11 @@ import type { Metadata } from "next";
 import { Confirmable } from "@/components/Confirmable";
 import { LocationCard } from "@/components/LocationCard";
 import { PageIntro } from "@/components/PageIntro";
-import { contact, locations, pages } from "@/data/site";
+import { contact, locations, pages, seo } from "@/data/site";
+import { pageMetadata } from "@/lib/seo";
 import { telHref } from "@/lib/phone";
 
-export const metadata: Metadata = pages.contact.meta;
+export const metadata: Metadata = pageMetadata(seo.contact);
 
 /**
  * Also the fallback for every WhatsApp and Call action while those numbers

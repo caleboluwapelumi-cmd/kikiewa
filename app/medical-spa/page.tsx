@@ -6,12 +6,10 @@ import { LocationBlock } from "@/components/LocationBlock";
 import { MedicalSpaHero } from "@/components/MedicalSpaHero";
 import { MedicalSpaIntro } from "@/components/MedicalSpaIntro";
 import { TreatmentCards } from "@/components/TreatmentCards";
-import { medicalSpa, nitelLocation } from "@/data/site";
+import { medicalSpa, nitelLocation, seo } from "@/data/site";
+import { pageMetadata } from "@/lib/seo";
 
-export const metadata: Metadata = {
-  title: medicalSpa.meta.title,
-  description: medicalSpa.meta.description,
-};
+export const metadata: Metadata = pageMetadata(seo.medicalSpa);
 
 export default function MedicalSpaPage() {
   return (

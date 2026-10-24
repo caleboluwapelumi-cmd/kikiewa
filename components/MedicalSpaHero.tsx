@@ -28,9 +28,18 @@ export function MedicalSpaHero() {
               {hero.body}
             </p>
 
-            <div className="mt-space-xl">
+            <div className="mt-space-xl flex flex-wrap items-center gap-x-space-xl gap-y-space-sm">
               <Button href={hero.cta.href} size="lg" icon="arrowRight">
                 {hero.cta.label}
+              </Button>
+              <Button
+                href={hero.secondaryCta.href}
+                size="lg"
+                variant="quiet"
+                icon="whatsapp"
+                iconPosition="leading"
+              >
+                {hero.secondaryCta.label}
               </Button>
             </div>
           </div>

@@ -2,35 +2,17 @@ import type { Metadata } from "next";
 import { CtaBand } from "@/components/CtaBand";
 import { ImageFrame } from "@/components/ImageFrame";
 import { PageIntro } from "@/components/PageIntro";
-import { gallery, pages, type DivisionSlug } from "@/data/site";
+import { gallery, galleryEmpty, gallerySections, pages, seo } from "@/data/site";
+import { pageMetadata } from "@/lib/seo";
 
-export const metadata: Metadata = pages.gallery.meta;
-
-// DRAFT COPY - client approval needed
-const sections: { division: DivisionSlug; title: string; empty: string }[] = [
-  {
-    division: "salon-spa",
-    title: "Salon & Spa",
-    empty: "Photographs of the Ebute salon and spa will appear here.",
-  },
-  {
-    division: "medical-spa",
-    title: "Medical Spa & Makeover",
-    empty: "Photographs of the Nitel practice will appear here. We never show client faces or before-and-after images without written consent.",
-  },
-  {
-    division: "institute",
-    title: "Beauty Institute",
-    empty: "Photographs of the institute's teaching rooms will appear here.",
-  },
-];
+export const metadata: Metadata = pageMetadata(seo.gallery);
 
 export default function GalleryPage() {
   return (
     <>
       <PageIntro copy={pages.gallery}>
         <nav aria-label="Gallery sections" className="flex flex-wrap gap-x-space-lg gap-y-space-sm">
-          {sections.map((section) => (
+          {gallerySections.map((section) => (
             <a
               key={section.division}
               href={"#" + section.division}
@@ -42,7 +24,7 @@ export default function GalleryPage() {
         </nav>
       </PageIntro>
 
-      {sections.map((section) => {
+      {gallerySections.map((section) => {
         const items = gallery.filter((item) => item.division === section.division);
         return (
           <section
@@ -70,7 +52,7 @@ export default function GalleryPage() {
                 </ul>
               ) : (
                 <p className="mt-space-md max-w-[56ch] text-pretty text-body-md text-muted">
-                  {section.empty}
+                  {galleryEmpty}
                 </p>
               )}
             </div>

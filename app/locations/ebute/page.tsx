@@ -1,12 +1,9 @@
 import type { Metadata } from "next";
 import { LocationPage } from "@/components/LocationPage";
-import { ebuteLocation } from "@/data/site";
+import { ebuteLocation, seo } from "@/data/site";
+import { pageMetadata } from "@/lib/seo";
 
-export const metadata: Metadata = {
-  title: "Salon & Spa in Ebute, Lagos",
-  description:
-    "The Kikiewa Ebute branch: salon and spa care in Lagos. Address, opening hours and booking.",
-};
+export const metadata: Metadata = pageMetadata(seo.ebute);
 
 export default function EbutePage() {
   return <LocationPage location={ebuteLocation} />;

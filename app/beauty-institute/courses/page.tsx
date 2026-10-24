@@ -2,9 +2,10 @@ import type { Metadata } from "next";
 import { CourseCards } from "@/components/CourseCards";
 import { CtaBand } from "@/components/CtaBand";
 import { PageIntro } from "@/components/PageIntro";
-import { pages } from "@/data/site";
+import { pages, seo } from "@/data/site";
+import { pageMetadata } from "@/lib/seo";
 
-export const metadata: Metadata = pages.courses.meta;
+export const metadata: Metadata = pageMetadata(seo.courses);
 
 export default function CoursesPage() {
   return (

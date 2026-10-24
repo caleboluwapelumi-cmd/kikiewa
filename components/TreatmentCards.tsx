@@ -1,7 +1,6 @@
-import { Confirmable } from "@/components/Confirmable";
 import { Icon } from "@/components/Icon";
 import { SectionHeading } from "@/components/SectionHeading";
-import { categoriesFor, medicalSpa } from "@/data/site";
+import { categoriesFor, isTBC, medicalSpa } from "@/data/site";
 
 /**
  * The six treatment areas, set as a ruled register — a grid of cells divided
@@ -37,9 +36,9 @@ export function TreatmentCards() {
               <h3 className="mt-space-md text-headline-sm text-primary md:mt-space-xl">
                 {treatment.name}
               </h3>
-              <p className="mt-space-sm text-body-sm text-muted">
-                <Confirmable value={treatment.summary} />
-              </p>
+              {isTBC(treatment.summary) ? null : (
+                <p className="mt-space-sm text-body-sm text-muted">{treatment.summary}</p>
+              )}
             </li>
           ))}
         </ul>

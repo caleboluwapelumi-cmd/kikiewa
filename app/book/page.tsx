@@ -1,11 +1,11 @@
 import type { Metadata } from "next";
-import { Confirmable } from "@/components/Confirmable";
 import { PageIntro } from "@/components/PageIntro";
 import { WhatsAppAction } from "@/components/WhatsAppAction";
-import { bookingPaths, locations, pages } from "@/data/site";
+import { bookingPaths, locations, pages, seo } from "@/data/site";
+import { pageMetadata } from "@/lib/seo";
 import { telHref } from "@/lib/phone";
 
-export const metadata: Metadata = pages.book.meta;
+export const metadata: Metadata = pageMetadata(seo.book);
 
 /**
  * Booking starts on WhatsApp or by phone until the online booking flow is
@@ -30,7 +30,7 @@ export default function BookPage() {
                   <h2 className="text-headline-sm text-primary">{path.title}</h2>
                   {location ? (
                     <p className="mt-space-xs text-label-sm uppercase text-secondary">
-                      {location.name} branch
+                      {location.area}
                     </p>
                   ) : null}
                   <p className="mt-space-sm mb-space-lg text-pretty text-body-md text-muted">
@@ -38,16 +38,12 @@ export default function BookPage() {
                   </p>
                   <div className="mt-auto flex flex-col gap-space-md">
                     <WhatsAppAction label={path.cta} message={path.whatsappMessage} />
-                    {location ? (
+                    {location && tel ? (
                       <p className="flex flex-wrap items-baseline gap-x-space-sm text-body-sm text-foreground">
                         <span className="text-label-sm uppercase text-muted">Call</span>
-                        {tel ? (
-                          <a href={tel} className="link-rule hover:text-secondary">
-                            {location.phone}
-                          </a>
-                        ) : (
-                          <Confirmable value={location.phone} />
-                        )}
+                        <a href={tel} className="link-rule hover:text-secondary">
+                          {location.phone}
+                        </a>
                       </p>
                     ) : null}
                   </div>

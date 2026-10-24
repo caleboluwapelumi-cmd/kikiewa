@@ -1,8 +1,7 @@
 import Link from "next/link";
-import { Confirmable } from "@/components/Confirmable";
 import { Icon } from "@/components/Icon";
 import { SectionHeading } from "@/components/SectionHeading";
-import { categoriesFor, salonSpa } from "@/data/site";
+import { categoriesFor, isTBC, salonSpa } from "@/data/site";
 
 /**
  * The six salon & spa categories. Hairline cards like the rest of the site,
@@ -35,9 +34,9 @@ export function ServiceCategories() {
               <h3 className="mt-space-lg text-headline-sm text-primary">
                 {category.name}
               </h3>
-              <p className="mt-space-sm text-body-sm text-muted">
-                <Confirmable value={category.summary} />
-              </p>
+              {isTBC(category.summary) ? null : (
+                <p className="mt-space-sm text-body-sm text-muted">{category.summary}</p>
+              )}
             </li>
           ))}
         </ul>

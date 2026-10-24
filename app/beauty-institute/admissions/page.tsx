@@ -4,9 +4,10 @@ import { Confirmable } from "@/components/Confirmable";
 import { CtaBand } from "@/components/CtaBand";
 import { PageIntro } from "@/components/PageIntro";
 import { WhatsAppAction } from "@/components/WhatsAppAction";
-import { courses, pages } from "@/data/site";
+import { courses, instituteActions, pages, seo } from "@/data/site";
+import { pageMetadata } from "@/lib/seo";
 
-export const metadata: Metadata = pages.admissions.meta;
+export const metadata: Metadata = pageMetadata(seo.admissions);
 
 export default function AdmissionsPage() {
   return (
@@ -14,11 +15,11 @@ export default function AdmissionsPage() {
       <PageIntro copy={pages.admissions}>
         <div className="flex flex-wrap items-start gap-x-space-xl gap-y-space-md">
           <WhatsAppAction
-            label="Ask about a course"
-            message="Hello Kikiewa, I would like to ask about a course at the Beauty Institute."
+            label={instituteActions.whatsappLabel}
+            message={instituteActions.whatsappMessage}
           />
-          <Button href="/beauty-institute/courses" variant="quiet" icon="arrowRight">
-            Compare courses
+          <Button href={instituteActions.viewCourses.href} variant="quiet" icon="arrowRight">
+            {instituteActions.viewCourses.label}
           </Button>
         </div>
       </PageIntro>

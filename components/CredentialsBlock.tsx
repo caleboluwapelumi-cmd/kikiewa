@@ -1,16 +1,16 @@
 import { Confirmable } from "@/components/Confirmable";
 import { Icon } from "@/components/Icon";
 import { SectionHeading } from "@/components/SectionHeading";
-import { medicalSpa } from "@/data/site";
+import { hasConfirmed, medicalSpa } from "@/data/site";
 
 /**
- * Licence and credentials. Every value stays "To be confirmed" until it is
- * verified — the page states what will be published here rather than
- * implying it already is.
- * Set as a two-column record (label | value), like a register entry.
+ * Licence and credentials, set as a two-column record (label | value), like
+ * a register entry. Renders nothing until at least one value is verified;
+ * after that, the rest show "To be confirmed".
  */
 export function CredentialsBlock() {
   const { credentials, credentialsIntro } = medicalSpa;
+  if (!hasConfirmed(credentials.map((credential) => credential.value))) return null;
 
   return (
     <section className="section-y w-full border-y border-border bg-surface">

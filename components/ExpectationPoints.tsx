@@ -19,7 +19,7 @@ export function ExpectationPoints() {
           className="mb-space-2xl"
         />
 
-        <ul className="grid grid-cols-1 gap-space-xl md:grid-cols-3 md:gap-gutter-desktop">
+        <ul className="grid grid-cols-1 gap-space-xl md:grid-cols-2 md:gap-gutter-desktop lg:grid-cols-4">
           {expectations.map((point) => (
             <li key={point.title} className="flex flex-col border-t border-accent pt-space-lg">
               <Icon name={point.icon} className="size-6 text-secondary" />

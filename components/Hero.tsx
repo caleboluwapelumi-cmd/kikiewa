@@ -1,8 +1,7 @@
 import { Button } from "@/components/Button";
-import { Confirmable } from "@/components/Confirmable";
 import { Icon } from "@/components/Icon";
 import { ImageFrame } from "@/components/ImageFrame";
-import { hero } from "@/data/site";
+import { hero, isTBC } from "@/data/site";
 
 export function Hero() {
   return (
@@ -32,22 +31,6 @@ export function Hero() {
                 {hero.secondaryCta.label}
               </Button>
             </div>
-
-            <dl className="mt-space-2xl grid grid-cols-1 border-t border-border sm:grid-cols-3 sm:divide-x sm:divide-border">
-              {hero.stats.map((stat) => (
-                <div
-                  key={stat.value}
-                  className="flex flex-col gap-space-sm border-b border-border py-space-md sm:border-b-0 sm:px-space-lg sm:pt-space-lg sm:pb-0 sm:first:pl-0"
-                >
-                  <dt className="font-display text-headline-sm text-primary">
-                    {stat.value}
-                  </dt>
-                  <dd className="text-label-sm uppercase text-muted">
-                    <Confirmable value={stat.label} />
-                  </dd>
-                </div>
-              ))}
-            </dl>
           </div>
 
           {/* Visual column — asymmetric 5 of 12 */}
@@ -70,16 +53,18 @@ export function Hero() {
               </div>
             </ImageFrame>
 
-            {/* Credential badge, offset over the frame edge */}
-            <div className="absolute top-10 -left-6 hidden max-w-[13rem] flex-col gap-space-sm border border-border bg-card p-space-lg shadow-float sm:flex lg:-left-12">
-              <Icon name="shield" className="size-5 text-secondary" />
-              <span className="font-display text-title-lg text-primary">
-                {hero.badge.title}
-              </span>
-              <span className="text-body-sm text-muted">
-                <Confirmable value={hero.badge.body} />
-              </span>
-            </div>
+            {/* Credential badge, offset over the frame edge. Hidden until confirmed. */}
+            {isTBC(hero.badge.body) ? null : (
+              <div className="absolute top-10 -left-6 hidden max-w-[13rem] flex-col gap-space-sm border border-border bg-card p-space-lg shadow-float sm:flex lg:-left-12">
+                <Icon name="shield" className="size-5 text-secondary" />
+                <span className="font-display text-title-lg text-primary">
+                  {hero.badge.title}
+                </span>
+                <span className="text-body-sm text-muted">
+                  {hero.badge.body}
+                </span>
+              </div>
+            )}
           </div>
         </div>
       </div>

@@ -4,10 +4,11 @@ import { Confirmable } from "@/components/Confirmable";
 import { ConsultationSteps } from "@/components/ConsultationSteps";
 import { CtaBand } from "@/components/CtaBand";
 import { PageIntro } from "@/components/PageIntro";
-import { pages, services } from "@/data/site";
+import { pages, services, seo } from "@/data/site";
+import { pageMetadata } from "@/lib/seo";
 import { formatDuration, formatNaira } from "@/lib/format";
 
-export const metadata: Metadata = pages.consultation.meta;
+export const metadata: Metadata = pageMetadata(seo.consultation);
 
 const consultation = services.find((service) => service.slug === "consultation");
 

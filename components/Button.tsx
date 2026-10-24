@@ -1,7 +1,13 @@
 import Link from "next/link";
 import { Icon, type IconName } from "@/components/Icon";
 
-export type ButtonVariant = "primary" | "outline" | "quiet" | "subtle" | "inverse";
+export type ButtonVariant =
+  | "primary"
+  | "outline"
+  | "quiet"
+  | "subtle"
+  | "inverse"
+  | "inverseOutline";
 export type ButtonSize = "sm" | "md" | "lg";
 
 /**
@@ -29,6 +35,9 @@ const variants: Record<ButtonVariant, string> = {
     "border border-border-strong text-primary hover:border-primary hover:bg-surface",
   // Solid light action on a plum surface
   inverse: "bg-on-primary text-primary hover:bg-surface",
+  // Hairline secondary action on a plum surface
+  inverseOutline:
+    "border border-on-primary/40 text-on-primary hover:border-on-primary hover:bg-on-primary/10",
 };
 
 // Heights keep every action at or above a 44px touch target.

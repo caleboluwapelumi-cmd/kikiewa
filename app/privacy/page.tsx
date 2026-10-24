@@ -1,18 +1,11 @@
 import type { Metadata } from "next";
-import { TbcLabel } from "@/components/Confirmable";
 import { PageIntro } from "@/components/PageIntro";
-import { pages } from "@/data/site";
+import { pages, seo } from "@/data/site";
+import { pageMetadata } from "@/lib/seo";
 
-export const metadata: Metadata = pages.privacy.meta;
+export const metadata: Metadata = pageMetadata(seo.privacy);
 
 /** The policy text itself must come from the client; nothing is drafted here. */
 export default function PrivacyPage() {
-  return (
-    <PageIntro copy={pages.privacy} className="pb-space-3xl">
-      <p className="flex flex-wrap items-baseline gap-x-space-sm border-y border-border-strong py-space-md text-body-md text-foreground">
-        Policy text
-        <TbcLabel />
-      </p>
-    </PageIntro>
-  );
+  return <PageIntro copy={pages.privacy} className="pb-space-3xl" />;
 }

@@ -29,14 +29,25 @@ export function CtaBand() {
             <p className="text-pretty text-body-lg text-on-primary/80">
               {ctaBand.body}
             </p>
-            <Button
-              href={ctaBand.cta.href}
-              variant="inverse"
-              size="lg"
-              icon="calendar"
-            >
-              {ctaBand.cta.label}
-            </Button>
+            <div className="flex flex-wrap items-center gap-space-md">
+              <Button
+                href={ctaBand.cta.href}
+                variant="inverse"
+                size="lg"
+                icon="calendar"
+              >
+                {ctaBand.cta.label}
+              </Button>
+              <Button
+                href={ctaBand.secondaryCta.href}
+                variant="inverseOutline"
+                size="lg"
+                icon="whatsapp"
+                iconPosition="leading"
+              >
+                {ctaBand.secondaryCta.label}
+              </Button>
+            </div>
           </div>
         </div>
       </div>

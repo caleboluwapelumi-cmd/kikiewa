@@ -1,7 +1,6 @@
-import { Confirmable } from "@/components/Confirmable";
 import { Icon } from "@/components/Icon";
 import { SectionHeading } from "@/components/SectionHeading";
-import { medicalSpa } from "@/data/site";
+import { isTBC, medicalSpa } from "@/data/site";
 
 /**
  * The consultation pathway. Hairline dividers instead of cards, so the three
@@ -21,11 +20,11 @@ export function ConsultationSteps() {
           className="mb-space-2xl"
         />
 
-        <ol className="grid grid-cols-1 divide-y divide-border border-y border-border-strong lg:grid-cols-3 lg:divide-x lg:divide-y-0">
+        <ol className="grid grid-cols-1 divide-y divide-border border-y border-border-strong lg:grid-cols-4 lg:divide-x lg:divide-y-0">
           {steps.map((step) => (
             <li
               key={step.step}
-              className="flex flex-col py-space-xl lg:px-10 lg:py-space-2xl lg:first:pl-0 lg:last:pr-0"
+              className="flex flex-col py-space-xl lg:px-8 lg:py-space-2xl lg:first:pl-0 lg:last:pr-0"
             >
               <div className="flex items-end justify-between">
                 <span
@@ -44,10 +43,10 @@ export function ConsultationSteps() {
               <p className="mt-space-sm max-w-[42ch] text-pretty text-body-md text-muted">
                 {step.body}
               </p>
-              {step.note ? (
+              {step.note && !isTBC(step.note.value) ? (
                 <p className="mt-space-md flex flex-wrap items-baseline gap-x-space-sm gap-y-space-xs text-label-sm uppercase text-foreground">
                   {step.note.label}
-                  <Confirmable value={step.note.value} />
+                  <span>{step.note.value}</span>
                 </p>
               ) : null}
             </li>

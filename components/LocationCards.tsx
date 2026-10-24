@@ -3,7 +3,7 @@ import { PeacockDivider } from "@/components/brand/PeacockDivider";
 import { SectionHeading } from "@/components/SectionHeading";
 import { locations, locationsIntro } from "@/data/site";
 
-/** Both branches, two-up on desktop. Carries the home page's one peacock divider. */
+/** Both locations, two-up on desktop. Carries the home page's one peacock divider. */
 export function LocationCards() {
   return (
     <section className="section-y w-full bg-background">

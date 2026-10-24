@@ -9,7 +9,8 @@
     "lint": "eslint",
     "typecheck": "tsc --noEmit",
     "brand:generate": "node scripts/generate-brand-paths.mjs",
-    "check:images": "node scripts/check-images.mjs"
+    "check:images": "node scripts/check-images.mjs",
+    "check:seo": "node scripts/check-seo.mjs"
   },
   "dependencies": {
     "next": "16.4.3",

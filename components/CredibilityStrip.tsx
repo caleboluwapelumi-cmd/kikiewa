@@ -1,13 +1,16 @@
 import { Confirmable } from "@/components/Confirmable";
 import { Icon } from "@/components/Icon";
 import { SectionHeading } from "@/components/SectionHeading";
-import { credibility, credibilityIntro } from "@/data/site";
+import { credibility, credibilityIntro, hasConfirmed } from "@/data/site";
 
 /**
  * Assurance standards, set as a ruled register rather than cards: a
  * governance list should read like a document, not an offer.
+ * Renders nothing until at least one detail is confirmed.
  */
 export function CredibilityStrip() {
+  if (!hasConfirmed(credibility.map((item) => item.detail))) return null;
+
   return (
     <section className="section-y w-full border-y border-border bg-surface">
       <div className="shell">

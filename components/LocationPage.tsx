@@ -1,15 +1,14 @@
 import { Button } from "@/components/Button";
-import { TbcLabel } from "@/components/Confirmable";
 import { CtaBand } from "@/components/CtaBand";
 import { Icon } from "@/components/Icon";
 import { ImageFrame } from "@/components/ImageFrame";
 import { LocationDetails } from "@/components/LocationDetails";
 import { SectionHeading } from "@/components/SectionHeading";
 import { WhatsAppAction } from "@/components/WhatsAppAction";
-import type { Location } from "@/data/site";
+import { whatsappMessages, type Location } from "@/data/site";
 
 /**
- * One branch per page (/locations/ebute, /locations/nitel), for local
+ * One location per page (/locations/ebute, /locations/nitel), for local
  * search: what happens there, its details, how to book, and the map.
  */
 export function LocationPage({ location }: { location: Location }) {
@@ -34,22 +33,21 @@ export function LocationPage({ location }: { location: Location }) {
                   {location.primaryCta.label}
                 </Button>
                 <WhatsAppAction
-                  label="Message us"
+                  label="Chat on WhatsApp"
                   variant="subtle"
-                  message={`Hello Kikiewa, I have a question about the ${location.name} branch.`}
+                  message={location.id === "nitel" ? whatsappMessages.medical : whatsappMessages.salon}
                 />
               </div>
             </div>
 
             <ImageFrame
-              alt={`Map showing the Kikiewa ${location.name} branch in Lagos`}
+              alt={`Map showing Kikiewa ${location.shortName}, Ikorodu`}
               ratio="aspect-[4/3]"
               sizes="(max-width: 1024px) 100vw, 45vw"
             >
               <div className="absolute inset-x-6 bottom-6 flex items-center gap-space-sm border border-border bg-background/95 p-space-md md:inset-x-8 md:bottom-8">
                 <Icon name="pin" className="size-4 shrink-0 text-secondary" />
-                <span className="text-label-sm uppercase text-foreground">Map</span>
-                <TbcLabel />
+                <span className="text-label-sm uppercase text-foreground">{location.area}</span>
               </div>
             </ImageFrame>
           </div>

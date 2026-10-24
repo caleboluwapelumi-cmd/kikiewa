@@ -3,20 +3,21 @@ import { Button } from "@/components/Button";
 import { CourseCards } from "@/components/CourseCards";
 import { CtaBand } from "@/components/CtaBand";
 import { PageIntro } from "@/components/PageIntro";
-import { pages } from "@/data/site";
+import { instituteActions, pages, seo } from "@/data/site";
+import { pageMetadata } from "@/lib/seo";
 
-export const metadata: Metadata = pages.institute.meta;
+export const metadata: Metadata = pageMetadata(seo.institute);
 
 export default function BeautyInstitutePage() {
   return (
     <>
       <PageIntro copy={pages.institute}>
         <div className="flex flex-wrap items-center gap-x-space-xl gap-y-space-sm">
-          <Button href="/beauty-institute/admissions" size="lg" icon="arrowRight">
-            Admissions
+          <Button href={instituteActions.viewCourses.href} size="lg" icon="arrowRight">
+            {instituteActions.viewCourses.label}
           </Button>
-          <Button href="/beauty-institute/courses" size="lg" variant="quiet">
-            All courses
+          <Button href={instituteActions.bookVisit.href} size="lg" variant="quiet">
+            {instituteActions.bookVisit.label}
           </Button>
         </div>
       </PageIntro>

@@ -1,11 +1,10 @@
 "use client";
 
 import Link from "next/link";
+import { CallSheet } from "@/components/CallSheet";
 import { Icon, type IconName } from "@/components/Icon";
 import { useMenuState } from "@/components/MenuState";
-import { bookingHref, contact, contactHref, whatsappGreeting } from "@/data/site";
-import { telHref } from "@/lib/phone";
-import { whatsappLink } from "@/lib/whatsapp";
+import { bookingHref, whatsappHref } from "@/data/site";
 
 /**
  * Sticky Book · WhatsApp · Call bar for phones (below md). Each target is
@@ -14,14 +13,17 @@ import { whatsappLink } from "@/lib/whatsapp";
  * The body reserves the same height (app/layout.tsx) so it never covers
  * content.
  *
- * WhatsApp and Call open the contact page until those numbers are confirmed.
+ * WhatsApp opens the contact page until the number is confirmed. Call opens
+ * a "Which location?" sheet (components/CallSheet.tsx).
  */
 
-const actions: { label: string; href: string; icon: IconName; primary?: boolean }[] = [
+const links: { label: string; href: string; icon: IconName; primary?: boolean }[] = [
   { label: "Book", href: bookingHref, icon: "calendar", primary: true },
-  { label: "WhatsApp", href: whatsappLink(contact.whatsapp, whatsappGreeting), icon: "whatsapp" },
-  { label: "Call", href: telHref(contact.phone) ?? contactHref, icon: "phone" },
+  { label: "WhatsApp", href: whatsappHref, icon: "whatsapp" },
 ];
+
+const itemClass =
+  "flex h-full min-h-11 w-full flex-col items-center justify-center gap-1 text-label-sm uppercase transition-colors duration-200";
 
 export function MobileActionBar() {
   const { open } = useMenuState();
@@ -36,12 +38,12 @@ export function MobileActionBar() {
       ].join(" ")}
     >
       <ul className="grid h-action-bar grid-cols-3 divide-x divide-border">
-        {actions.map((action) => (
+        {links.map((action) => (
           <li key={action.label}>
             <Link
               href={action.href}
               className={[
-                "flex h-full min-h-11 flex-col items-center justify-center gap-1 text-label-sm uppercase transition-colors duration-200",
+                itemClass,
                 action.primary
                   ? "bg-primary text-on-primary hover:bg-primary-hover"
                   : "text-primary hover:bg-surface",
@@ -52,6 +54,9 @@ export function MobileActionBar() {
             </Link>
           </li>
         ))}
+        <li>
+          <CallSheet className={itemClass + " text-primary hover:bg-surface"} />
+        </li>
       </ul>
     </nav>
   );
