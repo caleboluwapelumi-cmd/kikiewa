@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { CtaBand } from "@/components/CtaBand";
 import { ExpectationPoints } from "@/components/ExpectationPoints";
 import { GalleryStrip } from "@/components/GalleryStrip";
+import { IntroStatement } from "@/components/IntroStatement";
 import { LocationBlock } from "@/components/LocationBlock";
 import { SalonSpaHero } from "@/components/SalonSpaHero";
 import { ServiceCategories } from "@/components/ServiceCategories";
@@ -15,9 +16,16 @@ export default function SalonSpaPage() {
   return (
     <>
       <SalonSpaHero />
+      <IntroStatement text={salonSpa.intro} rule={false} />
       <ServiceCategories />
       <ExpectationPoints />
-      <GalleryStrip />
+      {/* The page's one peacock divider */}
+      <GalleryStrip
+        eyebrow={salonSpa.gallery.eyebrow}
+        heading={salonSpa.gallery.heading}
+        items={salonSpa.gallery.items}
+        divider
+      />
       <LocationBlock
         location={ebuteLocation}
         copy={salonSpa.location}

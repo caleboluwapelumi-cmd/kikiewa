@@ -30,8 +30,11 @@ export function Footer() {
             <Link href="/" className="-ml-1 w-fit p-1">
               <Logo variant="mono" className="h-16 w-auto text-cream" />
             </Link>
-            <p className="max-w-sm text-pretty text-body-md text-on-primary/75">
-              {footer.blurb}
+            <p className="flex flex-col gap-space-xs">
+              <span className="font-display text-headline-sm text-on-primary">
+                {footer.tagline}
+              </span>
+              <span className="text-body-md text-on-primary/75">{footer.place}</span>
             </p>
             {isTBC(footer.licence.value) ? null : (
               <div className="pt-space-xs">
@@ -45,7 +48,7 @@ export function Footer() {
 
           <nav aria-label={footer.exploreHeading} className="flex flex-col gap-space-sm lg:col-span-3">
             <h2 className={columnHeading}>{footer.exploreHeading}</h2>
-            {footer.divisionLinks.map((link) => (
+            {footer.exploreLinks.map((link) => (
               <Link key={link.href} href={link.href} className={linkClass}>
                 {link.label}
               </Link>

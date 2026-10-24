@@ -17,7 +17,7 @@ export function LocationPage({ location }: { location: Location }) {
       <section className="w-full bg-background pt-space-2xl pb-space-3xl md:pt-space-3xl lg:pt-28 lg:pb-32">
         <div className="shell">
           <SectionHeading
-            eyebrow={location.services + " • " + location.name}
+            eyebrow={location.services + " · " + location.area}
             heading={location.title}
             body={location.body}
             as="h1"
@@ -41,7 +41,7 @@ export function LocationPage({ location }: { location: Location }) {
             </div>
 
             <ImageFrame
-              alt={`Map showing Kikiewa ${location.shortName}, Ikorodu`}
+              alt={`Map showing Kikiewa, ${location.area}`}
               ratio="aspect-[4/3]"
               sizes="(max-width: 1024px) 100vw, 45vw"
             >

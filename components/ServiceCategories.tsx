@@ -4,7 +4,8 @@ import { SectionHeading } from "@/components/SectionHeading";
 import { categoriesFor, isTBC, salonSpa } from "@/data/site";
 
 /**
- * The six salon & spa categories. Hairline cards like the rest of the site,
+ * The six hair & beauty categories. Each card's id is its slug, the anchor
+ * the nav and the Home tiles link to (/salon-spa#hair and so on). Hairline cards like the rest of the site,
  * warmed with a square accent-washed icon tile — the service list under each
  * title stays "To be confirmed" until the client confirms it.
  */
@@ -26,7 +27,8 @@ export function ServiceCategories() {
           {categories.map((category) => (
             <li
               key={category.slug}
-              className="flex flex-col border border-border bg-card p-space-lg md:p-8 lg:p-10"
+              id={category.slug}
+              className="flex flex-col border border-border bg-card p-space-lg transition-colors duration-300 target:border-accent md:p-8 lg:p-10"
             >
               <span className="flex size-12 items-center justify-center bg-surface-warm text-secondary">
                 <Icon name={category.icon} className="size-5" />

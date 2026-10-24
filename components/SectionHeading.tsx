@@ -1,5 +1,6 @@
 type SectionHeadingProps = {
-  eyebrow: string;
+  /** Small uppercase label above the heading. Leave out for a quieter section. */
+  eyebrow?: string;
   heading: string;
   body?: string;
   /** Heading level — sections use h2, page titles h1. */
@@ -9,14 +10,14 @@ type SectionHeadingProps = {
   align?: "start" | "center";
   /** Light surfaces by default; "dark" for text on the plum bands. */
   tone?: "light" | "dark";
-  /** Rendered to the right of the heading on desktop (divisions section). */
+  /** Rendered to the right of the heading on desktop. */
   aside?: string;
   className?: string;
 };
 
 /**
  * Eyebrow, heading and optional standfirst. The short accent hairline before
- * the eyebrow is the one recurring signature across all three divisions.
+ * the eyebrow is the one recurring signature across the site.
  */
 export function SectionHeading({
   eyebrow,
@@ -46,7 +47,7 @@ export function SectionHeading({
     <div
       className={[
         "flex flex-col gap-space-lg",
-        aside ? "md:flex-row md:items-end md:justify-between md:gap-gutter-desktop" : "",
+        aside ? "lg:flex-row lg:items-end lg:justify-between lg:gap-gutter-desktop" : "",
         centered ? "items-center text-center" : "",
         className,
       ].join(" ")}
@@ -55,24 +56,26 @@ export function SectionHeading({
         className={[
           "flex flex-col",
           centered ? "items-center" : "",
-          aside ? "md:max-w-2xl" : "",
+          aside ? "lg:max-w-2xl" : "",
         ].join(" ")}
       >
-        <span
-          className={[
-            "mb-space-md flex items-center gap-3 text-label-sm uppercase",
-            dark ? "text-on-primary/75" : "text-secondary",
-          ].join(" ")}
-        >
+        {eyebrow ? (
           <span
-            aria-hidden="true"
             className={[
-              "inline-block h-px w-8 shrink-0",
-              dark ? "bg-on-primary/40" : "bg-accent",
+              "mb-space-md flex items-center gap-3 text-label-sm uppercase",
+              dark ? "text-on-primary/75" : "text-secondary",
             ].join(" ")}
-          />
-          {eyebrow}
-        </span>
+          >
+            <span
+              aria-hidden="true"
+              className={[
+                "inline-block h-px w-8 shrink-0",
+                dark ? "bg-on-primary/40" : "bg-accent",
+              ].join(" ")}
+            />
+            {eyebrow}
+          </span>
+        ) : null}
         <Tag className={headingClass}>{heading}</Tag>
         {body ? (
           <p
@@ -87,7 +90,7 @@ export function SectionHeading({
       </div>
 
       {aside ? (
-        <p className="max-w-md text-pretty text-body-md text-muted md:pb-1">
+        <p className="max-w-md text-pretty text-body-md text-muted lg:pb-1">
           {aside}
         </p>
       ) : null}

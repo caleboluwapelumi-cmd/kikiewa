@@ -17,7 +17,6 @@ export function CtaBand() {
       <div className="shell">
         <div className="grid grid-cols-1 gap-space-xl lg:grid-cols-12 lg:items-end lg:gap-gutter-desktop">
           <SectionHeading
-            eyebrow={ctaBand.eyebrow}
             heading={ctaBand.heading}
             tone="dark"
             size="xl"

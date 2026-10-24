@@ -2,8 +2,9 @@ import type { Metadata } from "next";
 import { Button } from "@/components/Button";
 import { CourseCards } from "@/components/CourseCards";
 import { CtaBand } from "@/components/CtaBand";
+import { IntroStatement } from "@/components/IntroStatement";
 import { PageIntro } from "@/components/PageIntro";
-import { instituteActions, pages, seo } from "@/data/site";
+import { instituteActions, instituteIntro, pages, seo } from "@/data/site";
 import { pageMetadata } from "@/lib/seo";
 
 export const metadata: Metadata = pageMetadata(seo.institute);
@@ -21,6 +22,7 @@ export default function BeautyInstitutePage() {
           </Button>
         </div>
       </PageIntro>
+      <IntroStatement text={instituteIntro} />
       <section className="section-y w-full border-t border-border bg-surface">
         <div className="shell">
           <CourseCards />

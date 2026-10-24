@@ -1,25 +1,41 @@
 import type { Metadata } from "next";
+import { AcademyBand } from "@/components/AcademyBand";
+import { BrandPromise } from "@/components/BrandPromise";
 import { CtaBand } from "@/components/CtaBand";
-import { DivisionCards } from "@/components/DivisionCards";
-import { EnrolmentBanner } from "@/components/EnrolmentBanner";
+import { Favourites } from "@/components/Favourites";
+import { FeatureSplit } from "@/components/FeatureSplit";
+import { GalleryStrip } from "@/components/GalleryStrip";
 import { Hero } from "@/components/Hero";
 import { LocationCards } from "@/components/LocationCards";
-import { seo } from "@/data/site";
+import { OfferingTiles } from "@/components/OfferingTiles";
+import { homeGallery, seo, skinFeature, visitFeature } from "@/data/site";
 import { pageMetadata } from "@/lib/seo";
 
 export const metadata: Metadata = pageMetadata(seo.home);
 
 /**
- * Credentials, credibility, team and reviews stay off Home until the client
- * confirms them (copy deck: hide, don't placeholder).
+ * Home, in the copy deck's v2 order. Reviews, team, credentials and the
+ * brand story stay off until the client confirms them (hide, don't
+ * placeholder). The peacock divider appears once, over "Made to be seen".
  */
 export default function Home() {
   return (
     <>
       <Hero />
-      <DivisionCards />
+      <BrandPromise />
+      <OfferingTiles />
+      <FeatureSplit copy={skinFeature} imageSide="right" surface="surface" />
+      <FeatureSplit copy={visitFeature} imageSide="left" tone="warm" />
+      <Favourites />
+      <GalleryStrip
+        heading={homeGallery.heading}
+        body={homeGallery.body}
+        items={homeGallery.items}
+        link={homeGallery.link}
+        divider
+      />
+      <AcademyBand />
       <LocationCards />
-      <EnrolmentBanner />
       <CtaBand />
     </>
   );

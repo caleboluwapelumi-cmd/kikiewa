@@ -29,7 +29,7 @@ const whatsappLabel =
 /**
  * Main header bar: logo, primary navigation, WhatsApp and Book.
  *
- * Desktop (lg+): Salon & Spa, Medical Spa and Beauty Institute open
+ * Desktop (lg+): Hair & Beauty, Skin & Aesthetics and Academy open
  * disclosure menus. Each is a button with aria-expanded; click or
  * Enter/Space toggles it, Escape closes it and returns focus to the button,
  * and it closes when focus or a click moves elsewhere. Nothing opens on

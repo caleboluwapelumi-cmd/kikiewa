@@ -1,12 +1,12 @@
 import { Button } from "@/components/Button";
 import { Icon } from "@/components/Icon";
 import { LocationDetails } from "@/components/LocationDetails";
-import type { Location } from "@/data/site";
+import { site, type Location } from "@/data/site";
 
 /**
- * Compact branch card: badge, title, blurb, the branch details and two
- * actions. Sized to sit two-up inside a shell, unlike the full-width
- * LocationBlock used by the division pages.
+ * Compact location card: the place name, what you come there for, the
+ * details and two actions. Sized to sit two-up inside a shell, unlike the
+ * full-width LocationBlock used on /salon-spa and /medical-spa.
  *
  * Details are hairline-ruled rows rather than nested boxes, so the card stays
  * one surface deep at every width.
@@ -23,19 +23,15 @@ export function LocationCard({
 }: LocationCardProps) {
   return (
     <article className="flex flex-col border border-border bg-card p-space-lg md:p-10 lg:p-12">
-      <div className="mb-space-lg flex items-center justify-between gap-space-md">
-        <span className="border border-border px-space-sm py-space-xs text-label-sm uppercase text-secondary">
-          {location.badge}
-        </span>
+      <div className="mb-space-md flex items-center justify-between gap-space-md">
+        <span className="text-label-sm uppercase text-secondary">{site.area}</span>
         <Icon name={location.icon} className="size-5 shrink-0 text-secondary" />
       </div>
 
-      <Title className="text-balance text-headline-md text-primary">
-        {location.title}
+      <Title className="text-balance text-headline-lg-mobile text-primary lg:text-headline-lg">
+        {location.name}
       </Title>
-      <p className="mt-space-sm text-pretty text-body-md text-muted">
-        {location.body}
-      </p>
+      <p className="mt-space-sm text-pretty text-body-lg text-muted">{location.offer}</p>
 
       <LocationDetails location={location} className="mt-space-lg" />
 

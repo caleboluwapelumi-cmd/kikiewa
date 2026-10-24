@@ -83,7 +83,7 @@ export function CallSheet({ className }: { className: string }) {
               const content = (
                 <>
                   <span className="flex flex-col gap-space-xs">
-                    <span className="text-title-md text-primary">{location.shortName}</span>
+                    <span className="text-title-md text-primary">{location.callLabel}</span>
                     <span className="text-body-sm text-muted">
                       {tel ? location.phone : callSheet.fallback}
                     </span>
