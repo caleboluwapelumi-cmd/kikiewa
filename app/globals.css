@@ -33,6 +33,14 @@
      Kept light because the logo orchid is more saturated than the old accent. */
   --color-surface-warm: color-mix(in oklab, var(--color-accent) 10%, var(--color-background));
   --color-border: #e5dfd7;
+
+  /* Cool off-white scale for skin & aesthetics (the clinical register).
+     Same lightness steps as the cream scale, with the warmth taken out.
+     Applied through the tone-clinical utility below, not used directly. */
+  --color-clinical: #f5f6f6;
+  --color-clinical-2: #eceeee;
+  --color-clinical-3: #e4e7e7;
+  --color-clinical-rule: #dadede;
   /* Stronger hairline for clinical rules and active states */
   --color-border-strong: color-mix(in oklab, var(--color-primary) 22%, var(--color-border));
 
@@ -271,6 +279,20 @@
   @media (width >= 64rem) {
     padding-block: 7.5rem;
   }
+}
+
+@utility tone-clinical {
+  /* The precision dial for skin & aesthetics. Inside it the cream surfaces
+     and hairlines become their cool counterparts, so every shared component
+     cools down without a second palette. Plum, type, buttons and the closing
+     band stay exactly as they are: same brand, cooler room. */
+  --color-background: var(--color-clinical);
+  --color-surface: var(--color-clinical-2);
+  --color-surface-2: var(--color-clinical-3);
+  --color-surface-3: var(--color-clinical-3);
+  --color-border: var(--color-clinical-rule);
+  --color-border-strong: color-mix(in oklab, var(--color-primary) 24%, var(--color-clinical-rule));
+  background-color: var(--color-background);
 }
 
 @utility link-rule {

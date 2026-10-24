@@ -1,46 +1,65 @@
-import { Icon } from "@/components/Icon";
 import { SectionHeading } from "@/components/SectionHeading";
 import { isTBC, medicalSpa } from "@/data/site";
 
 /**
- * The consultation pathway. Hairline dividers instead of cards, so the three
- * steps read as one sequence rather than three offers; large Bodoni numerals
- * carry the order.
+ * The consultation pathway as a ruled timeline: one plum rule with a small
+ * square stop per step, the step number as a label, then title and body. No
+ * icons or display numerals; the sequence itself is the design. Vertical on
+ * mobile, four columns from lg.
  */
-export function ConsultationSteps() {
+type ConsultationStepsProps = {
+  /** Section id, for in-page links. */
+  id?: string;
+  /** Overrides for reuse on detail pages ("What to expect"). */
+  eyebrow?: string | null;
+  heading?: string;
+  /** "surface" sets the steps on the deeper band. */
+  surface?: "background" | "surface";
+};
+
+export function ConsultationSteps({
+  id,
+  eyebrow,
+  heading,
+  surface = "background",
+}: ConsultationStepsProps) {
   const { pathway, steps } = medicalSpa;
 
   return (
-    <section className="section-y w-full bg-background">
+    <section
+      id={id}
+      className={[
+        "section-y w-full border-t border-border",
+        surface === "surface" ? "bg-surface" : "bg-background",
+      ].join(" ")}
+    >
       <div className="shell">
         <SectionHeading
-          eyebrow={pathway.eyebrow}
-          heading={pathway.heading}
+          eyebrow={eyebrow === null ? undefined : (eyebrow ?? pathway.eyebrow)}
+          heading={heading ?? pathway.heading}
           body={pathway.body}
-          className="mb-space-2xl"
+          className="mb-space-2xl lg:mb-space-3xl"
         />
 
-        <ol className="grid grid-cols-1 divide-y divide-border border-y border-border-strong lg:grid-cols-4 lg:divide-x lg:divide-y-0">
+        <ol className="grid grid-cols-1 border-l border-primary/30 lg:grid-cols-4 lg:border-t lg:border-l-0">
           {steps.map((step) => (
             <li
               key={step.step}
-              className="flex flex-col py-space-xl lg:px-8 lg:py-space-2xl lg:first:pl-0 lg:last:pr-0"
+              className="relative flex flex-col pb-space-xl pl-space-lg last:pb-0 lg:pt-space-xl lg:pr-space-xl lg:pb-0 lg:pl-0"
             >
-              <div className="flex items-end justify-between">
-                <span
-                  aria-hidden="true"
-                  className="font-display text-headline-lg-mobile leading-none text-secondary lg:text-headline-lg"
-                >
-                  {step.step}
-                </span>
-                <Icon name={step.icon} className="size-5 text-secondary" />
-              </div>
-
-              <h3 className="mt-space-lg text-headline-sm text-primary">
-                <span className="sr-only">Step {step.step}: </span>
+              {/* The stop on the rule */}
+              <span
+                aria-hidden="true"
+                className="absolute top-1.5 -left-[4.5px] size-2 bg-primary lg:-top-[4.5px] lg:left-0"
+              />
+              <p className="text-label-sm uppercase tabular-nums text-secondary">
+                <span className="sr-only">Step </span>
+                {step.step}
+              </p>
+              <h3 className="mt-space-sm text-headline-sm text-primary lg:mt-space-md">
                 {step.title}
               </h3>
-              <p className="mt-space-sm max-w-[42ch] text-pretty text-body-md text-muted">
+              <p className="mt-space-sm max-w-[40ch] text-pretty text-body-md text-muted">
                 {step.body}
               </p>
               {step.note && !isTBC(step.note.value) ? (

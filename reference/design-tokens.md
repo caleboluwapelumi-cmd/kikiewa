@@ -18,10 +18,14 @@ Brand colours were sampled from the logo (`public/brand/kikiewa-logo.svg`) on 24
 | surface | #F3F0EB | Section bands | |
 | surface-2 / surface-3 | #EDEAE4 / #E7E3DC | Image frames, deeper bands | |
 | surface-warm | accent 10% into background | Salon & Spa wash | |
+| clinical / clinical-2 / clinical-3 | #F5F6F6 / #ECEEEE / #E4E7E7 | Cool off-white scale for skin & aesthetics: page, bands, frames | |
+| clinical-rule | #DADEDE | Hairlines on the cool scale | |
 | foreground | #1A1A18 | Body text | 16.4:1 |
 | muted | #66635D | Secondary text. Lowest pair is 4.7:1 on surface-3, so it clears AA 4.5:1 on every surface | 5.7:1 |
 
 **Restraint:** the logo colours go on the logo, buttons and small accents only. Cream surfaces and photography carry the pages.
+
+**The clinical dial:** every `/medical-spa` page is wrapped in the `tone-clinical` utility (`app/medical-spa/layout.tsx`). Inside it, `background`, `surface`, `surface-2/3`, `border` and `border-strong` point at the cool scale, so shared components cool down on their own. Plum, type, buttons, the header, footer and closing band don't change: same brand, cooler room. Muted text stays above 4.5:1 on every cool surface (lowest: 4.8:1 on clinical-3).
 
 ## Logo
 

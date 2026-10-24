@@ -1,4 +1,5 @@
 import type { IconName } from "@/components/Icon";
+import { formatNaira } from "@/lib/format";
 import { whatsappLink } from "@/lib/whatsapp";
 
 /**
@@ -98,6 +99,8 @@ export type Service = {
   currency: "NGN";
   requiresConsultation: boolean;
   concerns?: ConcernSlug[];
+  /** The client's written aftercare, one point per item. Hidden while TBC. */
+  aftercare?: OrTBC<string[]>;
   image?: ImageAsset;
 };
 
@@ -120,8 +123,13 @@ export type TeamMember = {
   role: string;
   division: DivisionSlug;
   bio: OrTBC<string>;
+  /** Clinical staff only: registration body and number. Hidden while TBC. */
+  registration?: OrTBC<string>;
   image?: ImageAsset;
 };
+
+/** A question and answer. Questions whose answer is TBC are not shown. */
+export type FaqItem = { question: string; answer: OrTBC<string> };
 
 /* ---------------------------------------------------------------------------
    Site, contact, navigation
@@ -151,6 +159,8 @@ export const contact: {
 };
 
 export const bookingHref = "/book";
+/** Booking a skin consultation at Nitel: every skin treatment starts here. */
+export const consultationHref = bookingHref + "?location=nitel&service=consultation";
 export const contactHref = "/contact";
 
 // DRAFT COPY - client approval needed
@@ -338,6 +348,69 @@ export const seo = {
       "How Kikiewa collects, uses and protects your personal information when you book, enquire or visit us in Ikorodu, Lagos.",
   },
 } satisfies Record<string, PageMeta>;
+
+const TITLE_MAX = 60;
+const DESCRIPTION_MAX = 155;
+
+/** The first candidate that fits, else the last (check:seo then flags it). */
+function fit(max: number, ...candidates: string[]): string {
+  return candidates.find((text) => text.length <= max) ?? candidates[candidates.length - 1];
+}
+
+/** "Fine lines & firmness" -> "Fine Lines & Firmness", for titles. */
+function titleCase(text: string): string {
+  return text.replace(/(^|\s)(\p{Ll})/gu, (_, space: string, letter: string) => space + letter.toUpperCase());
+}
+
+/** "Acne & scarring" -> "acne and scarring", for running text. */
+function inSentence(text: string): string {
+  return text.replace(/ & /g, " and ").toLowerCase();
+}
+
+/** /medical-spa/[treatment], from the seo-plan pattern. TBC clauses are dropped. */
+// DRAFT COPY - client approval needed
+export function treatmentMeta(service: Service): PageMeta {
+  const name = titleCase(service.name);
+  const lead = `${service.name} at Kikiewa in Nitel, Ikorodu.`;
+  const how = service.requiresConsultation
+    ? " Starts with a consultation to assess suitability."
+    : " Book online or chat with us on WhatsApp.";
+  const price =
+    service.priceFrom === undefined || isTBC(service.priceFrom)
+      ? ""
+      : ` From ${formatNaira(service.priceFrom)}.`;
+  return {
+    path: treatmentHref(service),
+    title: fit(
+      TITLE_MAX,
+      `${name} in Ikorodu, Lagos | Kikiewa`,
+      `${name} | Kikiewa Ikorodu`,
+      `${name} | Kikiewa`,
+    ),
+    description: fit(DESCRIPTION_MAX, lead + how + price, lead + how),
+  };
+}
+
+/** /medical-spa/concerns/[concern], from the seo-plan pattern. */
+// DRAFT COPY - client approval needed
+export function concernMeta(concern: Concern): PageMeta {
+  const name = titleCase(concern.name);
+  const about = inSentence(concern.name);
+  return {
+    path: concernHref(concern),
+    title: fit(
+      TITLE_MAX,
+      `${name} Treatment in Ikorodu | Kikiewa`,
+      `${name} | Kikiewa Ikorodu`,
+      `${name} | Kikiewa`,
+    ),
+    description: fit(
+      DESCRIPTION_MAX,
+      `Concerned about ${about}? Book a consultation at Kikiewa's medical spa in Nitel, Ikorodu, to find the approach that suits your skin.`,
+      `Concerned about ${about}? Book a consultation at Kikiewa in Nitel, Ikorodu, to find the approach that suits your skin.`,
+    ),
+  };
+}
 
 /* ---------------------------------------------------------------------------
    Locations
@@ -596,6 +669,7 @@ export const services: Service[] = [
     priceFrom: TBC,
     currency: "NGN",
     requiresConsultation: true,
+    aftercare: TBC,
   },
   {
     slug: "injectable-treatment",
@@ -607,6 +681,7 @@ export const services: Service[] = [
     priceFrom: TBC,
     currency: "NGN",
     requiresConsultation: true,
+    aftercare: TBC,
   },
   {
     slug: "facial-aesthetics",
@@ -618,6 +693,7 @@ export const services: Service[] = [
     priceFrom: TBC,
     currency: "NGN",
     requiresConsultation: true,
+    aftercare: TBC,
   },
   {
     slug: "makeover-session",
@@ -645,6 +721,38 @@ export const services: Service[] = [
 
 export function servicesFor(division: ServiceDivision): Service[] {
   return services.filter((service) => service.division === division);
+}
+
+/**
+ * Skin & aesthetics services with their own /medical-spa/[treatment] page.
+ * The consultation has a page of its own (/medical-spa/consultation), and
+ * no slug may match a fixed route under /medical-spa.
+ */
+const fixedMedicalRoutes = new Set(["consultation", "treatments", "concerns"]);
+
+export function medicalTreatments(): Service[] {
+  return servicesFor("medical-spa").filter(
+    (service) =>
+      service.category !== "consultations" && !fixedMedicalRoutes.has(service.slug),
+  );
+}
+
+export function findTreatment(slug: string): Service | undefined {
+  return medicalTreatments().find((service) => service.slug === slug);
+}
+
+/** Where a skin & aesthetics row links: its own page, or the consultation page. */
+export function treatmentHref(service: Service): string {
+  return service.category === "consultations"
+    ? "/medical-spa/consultation"
+    : "/medical-spa/" + service.slug;
+}
+
+/** How to book at Nitel: consultation-led services book the consultation. */
+export function medicalBookingHref(service: Service): string {
+  return service.requiresConsultation
+    ? consultationHref
+    : bookingHref + "?location=nitel&service=" + service.slug;
 }
 
 /**
@@ -684,6 +792,14 @@ export const concerns: Concern[] = [
     summary: "For longer-term hair reduction.",
   },
 ];
+
+export function findConcern(slug: string): Concern | undefined {
+  return concerns.find((concern) => concern.slug === slug);
+}
+
+export function concernHref(concern: Concern): string {
+  return "/medical-spa/concerns/" + concern.slug;
+}
 
 /** Generic course names. Every course detail is TBC with the client. */
 // DRAFT COPY - client approval needed (summaries)
@@ -1091,30 +1207,38 @@ export const medicalSpa: {
     secondaryCta: NavLink;
     image: { alt: string; asset?: ImageAsset };
   };
-  intro: {
-    body: string;
-    /** The licence panel is hidden while the value is TBC. */
-    licenceLabel: string;
-    licenceValue: OrTBC<string>;
-    note: string;
-  };
-  treatmentsIntro: { eyebrow: string; heading: string; body: string };
+  /** In-page index under the hero. Hrefs are the section ids. */
+  contents: { label: string; links: NavLink[] };
+  /** Large serif statement, with a small label beside it on desktop. */
+  intro: { label: string; body: string };
   pathway: { eyebrow: string; heading: string; body?: string };
   steps: ConsultationStep[];
+  concernsIntro: { eyebrow: string; heading: string; body: string; cardLink: string };
+  treatmentsIntro: { eyebrow: string; heading: string; body: string };
+  /** Column headings and the tag in the treatments table. */
+  treatmentTable: {
+    caption: string;
+    treatment: string;
+    duration: string;
+    price: string;
+    consultationTag: string;
+  };
+  /** Hidden until a clinical team member has a confirmed name. */
+  teamIntro: { eyebrow: string; heading: string; registrationLabel: string };
   credentialsIntro: { eyebrow: string; heading: string; body: string };
   /** The section is hidden until at least one value is confirmed. */
   credentials: Credential[];
+  faq: { eyebrow: string; heading: string; items: FaqItem[] };
   location: LocationBlockCopy;
+  /** The skin note at the foot of the page (copy deck: "Footer note"). */
+  pageNote: string;
 } = {
   // DRAFT COPY - client approval needed
   hero: {
     eyebrow: "Skin & Aesthetics · Kikiewa Medical Spa, Nitel, Ikorodu",
     heading: "Every treatment begins with a conversation.",
     body: "The same Kikiewa care, with clinical standards. We assess, explain and plan with you before any treatment begins.",
-    cta: {
-      label: "Book a consultation",
-      href: bookingHref + "?location=nitel&service=consultation",
-    },
+    cta: { label: "Book a consultation", href: consultationHref },
     secondaryCta: {
       label: "Chat on WhatsApp",
       href: whatsappLink(contact.whatsapp, whatsappMessages.medical),
@@ -1125,18 +1249,20 @@ export const medicalSpa: {
   },
 
   // DRAFT COPY - client approval needed
-  intro: {
-    body: "Choosing a skin treatment is a personal decision. So we do what Kikiewa always does: take our time, tell you the truth, and recommend only what is suitable for you.",
-    licenceLabel: "Facility licence",
-    licenceValue: TBC,
-    note: "Every treatment follows a consultation and suitability assessment. If a treatment isn't right for you, we'll tell you.",
+  contents: {
+    label: "On this page",
+    links: [
+      { label: "How it works", href: "#how-it-works" },
+      { label: "By concern", href: "#concerns" },
+      { label: "Treatments", href: "#treatments" },
+      { label: "Before your consultation", href: "#faq" },
+    ],
   },
 
   // DRAFT COPY - client approval needed
-  treatmentsIntro: {
-    eyebrow: "Skin & Aesthetics",
-    heading: "Treatments",
-    body: "Prices are a guide. Your final plan and cost are confirmed at consultation.",
+  intro: {
+    label: "Our approach",
+    body: "Choosing a skin treatment is a personal decision. So we do what Kikiewa always does: take our time, tell you the truth, and recommend only what is suitable for you.",
   },
 
   // DRAFT COPY - client approval needed
@@ -1176,6 +1302,37 @@ export const medicalSpa: {
   ],
 
   // DRAFT COPY - client approval needed
+  concernsIntro: {
+    eyebrow: "By concern",
+    heading: "What would you like to address?",
+    body: "Start with your concern. We'll recommend the right approach at your consultation.",
+    // The deck's "See treatments" waits until concerns link to treatments.
+    cardLink: "Find out more",
+  },
+
+  // DRAFT COPY - client approval needed
+  treatmentsIntro: {
+    eyebrow: "Price guide",
+    heading: "Treatments",
+    body: "Prices are a guide. Your final plan and cost are confirmed at consultation.",
+  },
+
+  treatmentTable: {
+    caption: "Skin and aesthetic treatments, with duration and starting price",
+    treatment: "Treatment",
+    duration: "Duration",
+    price: "From",
+    consultationTag: "Consultation required",
+  },
+
+  // DRAFT COPY - client approval needed
+  teamIntro: {
+    eyebrow: "Clinical team",
+    heading: "Your clinical team",
+    registrationLabel: "Registration",
+  },
+
+  // DRAFT COPY - client approval needed
   credentialsIntro: {
     eyebrow: "Licence & safety",
     heading: "Our standards",
@@ -1189,6 +1346,36 @@ export const medicalSpa: {
   ],
 
   // DRAFT COPY - client approval needed
+  faq: {
+    eyebrow: "FAQ",
+    heading: "Before your consultation",
+    items: [
+      {
+        question: "What happens at a consultation?",
+        answer:
+          "We discuss your concerns and medical history, assess your skin, and explain suitable options, costs and aftercare. There's no obligation to go ahead.",
+      },
+      // If the fee is credited against treatment, say so.
+      { question: "Is there a consultation fee?", answer: TBC },
+      {
+        question: "How should I prepare?",
+        answer:
+          "Come with clean skin if possible, and bring a list of any medication or skincare you use.",
+      },
+      {
+        question: "Will I see results after one session?",
+        answer:
+          "Results vary from person to person. Some treatments need a course of sessions, and we'll talk you through what's realistic for you.",
+      },
+      {
+        question: "Is it suitable during pregnancy or breastfeeding?",
+        answer:
+          "Some treatments aren't. Please tell us at consultation and we'll advise you.",
+      },
+    ],
+  },
+
+  // DRAFT COPY - client approval needed
   location: {
     eyebrow: "Nitel location",
     heading: "Visit us in Nitel, Ikorodu",
@@ -1196,7 +1383,56 @@ export const medicalSpa: {
     whatsappLabel: "Chat on WhatsApp",
     whatsappMessage: whatsappMessages.medical,
   },
+
+  // DRAFT COPY - client approval needed
+  pageNote:
+    "Medical treatments are provided following consultation and assessment of suitability. Individual results vary.",
 };
+
+/** /medical-spa/[treatment] (copy deck: "Treatment detail"). */
+// DRAFT COPY - client approval needed
+export const treatmentPage = {
+  eyebrow: "Skin & Aesthetics · Nitel",
+  facts: {
+    duration: "Duration",
+    price: "From",
+    location: "Location",
+    consultationTag: "Consultation required",
+  },
+  expectHeading: "What to expect",
+  aftercareHeading: "Aftercare",
+  disclaimer: "Individual results vary. Suitability is assessed at consultation.",
+  consultationCta: "Book a consultation",
+  bookCta: "Book this service",
+  whatsappLabel: "Chat on WhatsApp",
+} as const;
+
+/** /medical-spa/concerns/[concern] (copy deck: "Concern detail"). */
+// DRAFT COPY - client approval needed
+export const concernPage = {
+  eyebrow: "Skin & Aesthetics · By concern",
+  /** H1 is "{concern name} treatment in Ikorodu". */
+  headingSuffix: " treatment in Ikorodu",
+  /** Follows the concern summary in the intro. */
+  introSuffix:
+    "At your consultation, we'll look at the cause and recommend the approach that suits your skin.",
+  // "Treatments we may recommend" waits until concerns link to treatments.
+  next: {
+    heading: "Your first step: book a consultation",
+    body: "We discuss your concerns and medical history, assess your skin, and explain suitable options, costs and aftercare. There's no obligation to go ahead.",
+    cta: "Book a consultation",
+    more: { label: "Your consultation", href: "/medical-spa/consultation" },
+  },
+  othersHeading: "Other concerns",
+} as const;
+
+/** Breadcrumb trail roots for nested pages. */
+export const breadcrumbRoots = {
+  home: { label: "Home", href: "/" },
+  skin: { label: "Skin & Aesthetics", href: "/medical-spa" },
+  concerns: { label: "By concern", href: "/medical-spa/concerns" },
+  treatments: { label: "Treatments", href: "/medical-spa/treatments" },
+} as const satisfies Record<string, NavLink>;
 
 /* ---------------------------------------------------------------------------
    /salon-spa

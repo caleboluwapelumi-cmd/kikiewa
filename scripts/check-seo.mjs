@@ -21,6 +21,10 @@ const DESCRIPTION_MAX = 155;
 const FORBIDDEN = ["TBC", "{{"];
 // Next's own error shell, not a site page.
 const SKIP = new Set(["_global-error.html"]);
+// Fallback shells for dynamic routes (e.g. medical-spa/[treatment].html).
+// They are templates, never served at that URL: real slugs are prerendered
+// and checked, and unknown slugs return a 404.
+const DYNAMIC_SHELL = /\[[^\]]+\]/;
 
 if (!existsSync(appDir)) {
   console.error("check:seo: no build output found. Run `npm run build` first.");
@@ -31,7 +35,13 @@ function walk(dir, files = []) {
   for (const name of readdirSync(dir)) {
     const path = join(dir, name);
     if (statSync(path).isDirectory()) walk(path, files);
-    else if (name.endsWith(".html") && !SKIP.has(relative(appDir, path))) files.push(path);
+    else if (
+      name.endsWith(".html") &&
+      !SKIP.has(relative(appDir, path)) &&
+      !DYNAMIC_SHELL.test(relative(appDir, path))
+    ) {
+      files.push(path);
+    }
   }
   return files;
 }

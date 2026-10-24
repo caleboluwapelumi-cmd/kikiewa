@@ -2,8 +2,15 @@ import type { Metadata } from "next";
 import { Button } from "@/components/Button";
 import { CtaBand } from "@/components/CtaBand";
 import { PageIntro } from "@/components/PageIntro";
-import { ServiceMenu } from "@/components/ServiceMenu";
-import { pages, seo } from "@/data/site";
+import { SkinNote } from "@/components/SkinNote";
+import { TreatmentTable } from "@/components/TreatmentTable";
+import {
+  breadcrumbRoots,
+  consultationHref,
+  medicalSpa,
+  pages,
+  seo,
+} from "@/data/site";
 import { pageMetadata } from "@/lib/seo";
 
 export const metadata: Metadata = pageMetadata(seo.treatments);
@@ -11,17 +18,21 @@ export const metadata: Metadata = pageMetadata(seo.treatments);
 export default function TreatmentsPage() {
   return (
     <>
-      <PageIntro copy={pages.treatments}>
+      <PageIntro
+        copy={pages.treatments}
+        breadcrumbs={[breadcrumbRoots.home, breadcrumbRoots.skin, breadcrumbRoots.treatments]}
+      >
         <div className="flex flex-wrap items-center gap-x-space-xl gap-y-space-sm">
-          <Button href="/book?service=consultation" size="lg" icon="arrowRight">
+          <Button href={consultationHref} size="lg" icon="arrowRight">
             Book a consultation
           </Button>
-          <Button href="/medical-spa/concerns" size="lg" variant="quiet">
+          <Button href={breadcrumbRoots.concerns.href} size="lg" variant="quiet">
             Browse by concern
           </Button>
         </div>
       </PageIntro>
-      <ServiceMenu division="medical-spa" />
+      <TreatmentTable withHeading={false} />
+      <SkinNote text={medicalSpa.pageNote} />
       <CtaBand />
     </>
   );

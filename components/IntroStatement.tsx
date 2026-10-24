@@ -1,14 +1,23 @@
 /**
  * The large serif paragraph that follows a page hero (copy deck: "Intro").
- * Set in the display face as an editorial lead, with nothing beside it.
+ * Set in the display face as an editorial lead. With a `label`, the label
+ * sits in a narrow column beside it, like a margin note: the clinical
+ * pages use this.
  */
 type IntroStatementProps = {
   text: string;
   /** Hairline above. Turn off when the hero already ends with one. */
   rule?: boolean;
+  label?: string;
 };
 
-export function IntroStatement({ text, rule = true }: IntroStatementProps) {
+export function IntroStatement({ text, rule = true, label }: IntroStatementProps) {
+  const statement = (
+    <p className="max-w-[34em] text-pretty font-display text-lead-mobile text-foreground lg:text-lead">
+      {text}
+    </p>
+  );
+
   return (
     <div
       className={[
@@ -17,9 +26,17 @@ export function IntroStatement({ text, rule = true }: IntroStatementProps) {
       ].join(" ")}
     >
       <div className="shell">
-        <p className="max-w-[34em] text-pretty font-display text-lead-mobile text-foreground lg:text-lead">
-          {text}
-        </p>
+        {label ? (
+          <div className="grid grid-cols-1 gap-space-md lg:grid-cols-12 lg:gap-gutter-desktop">
+            <p className="flex items-center gap-3 self-start text-label-sm uppercase text-muted lg:col-span-3 lg:pt-3">
+              <span aria-hidden="true" className="inline-block h-px w-8 shrink-0 bg-border-strong" />
+              {label}
+            </p>
+            <div className="lg:col-span-9">{statement}</div>
+          </div>
+        ) : (
+          statement
+        )}
       </div>
     </div>
   );

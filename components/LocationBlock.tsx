@@ -26,7 +26,7 @@ const tones: Record<
   { section: string; grid: string; panel: string; image: ImageTone }
 > = {
   clinical: {
-    section: "bg-background",
+    section: "border-t border-border bg-background",
     grid: "items-start",
     panel: "",
     image: "neutral",
