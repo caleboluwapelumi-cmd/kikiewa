@@ -16,7 +16,7 @@ export const metadata: Metadata = pageMetadata(seo.home);
 /**
  * Home, in the copy deck's v2 order. Reviews, team, credentials and the
  * brand story stay off until the client confirms them (hide, don't
- * placeholder). The peacock divider appears once, over "Made to be seen".
+ * placeholder). The peacock divider appears once, over "Inside Kikiewa".
  */
 export default function Home() {
   return (

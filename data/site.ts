@@ -219,6 +219,9 @@ export const utilityBar = {
 /* ---------------------------------------------------------------------------
    SEO: one row per route (reference/seo-plan.md, section 3).
    Titles ≤ 60 characters, descriptions ≤ 155, never "TBC" or "{{".
+   One brand: never "Kikiewa Salon & Spa" or "Kikiewa Medical Spa" as names.
+   Say "Kikiewa" plus what it is ("Kikiewa's medical spa in Nitel"), so the
+   search terms stay without implying separate businesses.
    `npm run check:seo` checks the built pages against these rules.
 --------------------------------------------------------------------------- */
 
@@ -236,7 +239,7 @@ export const seo = {
     path: "/salon-spa",
     title: "Salon & Spa in Ikorodu, Lagos | Kikiewa",
     description:
-      "Hair, nails, massage and spa rituals at Kikiewa Salon & Spa, Ebute, Ikorodu. See services and prices, then book online or on WhatsApp.",
+      "Hair, nails, makeup, massage and spa at Kikiewa in Ebute, Ikorodu. See services and prices, then book online or on WhatsApp.",
   },
   salonServices: {
     path: "/salon-spa/services",
@@ -248,7 +251,7 @@ export const seo = {
     path: "/medical-spa",
     title: "Medical Spa in Ikorodu, Lagos | Kikiewa",
     description:
-      "Consultation-led skin and aesthetic treatments at Kikiewa Medical Spa, Nitel, Ikorodu. Book a consultation online or on WhatsApp.",
+      "Consultation-led skin and aesthetic treatments at Kikiewa's medical spa in Nitel, Ikorodu. Book a consultation online or on WhatsApp.",
   },
   treatments: {
     path: "/medical-spa/treatments",
@@ -290,25 +293,25 @@ export const seo = {
     path: "/locations",
     title: "Our Locations in Ikorodu, Lagos | Kikiewa",
     description:
-      "Kikiewa Salon & Spa in Ebute and Medical Spa in Nitel, both in Ikorodu, Lagos. Addresses, opening hours and directions.",
+      "Kikiewa has two locations in Ikorodu, Lagos: Ebute for hair, nails and spa, and Nitel for skin and aesthetics. Addresses, hours and directions.",
   },
   ebute: {
     path: "/locations/ebute",
     title: "Kikiewa Ebute, Ikorodu | Salon & Spa",
     description:
-      "Find Kikiewa Salon & Spa in Ebute, Ikorodu: address, opening hours, directions and services. Book online or on WhatsApp.",
+      "Kikiewa's salon and spa in Ebute, Ikorodu, for hair, nails, makeup and massage: address, opening hours and directions. Book online or on WhatsApp.",
   },
   nitel: {
     path: "/locations/nitel",
     title: "Kikiewa Nitel, Ikorodu | Medical Spa",
     description:
-      "Find Kikiewa Medical Spa in Nitel, Ikorodu: address, opening hours, directions and treatments. Book a consultation.",
+      "Kikiewa's medical spa in Nitel, Ikorodu, for skin and aesthetic treatments: address, opening hours and directions. Book a consultation.",
   },
   gallery: {
     path: "/gallery",
     title: "Gallery | Kikiewa Ikorodu",
     description:
-      "Inside Kikiewa: our salon, spa and medical spa spaces in Ikorodu, Lagos, and recent work from our team.",
+      "Inside Kikiewa in Ikorodu, Lagos: recent work from our team, and our salon, spa and medical spa spaces in Ebute and Nitel.",
   },
   book: {
     path: "/book",
@@ -320,7 +323,7 @@ export const seo = {
     path: "/contact",
     title: "Contact Kikiewa | Ikorodu, Lagos",
     description:
-      "Call, WhatsApp or message Kikiewa Salon & Spa (Ebute) and Medical Spa (Nitel), Ikorodu, Lagos.",
+      "Call, WhatsApp or message Kikiewa in Ikorodu, Lagos: our salon and spa in Ebute, and our medical spa in Nitel. We reply during opening hours.",
   },
   licensing: {
     path: "/licensing",
@@ -459,7 +462,7 @@ export const serviceCategories: ServiceCategory[] = [
     // Slug doubles as the /salon-spa anchor; the nav and Home link to #spa.
     slug: "spa",
     division: "salon-spa",
-    name: "Massage & body",
+    name: "Spa & massage",
     icon: "spa",
     summary: "Massages and body rituals to release tension and restore calm.",
   },
@@ -920,7 +923,7 @@ export const homeGallery: {
   link: NavLink;
   items: GallerySlot[];
 } = {
-  heading: "Made to be seen",
+  heading: "Inside Kikiewa",
   body: "Recent work, our spaces, and the moments in between.",
   link: { label: "See more work", href: "/gallery" },
   items: [
@@ -1001,11 +1004,17 @@ export const credibility: CredibilityItem[] = [
   },
 ];
 
-/** Closing band on every page (copy deck, "Global elements"). */
+/**
+ * Closing band on every page (copy deck, "Global elements").
+ *
+ * Peacock lines ("Made to be seen", "Leave in full feather", "Show it off")
+ * appear at most once per page. This band is global, so its line doesn't
+ * count toward that limit. "Made to be seen" belongs to /gallery only.
+ */
 // DRAFT COPY - client approval needed
 export const ctaBand = {
   heading: "Come in. Leave in full feather.",
-  body: "Book online in a minute, or message us and we'll help you choose.",
+  body: "Book in a few taps, or message us and we'll help you choose.",
   cta: { label: "Book an appointment", href: bookingHref },
   secondaryCta: { label: "Chat on WhatsApp", href: whatsappHref },
 } as const;
