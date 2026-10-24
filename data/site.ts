@@ -508,7 +508,16 @@ export const serviceCategories: ServiceCategory[] = [
       { title: "Style or cut" },
       { title: "Finish & aftercare tips" },
     ],
-    faqs: [],
+    faqs: [
+      {
+        question: "How long will my appointment take?",
+        answer: "It depends on the style and your hair length. We'll give you a time when you book.",
+      },
+      {
+        question: "Do you cut men's hair?",
+        answer: "Yes. Our barbers offer cuts and grooming for men.",
+      },
+    ],
     consultationLed: false,
     seo: seo.hair,
   },
@@ -523,7 +532,23 @@ export const serviceCategories: ServiceCategory[] = [
     line: "Finished with precision.",
     intro:
       "Clean shapes, neat cuticles and colour that lasts. Keep it simple or ask for nail art.",
-    faqs: [],
+    expect: [
+      { title: "Choose your look" },
+      { title: "Shape & prep" },
+      { title: "Colour or art" },
+      { title: "Finish & care tips" },
+    ],
+    faqs: [
+      {
+        question: "Can I bring a design I like?",
+        answer: "Yes. Bring a photo and we'll talk it through before we start.",
+      },
+      {
+        question: "How long does gel polish last?",
+        answer:
+          "Longer than regular polish. How long depends on your nails and your daily routine; we'll give you tips to make it last.",
+      },
+    ],
     consultationLed: false,
     seo: seo.nails,
   },
@@ -538,6 +563,12 @@ export const serviceCategories: ServiceCategory[] = [
     line: "For the moments you want to remember.",
     intro:
       "Bridal, events, photoshoots or just because. We match your makeup to your skin, your outfit and the occasion.",
+    expect: [
+      { title: "Tell us the occasion" },
+      { title: "Skin prep" },
+      { title: "Your look" },
+      { title: "Final touches" },
+    ],
     faqs: [
       { question: "Do you offer trials?", answer: TBC },
       { question: "Can you come to my venue?", answer: TBC },
