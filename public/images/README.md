@@ -49,17 +49,20 @@ Images are wired up in `data/site.ts` as an `ImageAsset`:
 
 Write alt text that describes the photograph for someone who cannot see it. Never leave it blank or write "image".
 
-## Temporary images
+## Stock and temporary images
 
-Until the photoshoot, two kinds of stand-in are allowed:
+Besides final photography, three sources are allowed:
 
-- **`source: "instagram-temp"`**: an approved photo from Kikiewa's Instagram.
-- **`source: "stock-temp"`**: an Unsplash photo, with a row in [CREDITS.md](CREDITS.md). Never in Our work, Gallery, Inside our classes, Locations, the team or Testimonials (a type error there).
+- **`source: "stock"`**: an Unsplash photo approved to keep. Allowed on the live site.
+- **`source: "stock-temp"`**: an Unsplash photo still to be replaced. Temporary.
+- **`source: "instagram-temp"`**: an approved photo from Kikiewa's Instagram. Temporary.
+
+Every stock photo, kept or temporary, needs a row in [CREDITS.md](CREDITS.md). Stock is never used in Our work, Gallery, Inside our classes, Locations, the team or Testimonials (a type error there).
 
 1. Put it in its normal folder with a plain name (no phone numbers or hashtags from the original filename).
 2. Tag it in `data/site.ts` with its `source`.
-3. Previews show a small "Temp image" badge on it.
-4. `npm run check:images` lists every temporary image still in use, and checks each file exists and each stock image is credited. It exits with an error when `NEXT_PUBLIC_SITE_ENV=production`, so temporary images can't ship to the live site unnoticed.
+3. Previews show a small "Temp image" badge on `stock-temp` and `instagram-temp` images. Kept stock has no badge.
+4. `npm run check:images` lists every stock and temporary image in use, and checks each file exists and each stock image is credited. It exits with an error when `NEXT_PUBLIC_SITE_ENV=production` and any `stock-temp` or `instagram-temp` image is still referenced, so temporary images can't ship to the live site unnoticed.
 
 When the final photograph arrives, replace the file (or point `src` at the new one) and remove the `source` tag.
 

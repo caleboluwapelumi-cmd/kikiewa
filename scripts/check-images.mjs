@@ -1,16 +1,18 @@
 /**
  * npm run check:images
  *
- * Lists every temporary image the site still uses: any ImageAsset in data/,
- * app/, components/ or lib/ tagged `source: "instagram-temp"` (a client photo
- * from Instagram) or `source: "stock-temp"` (an Unsplash photo).
+ * Lists every non-final image the site uses: any ImageAsset in data/, app/,
+ * components/ or lib/ tagged `source: "stock"` (an Unsplash photo approved
+ * to keep), `source: "stock-temp"` (an Unsplash photo still to replace) or
+ * `source: "instagram-temp"` (a client photo from Instagram).
  *
- * Also fails when:
+ * Fails when:
  * - a tagged image's file is missing from public/,
- * - a stock-temp image has no row in public/images/CREDITS.md,
+ * - a stock image (kept or temp) has no row in public/images/CREDITS.md,
  * - the old temp/ folder convention is used without a tag,
- * - NEXT_PUBLIC_SITE_ENV is "production" and any temporary image is still
- *   referenced, so a production build step can block on it.
+ * - NEXT_PUBLIC_SITE_ENV is "production" and any temporary image
+ *   (stock-temp or instagram-temp) is still referenced, so a production
+ *   build step can block on it. Kept stock is allowed in production.
  */
 import { existsSync, readdirSync, readFileSync, statSync } from "node:fs";
 import { dirname, join, relative, sep } from "node:path";
@@ -19,8 +21,12 @@ import { fileURLToPath } from "node:url";
 const root = join(dirname(fileURLToPath(import.meta.url)), "..");
 const SOURCE_DIRS = ["data", "app", "components", "lib"];
 const SOURCE_EXT = /\.(tsx?|jsx?|mjs|json|css)$/;
-const TEMP_SOURCES = ["instagram-temp", "stock-temp"];
-const TAG = /source\s*:\s*["'`](instagram-temp|stock-temp)["'`]/g;
+const SOURCES = ["stock", "stock-temp", "instagram-temp"];
+/** Blocked in production. */
+const TEMP_SOURCES = ["stock-temp", "instagram-temp"];
+/** Need a row in CREDITS.md. */
+const STOCK_SOURCES = ["stock", "stock-temp"];
+const TAG = /source\s*:\s*["'`](stock-temp|stock|instagram-temp)["'`]/g;
 const SRC = /src\s*:\s*["'`]([^"'`]+)["'`]/;
 const LEGACY_TEMP_PATH = /\/images\/[\w-]+\/temp\/[^"'`\s)]+/g;
 const CREDITS = join(root, "public", "images", "CREDITS.md");
@@ -70,14 +76,15 @@ const problems = [];
 const env = process.env.NEXT_PUBLIC_SITE_ENV ?? "(not set)";
 console.log(`check:images  NEXT_PUBLIC_SITE_ENV=${env}\n`);
 
-for (const source of TEMP_SOURCES) {
+for (const source of SOURCES) {
   const rows = tagged.filter((item) => item.source === source);
   if (!rows.length) {
     console.log(`No "${source}" images are referenced.\n`);
     continue;
   }
   const unique = new Set(rows.map((row) => row.src));
-  console.log(`"${source}" images still referenced (${unique.size} files, ${rows.length} uses):`);
+  const kind = TEMP_SOURCES.includes(source) ? "temporary, blocked in production" : "kept, allowed in production";
+  console.log(`"${source}" images referenced, ${kind} (${unique.size} files, ${rows.length} uses):`);
   for (const row of rows) console.log(`  ${row.src ?? "(no src found)"}  <- ${row.at}`);
   console.log("");
 }
@@ -90,7 +97,7 @@ for (const row of tagged) {
   if (!existsSync(join(root, "public", row.src))) {
     problems.push(`Missing file ${row.src} (${row.at})`);
   }
-  if (row.source === "stock-temp" && !credits.includes(row.src.replace(/^\/images\//, ""))) {
+  if (STOCK_SOURCES.includes(row.source) && !credits.includes(row.src.replace(/^\/images\//, ""))) {
     problems.push(`No credit for ${row.src} in public/images/CREDITS.md (${row.at})`);
   }
 }
@@ -104,12 +111,15 @@ if (problems.length) {
   process.exit(1);
 }
 
-if (tagged.length && process.env.NEXT_PUBLIC_SITE_ENV === "production") {
+const temporary = tagged.filter((row) => TEMP_SOURCES.includes(row.source));
+if (temporary.length && process.env.NEXT_PUBLIC_SITE_ENV === "production") {
   console.error(
-    "FAIL: temporary images (instagram-temp or stock-temp) are still referenced in a production build. " +
-      "Replace them with final photography (see public/images/README.md).",
+    "FAIL: temporary images (stock-temp or instagram-temp) are still referenced in a production build. " +
+      "Replace them with final photography, or approve stock to keep as source \"stock\" (see public/images/README.md).",
   );
   process.exit(1);
 }
 
-console.log(tagged.length ? "OK for previews. Production builds fail until every temporary image is replaced." : "OK.");
+console.log(
+  temporary.length ? "OK for previews. Production builds fail until every temporary image is replaced." : "OK.",
+);

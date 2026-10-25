@@ -1,11 +1,10 @@
 /**
  * WhatsApp deep links.
  *
- * The business WhatsApp number is not confirmed yet (`contact.whatsapp` in
- * data/site.ts is TBC), so this helper refuses to build a wa.me link out of a
- * placeholder. Anything that is not a usable international number falls back
- * to the contact page, which means no broken wa.me links can ship while the
- * number is still TBC.
+ * The business number is `contact.whatsapp` in data/site.ts. This helper
+ * refuses to build a wa.me link out of a placeholder: anything that is not a
+ * usable international number (such as a location's TBC) falls back to the
+ * contact page, so no broken wa.me links can ship.
  */
 
 /** Where a WhatsApp action points when the number is not usable yet. */
@@ -25,9 +24,14 @@ export function isUsableWhatsAppNumber(number: string | undefined): boolean {
   return normaliseNumber(number).length >= MIN_DIGITS;
 }
 
-/** Strips spaces, punctuation and any leading `+` or `00` international prefix. */
+/**
+ * Digits for wa.me: strips spaces, punctuation and any leading `+` or `00`.
+ * A Nigerian number written locally ("0706 621 2933") becomes 2347066212933,
+ * so data and screens can keep the local form.
+ */
 function normaliseNumber(number: string): string {
   const digits = number.replace(/\D/g, "");
+  if (/^0\d{10}$/.test(digits)) return "234" + digits.slice(1);
   return digits.startsWith("00") ? digits.slice(2) : digits;
 }
 

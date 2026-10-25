@@ -52,14 +52,16 @@ export type FaqItem = { question: string; answer: OrTBC<string> };
 export type Point = { title: string; body?: string };
 
 /**
- * Where a photograph comes from. Both temp sources are stand-ins until the
+ * Where a photograph comes from. The two temp sources are stand-ins until the
  * photoshoot: `npm run check:images` lists every one still referenced and
  * fails a production build, and previews badge them "Temp image".
  * - "final": cleared, final photography (the default).
+ * - "stock": an Unsplash photo approved to keep. Allowed in production.
+ * - "stock-temp": an Unsplash photo still to be replaced.
  * - "instagram-temp": a client photo taken from Kikiewa's Instagram.
- * - "stock-temp": an Unsplash photo, credited in public/images/CREDITS.md.
+ * Every stock photo, kept or temp, has a row in public/images/CREDITS.md.
  */
-export type ImageSource = "final" | "instagram-temp" | "stock-temp";
+export type ImageSource = "final" | "stock" | "stock-temp" | "instagram-temp";
 
 /**
  * A photograph, stored under public/images/{folder}/. `source` defaults to
@@ -82,7 +84,7 @@ export type ImageAsset = {
  * Inside our classes, the team, Locations, Testimonials. Stock is a type
  * error here.
  */
-export type OwnImageAsset = ImageAsset & { source?: Exclude<ImageSource, "stock-temp"> };
+export type OwnImageAsset = ImageAsset & { source?: Exclude<ImageSource, "stock" | "stock-temp"> };
 
 /** A picture position with its alt text, waiting for a photograph. */
 export type ImageSlot = { alt: string; image?: ImageAsset };
@@ -107,11 +109,14 @@ export const site = {
 
 /**
  * Business-wide contact details. `phone` is the main line (from the client's
- * Instagram); each location keeps its own number, TBC until confirmed.
+ * Instagram) and also the WhatsApp line. Numbers are written in the local
+ * form shown on screen; tel: and wa.me links convert them to +234
+ * (lib/phone.ts, lib/whatsapp.ts). Each location keeps its own numbers, TBC
+ * until confirmed, and falls back to these meanwhile.
  */
 export const contact: { phone: OrTBC<string>; whatsapp: OrTBC<string>; email: OrTBC<string> } = {
   phone: "0706 621 2933",
-  whatsapp: TBC,
+  whatsapp: "0706 621 2933",
   email: TBC,
 };
 
@@ -131,7 +136,7 @@ export const whatsappMessages = {
   academy: "Hello Kikiewa, I'd like to know more about the Academy courses.",
 } as const;
 
-/** WhatsApp link with the general greeting (falls back to /contact while TBC). */
+/** WhatsApp link with the general greeting (falls back to /contact if the number is TBC). */
 export const whatsappHref = whatsappLink(contact.whatsapp, whatsappMessages.general);
 
 /** Every CTA label (site plan, section 1). */
@@ -320,8 +325,8 @@ export type Location = {
   hours: OrTBC<OpeningHours[]>;
   phone: OrTBC<string>;
   /**
-   * WhatsApp number for booking requests at this location, in international
-   * form (+234…). While TBC, requests use the business number, then /contact.
+   * WhatsApp number for booking requests at this location, written locally
+   * ("0706 621 2933"). While TBC, requests use the business number.
    */
   whatsapp: OrTBC<string>;
   /** Google Maps link for "Get directions". */
@@ -473,7 +478,7 @@ export const serviceCategories: ServiceCategory[] = [
         alt: "A woman smoothing a dab of cream onto her cheek",
         width: 1600,
         height: 2400,
-        source: "stock-temp",
+        source: "stock",
       },
     },
     heading: "Facials",
@@ -539,7 +544,7 @@ export const serviceCategories: ServiceCategory[] = [
         alt: "A woman resting on a massage table beside warm stones, towels and a candle",
         width: 1600,
         height: 1036,
-        source: "stock-temp",
+        source: "stock",
       },
     },
     heading: "Massage & Spa",
@@ -573,7 +578,7 @@ export const serviceCategories: ServiceCategory[] = [
         alt: "A clean, white skin-care treatment room with a made-up treatment bed",
         width: 1600,
         height: 1988,
-        source: "stock-temp",
+        source: "stock",
       },
     },
     heading: "Aesthetics",
@@ -628,7 +633,7 @@ export const serviceCategories: ServiceCategory[] = [
         alt: "Close-up of hands braiding neat rows into dark hair",
         width: 1600,
         height: 2000,
-        source: "stock-temp",
+        source: "stock",
       },
     },
     heroImage: {
@@ -638,7 +643,7 @@ export const serviceCategories: ServiceCategory[] = [
         alt: "A barber shaping a man's curly high-top fade",
         width: 1600,
         height: 1840,
-        source: "stock-temp",
+        source: "stock",
       },
     },
     heading: "Hair & Barbing",
@@ -677,7 +682,7 @@ export const serviceCategories: ServiceCategory[] = [
         alt: "A smiling woman with short white-polished nails resting her hand at her chin",
         width: 1600,
         height: 2400,
-        source: "stock-temp",
+        source: "stock",
       },
     },
     heading: "Nails",
@@ -717,7 +722,7 @@ export const serviceCategories: ServiceCategory[] = [
         alt: "A woman with shimmering eyeshadow lining her lips with a pencil",
         width: 1600,
         height: 2400,
-        source: "stock-temp",
+        source: "stock",
       },
     },
     heading: "Makeup",
@@ -1014,7 +1019,7 @@ export const hero: { label: string; slides: HeroSlide[] } = {
           alt: "A candlelit steam room with warm lights over a stone bench",
           width: 2400,
           height: 1601,
-          source: "stock-temp",
+          source: "stock",
         },
       },
     },
@@ -1029,7 +1034,7 @@ export const hero: { label: string; slides: HeroSlide[] } = {
           alt: "A therapist giving a woman a facial with a handheld skin-care device",
           width: 2400,
           height: 1600,
-          source: "stock-temp",
+          source: "stock",
         },
       },
     },
@@ -1044,7 +1049,7 @@ export const hero: { label: string; slides: HeroSlide[] } = {
           alt: "A woman relaxing with her eyes closed during a back massage",
           width: 2400,
           height: 1600,
-          source: "stock-temp",
+          source: "stock",
         },
       },
     },
@@ -1059,7 +1064,7 @@ export const hero: { label: string; slides: HeroSlide[] } = {
           alt: "A smiling woman with her braids styled in a high, beaded updo",
           width: 2400,
           height: 1898,
-          source: "stock-temp",
+          source: "stock",
         },
       },
     },
@@ -1080,7 +1085,7 @@ export const miniAbout = {
       alt: "Portrait of a woman with glowing skin, eyes closed, in warm light",
       width: 1600,
       height: 2400,
-      source: "stock-temp",
+      source: "stock",
     },
   } as ImageSlot,
 };
@@ -1254,7 +1259,16 @@ export const about = {
     body: "To bring expertise and professional know-how to every client, so their beauty can be seen and felt.",
   },
   valuesHeading: "How we work",
-  valuesImage: { alt: "A Kikiewa treatment in progress in Ikorodu" } as ImageSlot,
+  valuesImage: {
+    alt: "A Kikiewa treatment in progress in Ikorodu",
+    image: {
+      src: "/images/home/about.jpg",
+      alt: "Portrait of a woman with glowing skin, eyes closed, in warm light",
+      width: 1600,
+      height: 2400,
+      source: "stock",
+    },
+  } as ImageSlot,
   /** After "How we work": the team's training, photographed by Kikiewa. */
   learning: {
     heading: "We keep learning",
@@ -1354,7 +1368,7 @@ export const courses: Course[] = [
         alt: "Hands with pink nails braiding a section of dark hair",
         width: 1600,
         height: 2000,
-        source: "stock-temp",
+        source: "stock",
       },
     },
     overview:
@@ -1385,7 +1399,7 @@ export const courses: Course[] = [
         alt: "A therapist brushing a facial mask onto a woman's face",
         width: 1600,
         height: 1067,
-        source: "stock-temp",
+        source: "stock",
       },
     },
     overview:
@@ -1420,7 +1434,7 @@ export const academy = {
       alt: "Close-up of hands painting nail polish onto another person's nails",
       width: 2400,
       height: 1600,
-      source: "stock-temp",
+      source: "stock",
     },
   } as ImageSlot,
   whyHeading: "Why train with us",

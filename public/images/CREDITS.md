@@ -1,8 +1,10 @@
 # Image credits
 
-Temporary images, used until the photoshoot. Every row here is tagged in `data/site.ts`, and `npm run check:images` lists each one still in use (and fails a production build while any remain).
+Stock and temporary images. Every row here is tagged in `data/site.ts`, and `npm run check:images` lists each one in use. Production builds fail while any temporary image (`stock-temp` or `instagram-temp`) remains; kept stock (`stock`) is allowed.
 
-## Stock (`source: "stock-temp"`)
+## Stock (`source: "stock"` kept, or `source: "stock-temp"` still to replace)
+
+Every stock image needs a row here, kept or temporary. All rows below are currently `stock` (approved to keep).
 
 All from Unsplash, under the [Unsplash License](https://unsplash.com/license): free for commercial use, no permission or attribution required (credited here anyway). None are Unsplash+.
 
@@ -14,7 +16,7 @@ Rules for stock: Black or African models, or no people; warm, natural light; no 
 | Home hero, slide 2 | `home/hero-2.jpg` | Iwaria Inc. | https://unsplash.com/photos/a-woman-getting-a-facial-massage-with-an-electric-device-_sYJQjqopus | Unsplash License | |
 | Home hero, slide 3 | `home/hero-3.jpg` | Iwaria Inc. | https://unsplash.com/photos/a-woman-getting-a-back-massage-at-a-beauty-salon-VWELT4w5jj8 | Unsplash License | |
 | Home hero, slide 4 | `home/hero-4.jpg` | Lisa Marie Theck | https://unsplash.com/photos/a-woman-smiles-with-her-hair-in-a-bun-wjSSZ7r-iA0 | Unsplash License | |
-| Home, About Kikiewa portrait | `home/about.jpg` | Gideon Hezekiah | https://unsplash.com/photos/woman-in-black-tank-top-WCEMFqEIVek | Unsplash License | |
+| Home, About Kikiewa portrait; About, How we work portrait | `home/about.jpg` | Gideon Hezekiah | https://unsplash.com/photos/woman-in-black-tank-top-WCEMFqEIVek | Unsplash License | |
 | Facials (card and page hero) | `services/facials.jpg` | Leighann Blackwood | https://unsplash.com/photos/a-woman-is-putting-a-lotion-on-her-face-OSC6FLeoEOE | Unsplash License | |
 | Massage & Spa (card and page hero) | `services/massage.jpg` | Iwaria Inc. | https://unsplash.com/photos/a-woman-laying-on-a-bed-with-a-towel-and-a-cup-of-coffee-Bv826LRAgIc | Unsplash License | |
 | Aesthetics (card and page hero) | `services/aesthetics.jpg` | Atikah Akhtar | https://unsplash.com/photos/white-wooden-vanity-table-with-mirror-6xlyKFFvufg | Unsplash License | Cropped to the right of the room to leave out branded products; two small labels softened |

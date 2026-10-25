@@ -13,7 +13,7 @@ import { bookingHref, whatsappHref } from "@/data/site";
  * The body reserves the same height (app/layout.tsx) so it never covers
  * content.
  *
- * WhatsApp opens the contact page until the number is confirmed. Call opens
+ * WhatsApp opens the business number (the contact page if it is TBC). Call opens
  * a sheet with the main line and both locations (components/CallSheet.tsx).
  */
 

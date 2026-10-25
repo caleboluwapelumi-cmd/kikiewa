@@ -18,8 +18,9 @@ import { isProductionSite } from "@/lib/env";
  * share the same finished edge.
  *
  * Temporary images (source "stock-temp" or "instagram-temp") carry a small
- * "Temp image" badge on previews, so nobody mistakes them for final. The
- * badge never renders in production, where check:images blocks them anyway.
+ * "Temp image" badge on previews, so nobody mistakes them for final. Kept
+ * stock (source "stock") has no badge. The badge never renders in
+ * production, where check:images blocks temporary images anyway.
  */
 
 export type ImageTone = "neutral" | "warm" | "dark";

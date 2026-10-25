@@ -4,8 +4,9 @@ import { ContactForm } from "@/components/ContactForm";
 import { LocationCard } from "@/components/LocationCard";
 import { PageIntro } from "@/components/PageIntro";
 import { SectionHeading } from "@/components/SectionHeading";
-import { contact, contactPage, locations, seo } from "@/data/site";
+import { contact, contactPage, locations, seo, whatsappHref } from "@/data/site";
 import { telHref } from "@/lib/phone";
+import { isUsableWhatsAppNumber } from "@/lib/whatsapp";
 import { pageMetadata } from "@/lib/seo";
 
 export const metadata: Metadata = pageMetadata(seo.contact);
@@ -29,7 +30,23 @@ export default function ContactPage() {
         <Confirmable value={contact.phone} />
       ),
     },
-    { label: contactPage.whatsappLabel, value: <Confirmable value={contact.whatsapp} /> },
+    {
+      label: contactPage.whatsappLabel,
+      value: (
+        <Confirmable
+          value={contact.whatsapp}
+          format={(number) =>
+            isUsableWhatsAppNumber(number) ? (
+              <a href={whatsappHref} className="link-rule hover:text-secondary">
+                {number}
+              </a>
+            ) : (
+              number
+            )
+          }
+        />
+      ),
+    },
     {
       label: contactPage.emailLabel,
       value: (
