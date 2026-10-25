@@ -27,7 +27,7 @@ export function AcademyHome() {
           </div>
           <div className="flex flex-col gap-space-lg lg:col-span-5">
             <CourseCards compact />
-            <Button href={academyHome.cta.href} icon="arrowRight" className="self-start">
+            <Button href={academyHome.cta.href} className="self-start">
               {academyHome.cta.label}
             </Button>
           </div>

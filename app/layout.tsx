@@ -1,26 +1,33 @@
 import type { Metadata } from "next";
-import { Bodoni_Moda, Plus_Jakarta_Sans } from "next/font/google";
+import { Fraunces, Outfit } from "next/font/google";
 import { Header } from "@/components/Header";
 import { Footer } from "@/components/Footer";
 import { JsonLd } from "@/components/JsonLd";
 import { MenuStateProvider } from "@/components/MenuState";
 import { MobileActionBar } from "@/components/MobileActionBar";
+import { MobileMenu } from "@/components/MobileMenu";
+import { RevealOnScroll } from "@/components/RevealOnScroll";
 import { seo, site } from "@/data/site";
 import { isProductionSite } from "@/lib/env";
 import { organizationJsonLd } from "@/lib/jsonld";
 import "./globals.css";
 
-const bodoniModa = Bodoni_Moda({
-  variable: "--font-bodoni-moda",
+// Headings: the variable font with its optical size and SOFT axes, both
+// set per type tier in app/globals.css. next/font only loads extra axes
+// with the full weight axis; the site uses 400 to 600 of it.
+const fraunces = Fraunces({
+  variable: "--font-fraunces",
   subsets: ["latin"],
-  // Optical-size axis. Values are set per type tier in app/globals.css.
-  axes: ["opsz"],
+  weight: "variable",
+  axes: ["opsz", "SOFT"],
   display: "swap",
 });
 
-const plusJakartaSans = Plus_Jakarta_Sans({
-  variable: "--font-plus-jakarta",
+// Body and UI: 400, 500 and 600.
+const outfit = Outfit({
+  variable: "--font-outfit",
   subsets: ["latin"],
+  weight: ["400", "500", "600"],
   display: "swap",
 });
 
@@ -49,15 +56,15 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
     <html
       lang={site.lang}
-      className={`${bodoniModa.variable} ${plusJakartaSans.variable} h-full antialiased`}
+      className={`${fraunces.variable} ${outfit.variable} h-full antialiased`}
     >
-      {/* Below md the body reserves the mobile action bar's height (plus the
-          safe-area inset), so the bar never covers the end of the main
-          content or the footer beneath it. */}
-      <body className="flex min-h-full flex-col pb-[calc(var(--spacing-action-bar)+env(safe-area-inset-bottom))] md:pb-0">
+      {/* The floating mobile action bar reserves its own room at the end of
+          the page (a spacer in components/MobileActionBar.tsx), so it never
+          covers the end of the content or the footer. */}
+      <body className="flex min-h-full flex-col">
         <a
           href="#main"
-          className="fixed top-space-md left-space-md z-[60] -translate-y-[200%] bg-primary px-space-md py-space-sm text-label-md uppercase text-on-primary transition-transform duration-200 focus:translate-y-0"
+          className="fixed top-space-md left-space-md z-[60] -translate-y-[200%] inline-flex min-h-12 items-center rounded-chip bg-primary px-space-lg text-button text-on-primary transition-transform duration-200 focus:translate-y-0"
         >
           Skip to content
         </a>
@@ -74,7 +81,9 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
           </main>
           <Footer />
           <MobileActionBar />
+          <MobileMenu />
         </MenuStateProvider>
+        <RevealOnScroll />
       </body>
     </html>
   );

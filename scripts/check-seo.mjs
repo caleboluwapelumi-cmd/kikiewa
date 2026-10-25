@@ -11,6 +11,9 @@
  *    no redirect source is also a page, and every destination is a page.
  * 4. Words: no page shows "branch", "head office", "division" or "house",
  *    or anything the plan keeps off the website (section 0).
+ * 5. Dashes: no built page contains an em dash (—) or an en dash (–)
+ *    anywhere in its HTML: visible text, attributes, metadata, JSON-LD and
+ *    the page data. Copy uses commas, full stops or colons instead.
  *
  * It checks the built output rather than data/site.ts, so whatever a search
  * engine would see is what gets checked.
@@ -26,6 +29,7 @@ const routesManifest = join(root, ".next", "routes-manifest.json");
 const TITLE_MAX = 60;
 const DESCRIPTION_MAX = 155;
 const FORBIDDEN = ["TBC", "{{"];
+const DASHES = /[\u2013\u2014]/; // en dash, em dash
 
 /** Every page in the site plan (section 2). */
 const EXPECTED_ROUTES = [
@@ -198,6 +202,15 @@ for (const file of pages) {
   for (const [field, value] of titles) check(field, value, TITLE_MAX);
   for (const [field, value] of descriptions) check(field, value, DESCRIPTION_MAX);
 
+  const decoded = decode(html);
+  const dash = decoded.match(DASHES);
+  if (dash) {
+    const at = decoded.indexOf(dash[0]);
+    const context = decoded.slice(Math.max(0, at - 50), at + 30).replace(/\s+/g, " ").trim();
+    const count = decoded.match(new RegExp(DASHES.source, "g")).length;
+    problems.push(`${route}: contains ${count} dash(es) (— or –), first: "…${context}…"`);
+  }
+
   const text = [visibleText(html), ...titles.map(([, v]) => v), ...descriptions.map(([, v]) => v)].join(" ");
   for (const [pattern, word] of BANNED_WORDS) {
     const match = text.match(pattern);
@@ -235,5 +248,5 @@ if (problems.length) {
 console.log(
   `check:seo: ${pages.length} pages OK (all ${EXPECTED_ROUTES.length} site-plan routes built; ` +
     `titles ≤ ${TITLE_MAX}, descriptions ≤ ${DESCRIPTION_MAX}, no TBC or {{; ` +
-    `${EXPECTED_REDIRECTS.length} old URLs redirect 308; no banned words).`,
+    `${EXPECTED_REDIRECTS.length} old URLs redirect 308; no banned words; no em or en dashes).`,
 );

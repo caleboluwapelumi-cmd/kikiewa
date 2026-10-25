@@ -74,7 +74,7 @@ export function LocationDetails({
       icon: "phone",
       label: locationLabels.phone,
       value: tel ? (
-        <a href={tel} className="link-rule hover:text-secondary">
+        <a href={tel} className="link-touch hover:text-secondary">
           {location.phone}
         </a>
       ) : (

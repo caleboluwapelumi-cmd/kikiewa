@@ -1,4 +1,4 @@
-import { Button } from "@/components/Button";
+import { Button, ButtonGroup } from "@/components/Button";
 import { Logo } from "@/components/brand/Logo";
 import { SectionHeading } from "@/components/SectionHeading";
 import { ctaBand, type NavLink } from "@/data/site";
@@ -33,28 +33,17 @@ export function CtaBand({ primary = ctaBand.cta, secondary = ctaBand.secondaryCt
 
           <div className="flex flex-col items-start gap-space-lg lg:col-span-4 lg:col-start-9 lg:border-l lg:border-on-primary/20 lg:pl-gutter-desktop">
             <Logo variant="mono" className="h-12 w-auto text-cream" />
-            <p className="text-pretty text-body-lg text-on-primary/80">
+            <p className="text-body-lg text-on-primary/80">
               {ctaBand.body}
             </p>
-            <div className="flex flex-wrap items-center gap-space-md">
-              <Button
-                href={primary.href}
-                variant="inverse"
-                size="lg"
-                icon="calendar"
-              >
+            <ButtonGroup stack className="w-full">
+              <Button href={primary.href} variant="onDark">
                 {primary.label}
               </Button>
-              <Button
-                href={secondary.href}
-                variant="inverseOutline"
-                size="lg"
-                icon="whatsapp"
-                iconPosition="leading"
-              >
+              <Button href={secondary.href} variant="whatsapp" tone="dark">
                 {secondary.label}
               </Button>
-            </div>
+            </ButtonGroup>
           </div>
         </div>
       </div>

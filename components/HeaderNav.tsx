@@ -27,12 +27,14 @@ const whatsappLabel =
  * and it closes when focus or a click moves elsewhere. Nothing opens on
  * hover alone.
  *
- * Below lg: a full-height menu sheet with every link listed.
+ * Below lg: the menu button opens MobileMenu, a drawer from the right.
+ *
+ * In the compact (scrolled) header the bar's contents are nudged down by
+ * half the distance the header slides up, so they stay centred.
  */
 export function HeaderNav({ logo }: HeaderNavProps) {
   const { open, setOpen } = useMenuState();
   const [openGroup, setOpenGroup] = useState<string | null>(null);
-  const toggleRef = useRef<HTMLButtonElement>(null);
   const navRef = useRef<HTMLElement>(null);
   const groupButtons = useRef<Record<string, HTMLButtonElement | null>>({});
   const pathname = usePathname();
@@ -65,34 +67,6 @@ export function HeaderNav({ logo }: HeaderNavProps) {
     };
   }, [openGroup]);
 
-  // While the mobile menu is open: lock page scroll, close on Escape (sending
-  // focus back to the toggle, as the menu turns inert), and close if the
-  // viewport widens past the breakpoint where the menu is hidden.
-  useEffect(() => {
-    if (!open) return;
-
-    const onKeyDown = (event: KeyboardEvent) => {
-      if (event.key !== "Escape") return;
-      setOpen(false);
-      toggleRef.current?.focus();
-    };
-
-    const desktop = window.matchMedia("(width >= 64rem)");
-    const onBreakpoint = () => {
-      if (desktop.matches) setOpen(false);
-    };
-
-    document.addEventListener("keydown", onKeyDown);
-    desktop.addEventListener("change", onBreakpoint);
-    document.body.style.overflow = "hidden";
-
-    return () => {
-      document.removeEventListener("keydown", onKeyDown);
-      desktop.removeEventListener("change", onBreakpoint);
-      document.body.style.overflow = "";
-    };
-  }, [open, setOpen]);
-
   const closeAll = () => {
     setOpen(false);
     setOpenGroup(null);
@@ -100,7 +74,7 @@ export function HeaderNav({ logo }: HeaderNavProps) {
 
   return (
     <div className="relative border-b border-border bg-background/90 backdrop-blur-md">
-      <div className="shell flex h-20 items-center justify-between gap-space-lg">
+      <div className="shell flex h-20 items-center justify-between gap-space-lg transition-transform duration-300 ease-out-soft group-data-compact/header:translate-y-1 lg:group-data-compact/header:translate-y-1.5">
         <Link href="/" className="-ml-1 flex shrink-0 items-center p-1" onClick={closeAll}>
           {logo}
         </Link>
@@ -110,7 +84,8 @@ export function HeaderNav({ logo }: HeaderNavProps) {
             {primaryNav.map((item) => {
               const current = isCurrentGroup(item);
               const linkClass = [
-                "link-rule flex items-center gap-1 py-1 text-body-sm font-medium transition-colors duration-200",
+                // The after: layer stretches the hit area to 48px tall without moving the text
+                "link-rule relative flex items-center gap-1 py-1 text-body-sm font-medium transition-colors duration-200 after:absolute after:inset-x-0 after:-inset-y-[9px]",
                 current ? "text-primary" : "text-muted hover:text-primary",
               ].join(" ");
 
@@ -167,7 +142,7 @@ export function HeaderNav({ logo }: HeaderNavProps) {
                   <div
                     id={panelId}
                     hidden={!expanded}
-                    className="absolute top-full left-1/2 z-10 mt-5 w-64 -translate-x-1/2 border border-border bg-background py-space-sm shadow-float"
+                    className="absolute top-full left-1/2 z-10 mt-5 w-64 -translate-x-1/2 overflow-hidden rounded-card border border-border bg-background py-space-sm shadow-float"
                   >
                     <ul>
                       <li>
@@ -209,92 +184,27 @@ export function HeaderNav({ logo }: HeaderNavProps) {
             href={whatsappHref}
             aria-label={whatsappLabel}
             title={whatsappLabel}
-            className="hidden size-11 items-center justify-center text-primary transition-colors duration-200 hover:text-secondary md:flex"
+            className="hidden size-12 items-center justify-center rounded-full text-primary transition-[color,background-color,transform] duration-200 hover:bg-surface hover:text-secondary active:scale-[0.94] md:flex"
           >
             <Icon name="whatsapp" className="size-5" />
           </a>
 
-          <Button href={bookingHref} size="sm" className="hidden sm:inline-flex">
+          <Button href={bookingHref} className="hidden sm:inline-flex">
             {cta.bookShort}
           </Button>
 
           <button
-            ref={toggleRef}
+            id="menu-toggle"
             type="button"
-            onClick={() => setOpen((value) => !value)}
+            onClick={() => setOpen(true)}
             aria-expanded={open}
             aria-controls="mobile-menu"
-            aria-label={open ? "Close menu" : "Open menu"}
-            className="flex size-11 items-center justify-center rounded-xs border border-border text-primary transition-colors duration-200 hover:border-primary active:translate-y-px lg:hidden"
+            aria-label="Open menu"
+            className="flex size-12 items-center justify-center rounded-full border border-border-strong text-primary transition-[border-color,background-color,transform] duration-200 hover:border-primary hover:bg-surface active:scale-[0.94] lg:hidden"
           >
-            <Icon name={open ? "close" : "menu"} className="size-5" />
+            <Icon name="menu" className="size-5" />
           </button>
         </div>
-      </div>
-
-      {/* Mobile menu — full-height sheet under the bar. Stays mounted so it can
-          fade in; `inert` removes it from focus and the accessibility tree
-          while closed. */}
-      <div
-        id="mobile-menu"
-        inert={!open}
-        className={[
-          "absolute inset-x-0 top-full h-[calc(100dvh-var(--spacing-header))] overflow-y-auto border-t border-border bg-background transition-[opacity,transform,visibility] duration-300 ease-out-soft lg:hidden",
-          open ? "visible translate-y-0 opacity-100" : "invisible -translate-y-2 opacity-0",
-        ].join(" ")}
-      >
-        <nav aria-label="Primary mobile" className="shell flex min-h-full flex-col py-space-lg">
-          <ul className="border-t border-border">
-            {primaryNav.map((item) => {
-              const current = isCurrent(item.href);
-              return (
-                <li key={item.href} className="border-b border-border">
-                  <Link
-                    href={item.href}
-                    onClick={closeAll}
-                    aria-current={pathname === item.href ? "page" : undefined}
-                    className={[
-                      "group flex items-center justify-between py-4 font-display text-headline-md transition-colors duration-200",
-                      current ? "text-secondary" : "text-primary hover:text-secondary",
-                    ].join(" ")}
-                  >
-                    {item.label}
-                    <Icon
-                      name="arrowRight"
-                      className="size-5 shrink-0 text-secondary transition-transform duration-300 ease-out-soft group-hover:translate-x-1"
-                    />
-                  </Link>
-                  {item.children ? (
-                    <ul className="-mt-1 flex flex-wrap gap-x-space-lg pb-space-md">
-                      {item.children.map((child) => (
-                        <li key={child.href}>
-                          <Link
-                            href={child.href}
-                            onClick={closeAll}
-                            aria-current={pathname === child.href ? "page" : undefined}
-                            className="flex min-h-11 items-center text-body-md text-muted transition-colors duration-200 hover:text-primary aria-[current=page]:text-secondary"
-                          >
-                            {child.label}
-                          </Link>
-                        </li>
-                      ))}
-                    </ul>
-                  ) : null}
-                </li>
-              );
-            })}
-          </ul>
-
-          {/* Click bubbles up from the link, closing the menu on navigation */}
-          <div onClick={closeAll} className="mt-auto flex flex-col gap-space-sm pt-space-xl">
-            <Button href={bookingHref} size="lg" icon="arrowRight" className="w-full">
-              {cta.book}
-            </Button>
-            <Button href={whatsappHref} size="lg" variant="subtle" icon="whatsapp" iconPosition="leading" className="w-full">
-              {cta.whatsapp}
-            </Button>
-          </div>
-        </nav>
       </div>
     </div>
   );

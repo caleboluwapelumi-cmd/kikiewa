@@ -12,7 +12,7 @@ export function LocationCards() {
           aside={locationsSection.intro}
           className="mb-space-2xl lg:mb-space-3xl"
         />
-        <div className="grid grid-cols-1 gap-gutter lg:grid-cols-2 lg:gap-gutter-desktop">
+        <div data-reveal-stagger className="grid grid-cols-1 gap-gutter lg:grid-cols-2 lg:gap-gutter-desktop">
           {locations.map((location) => (
             <LocationCard key={location.id} location={location} />
           ))}

@@ -12,7 +12,7 @@ type IntroStatementProps = {
 
 export function IntroStatement({ text, rule = true, label }: IntroStatementProps) {
   const statement = (
-    <p className="max-w-[34em] text-pretty font-display text-lead-mobile text-foreground lg:text-lead">
+    <p className="max-w-[34em] font-display text-lead text-foreground">
       {text}
     </p>
   );

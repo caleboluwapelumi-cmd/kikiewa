@@ -6,7 +6,7 @@
  */
 
 const controlBase =
-  "w-full rounded-xs border bg-card px-space-md text-body-md text-foreground transition-colors duration-200 placeholder:text-muted hover:border-primary focus-visible:border-primary";
+  "w-full rounded-input border bg-card px-space-md text-body-md text-foreground transition-colors duration-200 placeholder:text-muted hover:border-primary focus-visible:border-primary";
 
 export function controlClass(invalid: boolean): string {
   return [controlBase, invalid ? "border-error" : "border-border-strong"].join(" ");
@@ -134,7 +134,7 @@ export function ErrorSummary({
       tabIndex={-1}
       role="alert"
       aria-labelledby="error-summary-title"
-      className="border border-error border-l-4 bg-card p-space-lg"
+      className="rounded-input border border-error border-l-4 bg-card p-space-lg"
     >
       <h3 id="error-summary-title" className="font-body text-title-md text-error">
         {title}

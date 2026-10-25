@@ -5,7 +5,7 @@ import type { GalleryItem } from "@/data/site";
 export function GalleryGrid({ items }: { items: GalleryItem[] }) {
   if (items.length === 0) return null;
   return (
-    <ul className="grid grid-cols-2 gap-space-sm md:gap-gutter lg:grid-cols-3">
+    <ul data-reveal-stagger className="grid grid-cols-2 gap-space-sm md:gap-gutter lg:grid-cols-3">
       {items.map((item) => (
         <li key={item.src}>
           <figure>

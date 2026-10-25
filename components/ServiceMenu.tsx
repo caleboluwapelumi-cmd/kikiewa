@@ -62,7 +62,7 @@ export function ServiceMenu({ slug }: { slug: ServiceSlug }) {
                       <Confirmable value={item.priceFrom} format={formatPriceFrom} />
                     </dd>
                   </dl>
-                  <Button href={serviceBookingHref(item)} variant="subtle" size="sm">
+                  <Button href={serviceBookingHref(item)} variant="secondary">
                     {item.requiresConsultation ? cta.consultation : cta.bookShort}
                     <span className="sr-only">: {item.name}</span>
                   </Button>

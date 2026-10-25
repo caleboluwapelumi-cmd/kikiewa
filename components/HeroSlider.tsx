@@ -1,4 +1,4 @@
-import { Button } from "@/components/Button";
+import { Button, ButtonGroup } from "@/components/Button";
 import { ImageFrame } from "@/components/ImageFrame";
 import { Slider } from "@/components/Slider";
 import { hero } from "@/data/site";
@@ -14,8 +14,11 @@ import { hero } from "@/data/site";
  * Slide 1's heading is the page's H1; the others share its styling as
  * paragraphs. Slide 1's image loads eagerly, the rest lazily.
  *
+ * Each photograph zooms slowly (1 to 1.06) while its slide shows, under
+ * the crossfade (.ken-burns in app/globals.css). No zoom under reduced motion.
+ *
  * Height: the first screen, less the fixed header (and, below md, the
- * fixed mobile action bar).
+ * floating mobile action bar).
  */
 export function HeroSlider() {
   return (
@@ -23,7 +26,7 @@ export function HeroSlider() {
       label={hero.label}
       tone="dark"
       className="bg-primary"
-      viewportClassName="h-[calc(100svh-var(--spacing-header)-var(--spacing-action-bar))] min-h-[34rem] max-h-[60rem] md:h-[calc(100svh-var(--spacing-header))] lg:h-[calc(100svh-var(--spacing-header-desktop))]"
+      viewportClassName="h-[calc(100svh-var(--spacing-header)-var(--spacing-action-bar)-var(--spacing-action-bar-inset)*2)] min-h-[34rem] max-h-[60rem] md:h-[calc(100svh-var(--spacing-header))] lg:h-[calc(100svh-var(--spacing-header-desktop))]"
       controlsClassName="absolute inset-x-0 bottom-space-lg shell md:bottom-space-xl lg:justify-end"
       slideLabels={hero.slides.map((slide) => slide.heading)}
     >
@@ -41,6 +44,7 @@ export function HeroSlider() {
               priority={index === 0}
               sizes="100vw"
               className="absolute inset-0"
+              imageClassName="ken-burns"
             />
             <div
               aria-hidden="true"
@@ -53,17 +57,17 @@ export function HeroSlider() {
             <div className="absolute inset-x-0 bottom-0 pb-32 md:pb-36 lg:pb-space-3xl">
               <div className="shell">
                 <div className="max-w-3xl lg:max-w-[46rem]">
-                  <Heading className="text-balance font-display text-display-hero-mobile text-on-primary lg:text-display-hero">
+                  <Heading className="font-display text-display-hero text-on-primary">
                     {slide.heading}
                   </Heading>
-                  <p className="mt-space-md max-w-[46ch] text-pretty text-body-lg text-on-primary/90">
+                  <p className="mt-space-md max-w-[46ch] text-body-lg text-on-primary/90">
                     {slide.line}
                   </p>
-                  <div className="mt-space-lg">
-                    <Button href={slide.cta.href} variant="inverse" size="lg" icon="arrowRight">
+                  <ButtonGroup stack className="mt-space-lg">
+                    <Button href={slide.cta.href} variant="onDark">
                       {slide.cta.label}
                     </Button>
-                  </div>
+                  </ButtonGroup>
                 </div>
               </div>
             </div>

@@ -75,7 +75,7 @@ export function ChoiceGroup({
               key={choice.value}
               htmlFor={id}
               className={[
-                "group relative flex cursor-pointer rounded-xs border bg-card transition-[border-color,background-color,box-shadow] duration-200 ease-out-soft",
+                "group relative flex cursor-pointer rounded-input border bg-card transition-[border-color,background-color,box-shadow,transform] duration-200 ease-out-soft active:scale-[0.98]",
                 "hover:border-primary has-focus-visible:outline-2 has-focus-visible:outline-offset-3 has-focus-visible:outline-secondary",
                 checked ? "border-primary bg-surface-warm shadow-lift" : error ? "border-error" : "border-border-strong",
                 compact

@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import { PeacockDivider } from "@/components/brand/PeacockDivider";
-import { Button } from "@/components/Button";
+import { Button, ButtonGroup } from "@/components/Button";
 import { ClassSlideshow } from "@/components/ClassSlideshow";
 import { CourseCards } from "@/components/CourseCards";
 import { CtaBand } from "@/components/CtaBand";
@@ -38,20 +38,12 @@ export default function AcademyPage() {
   return (
     <>
       <WideHero copy={academy.intro} image={academy.image}>
-        <div className="flex flex-wrap items-center gap-x-space-xl gap-y-space-sm">
-          <Button href="#courses" size="lg" icon="arrowRight">
-            {cta.seeCourses}
-          </Button>
-          <Button
-            href={whatsappLink(contact.whatsapp, whatsappMessages.academy)}
-            size="lg"
-            variant="quiet"
-            icon="whatsapp"
-            iconPosition="leading"
-          >
+        <ButtonGroup stack className="w-full">
+          <Button href="#courses">{cta.seeCourses}</Button>
+          <Button href={whatsappLink(contact.whatsapp, whatsappMessages.academy)} variant="whatsapp">
             {cta.whatsapp}
           </Button>
-        </div>
+        </ButtonGroup>
       </WideHero>
 
       <section className="section-y w-full border-t border-border bg-background">

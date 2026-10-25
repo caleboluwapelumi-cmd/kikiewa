@@ -35,11 +35,10 @@ export function SectionHeading({
 
   const headingClass = [
     size === "xl"
-      ? "text-display-hero-mobile lg:text-display-hero"
+      ? "text-display-hero"
       : size === "lg"
-        ? "text-headline-lg-mobile lg:text-headline-lg"
+        ? "text-headline-lg"
         : "text-headline-md",
-    "text-balance",
     dark ? "text-on-primary" : "text-primary",
   ].join(" ");
 
@@ -80,7 +79,7 @@ export function SectionHeading({
         {body ? (
           <p
             className={[
-              "mt-space-md max-w-[60ch] text-pretty text-body-lg",
+              "mt-space-md max-w-[60ch] text-body-lg",
               dark ? "text-on-primary/80" : "text-muted",
             ].join(" ")}
           >
@@ -90,7 +89,7 @@ export function SectionHeading({
       </div>
 
       {aside ? (
-        <p className="max-w-md text-pretty text-body-md text-muted lg:pb-1">
+        <p className="max-w-md text-body-md text-muted lg:pb-1">
           {aside}
         </p>
       ) : null}

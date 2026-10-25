@@ -30,7 +30,7 @@ export function ServiceSigns({ signs }: { signs: ServiceSignsData }) {
           <SectionHeading heading={signs.heading} />
           <ValuesList items={signs.items} />
           <div>
-            <Button href={signs.cta.href} size="lg" icon="arrowRight">
+            <Button href={signs.cta.href}>
               {signs.cta.label}
             </Button>
           </div>

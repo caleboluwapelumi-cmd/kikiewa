@@ -2,11 +2,10 @@
 
 import Link from "next/link";
 import { useRef, useState } from "react";
-import { buttonClass } from "@/components/Button";
+import { Button } from "@/components/Button";
 import { TbcLabel } from "@/components/Confirmable";
 import { ChoiceGroup, choiceId } from "@/components/form/ChoiceGroup";
 import { ErrorSummary, TextAreaField, TextField } from "@/components/form/Field";
-import { Icon } from "@/components/Icon";
 import { contact, contactPage, type ContactTopic } from "@/data/site";
 import { formatNigerianPhone, normaliseNigerianPhone, type FieldErrors } from "@/lib/validation";
 import { isUsableWhatsAppNumber, whatsappLink } from "@/lib/whatsapp";
@@ -145,19 +144,16 @@ export function ContactForm() {
         {t.privacyAfter}
       </p>
       <div className="flex flex-col items-start gap-space-md border-t border-border pt-space-lg">
-        <button type="submit" className={buttonClass("primary", "lg")}>
-          <Icon name="whatsapp" className="size-4 shrink-0" />
-          <span>{t.send}</span>
-        </button>
+        <Button type="submit">{t.send}</Button>
         {numberReady ? null : <TbcLabel className="normal-case tracking-normal">{t.whatsappTbc}</TbcLabel>}
       </div>
       <div role="status" aria-live="polite">
         {status?.kind === "opened" ? (
           <p className="flex flex-col items-start gap-space-sm border-l-2 border-accent pl-space-md text-body-md text-foreground">
             {t.opened}
-            <a href={status.href} target="_blank" rel="noopener noreferrer" className="link-rule text-label-md uppercase text-primary">
+            <Button href={status.href} target="_blank" rel="noopener noreferrer" variant="whatsapp">
               {t.reopen}
-            </a>
+            </Button>
           </p>
         ) : status?.kind === "tbc" ? (
           <p className="border-l-2 border-accent pl-space-md text-body-md text-foreground">{t.whatsappTbc}</p>

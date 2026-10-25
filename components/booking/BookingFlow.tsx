@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
-import { buttonClass } from "@/components/Button";
+import { Button } from "@/components/Button";
 import { Confirmable } from "@/components/Confirmable";
 import { ChoiceGroup, choiceId, type Choice } from "@/components/form/ChoiceGroup";
 import { ErrorSummary, TextAreaField, TextField } from "@/components/form/Field";
@@ -45,6 +45,9 @@ import { formatNigerianPhone, isValidEmail, normaliseNigerianPhone, type FieldEr
  * - Focus moves to each step's heading, and to the error summary when a
  *   step is sent with problems.
  * - Sending opens WhatsApp to that location (lib/booking/submit.ts).
+ * - On phones the Continue and Back buttons stick to the bottom of the
+ *   screen while the step is in view (the floating action bar is hidden on
+ *   /book, so nothing covers them).
  */
 
 const STEP_COUNT = 5;
@@ -245,27 +248,22 @@ export function BookingFlow() {
       <h2
         ref={headingRef}
         tabIndex={-1}
-        className="text-balance text-headline-lg-mobile text-primary focus:outline-none lg:text-headline-lg"
+        className="text-headline-lg text-primary focus:outline-none"
       >
         {title}
       </h2>
     </div>
   );
 
-  const actions = (continueLabel: string = t.continue, icon: "arrowRight" | "whatsapp" = "arrowRight") => (
-    <div className="mt-space-xl flex flex-wrap items-center gap-x-space-xl gap-y-space-md border-t border-border pt-space-lg">
-      <button type="submit" className={buttonClass("primary", "lg")}>
-        {icon === "whatsapp" ? <Icon name="whatsapp" className="size-4 shrink-0" /> : null}
-        <span>{continueLabel}</span>
-        {icon === "arrowRight" ? (
-          <Icon name="arrowRight" className="size-4 shrink-0 transition-transform duration-300 ease-out-soft group-hover:translate-x-1" />
-        ) : null}
-      </button>
+  const actions = (continueLabel: string = t.continue) => (
+    <div className="sticky bottom-0 z-10 -mx-space-lg mt-space-xl -mb-space-lg flex items-center gap-3 rounded-b-card border-t border-border bg-card/95 px-space-lg pt-space-md pb-[calc(var(--spacing-space-md)+env(safe-area-inset-bottom))] backdrop-blur-md md:static md:mx-0 md:mb-0 md:flex-wrap md:rounded-none md:bg-transparent md:px-0 md:pt-space-lg md:pb-0 md:backdrop-blur-none">
+      <Button type="submit" className="flex-1 md:flex-none">
+        {continueLabel}
+      </Button>
       {typeof step === "number" && step > 1 ? (
-        <button type="button" onClick={() => goTo((step - 1) as BookingStepNumber)} className={buttonClass("quiet", "lg")}>
-          <Icon name="chevronLeft" className="size-4 shrink-0" />
-          <span>{t.back}</span>
-        </button>
+        <Button variant="secondary" onClick={() => goTo((step - 1) as BookingStepNumber)}>
+          {t.back}
+        </Button>
       ) : null}
     </div>
   );
@@ -382,7 +380,7 @@ export function BookingFlow() {
         <div className="flex flex-col gap-space-xl">
           <p className="max-w-[60ch] text-body-md text-muted">{t.dateTime.hint}</p>
           {usesExampleTimes(location) ? (
-            <p className="w-fit border border-dashed border-border-strong px-space-md py-space-sm text-label-sm uppercase text-muted">
+            <p className="w-fit rounded-chip border border-dashed border-border-strong px-space-md py-space-sm text-label-sm uppercase text-muted">
               {t.dateTime.exampleTimes}
             </p>
           ) : null}
@@ -520,7 +518,7 @@ export function BookingFlow() {
                   <button
                     type="button"
                     onClick={() => goTo(row.edit)}
-                    className="link-rule py-1 text-label-md uppercase text-primary hover:text-secondary"
+                    className="inline-flex min-h-12 items-center text-body-sm font-semibold text-primary underline decoration-border-strong underline-offset-4 transition-colors duration-200 hover:text-secondary hover:decoration-secondary"
                   >
                     {t.change}
                     <span className="sr-only"> {row.label.toLowerCase()}</span>
@@ -540,7 +538,7 @@ export function BookingFlow() {
             <label
               htmlFor="consent"
               className={[
-                "flex cursor-pointer items-start gap-space-md border bg-card p-space-md has-focus-visible:outline-2 has-focus-visible:outline-offset-3 has-focus-visible:outline-secondary",
+                "flex cursor-pointer items-start gap-space-md rounded-input border bg-card p-space-md has-focus-visible:outline-2 has-focus-visible:outline-offset-3 has-focus-visible:outline-secondary",
                 errors.consent ? "border-error" : "border-border-strong",
               ].join(" ")}
             >
@@ -554,7 +552,7 @@ export function BookingFlow() {
                 }}
                 aria-invalid={errors.consent ? true : undefined}
                 aria-describedby={errors.consent ? "consent-error" : undefined}
-                className="mt-1 size-4 shrink-0 accent-primary"
+                className="mt-0.5 size-5 shrink-0 accent-primary"
               />
               <span className="text-body-md text-foreground">{t.review.consent}</span>
             </label>
@@ -572,7 +570,7 @@ export function BookingFlow() {
           </div>
           <p className="text-body-sm text-muted">{t.review.sendNote}</p>
         </div>
-        {actions(t.review.send, "whatsapp")}
+        {actions(t.review.send)}
       </form>
     );
   } else if (step === "sent" && service && location && date && time) {
@@ -585,26 +583,22 @@ export function BookingFlow() {
         <div className="flex flex-col gap-space-xl">
           <p className="max-w-[60ch] text-pretty text-body-lg text-muted">{whatsapp ? t.sent.body : t.sent.fallbackBody}</p>
           {result ? (
-            <div className="border border-border bg-surface p-space-lg">
+            <div className="rounded-card border border-border bg-surface p-space-lg">
               <p className="mb-space-sm text-label-sm uppercase text-muted">{t.review.summaryHeading}</p>
               <p className="text-body-md break-words whitespace-pre-line text-foreground">{result.message}</p>
             </div>
           ) : null}
-          <div className="flex flex-wrap items-center gap-x-space-xl gap-y-space-md">
+          <div className="flex flex-wrap items-center gap-3">
             {result && whatsapp ? (
-              <a href={result.href} target="_blank" rel="noopener noreferrer" className={buttonClass("primary", "lg")}>
-                <Icon name="whatsapp" className="size-4 shrink-0" />
-                <span>{t.sent.reopen}</span>
-              </a>
+              <Button href={result.href} target="_blank" rel="noopener noreferrer" variant="whatsapp">
+                {t.sent.reopen}
+              </Button>
             ) : (
-              <Link href={contactHref} className={buttonClass("primary", "lg")}>
-                <span>{t.sent.fallbackCta}</span>
-                <Icon name="arrowRight" className="size-4 shrink-0" />
-              </Link>
+              <Button href={contactHref}>{t.sent.fallbackCta}</Button>
             )}
-            <button type="button" onClick={startAgain} className={buttonClass("quiet", "lg")}>
-              <span>{t.sent.another}</span>
-            </button>
+            <Button variant="secondary" onClick={startAgain}>
+              {t.sent.another}
+            </Button>
           </div>
         </div>
       </div>
@@ -615,7 +609,7 @@ export function BookingFlow() {
     <div className="grid grid-cols-1 gap-space-xl lg:grid-cols-12 lg:gap-gutter-desktop">
       <div className="flex flex-col gap-space-xl lg:col-span-8">
         {step === "sent" ? null : <Progress step={step} onGo={goTo} />}
-        <div className="border border-border bg-card p-space-lg md:p-10 lg:p-12">{body}</div>
+        <div className="rounded-card border border-border bg-card p-space-lg md:p-10 lg:p-12">{body}</div>
       </div>
       {step === "sent" || step === 5 ? null : (
         <aside aria-label={t.review.summaryHeading} className="hidden lg:col-span-4 lg:block">
@@ -633,7 +627,7 @@ export function BookingFlow() {
                 <div key={row.label} className="flex flex-col gap-space-xs">
                   <dt className="text-label-sm uppercase text-muted">{row.label}</dt>
                   <dd className={row.value ? "text-body-md text-foreground" : "text-body-md text-muted"}>
-                    {row.value ?? "—"}
+                    {row.value ?? t.review.notChosen}
                   </dd>
                 </div>
               ))}
@@ -656,7 +650,7 @@ function Progress({ step, onGo }: { step: BookingStepNumber; onGo: (step: Bookin
         </p>
         <div aria-hidden="true" className="mt-space-sm grid grid-cols-5 gap-1">
           {t.steps.map((entry, index) => (
-            <span key={entry.short} className={["h-0.5", index < step ? "bg-primary" : "bg-border-strong"].join(" ")} />
+            <span key={entry.short} className={["h-1 rounded-full", index < step ? "bg-primary" : "bg-border-strong"].join(" ")} />
           ))}
         </div>
       </div>
@@ -670,7 +664,7 @@ function Progress({ step, onGo }: { step: BookingStepNumber; onGo: (step: Bookin
               <span
                 aria-hidden="true"
                 className={[
-                  "grid size-6 place-items-center text-label-sm tabular-nums",
+                  "grid size-7 place-items-center rounded-full text-label-sm tabular-nums",
                   current ? "bg-primary text-on-primary" : done ? "bg-surface-warm text-primary" : "border border-border-strong text-muted",
                 ].join(" ")}
               >
@@ -689,11 +683,11 @@ function Progress({ step, onGo }: { step: BookingStepNumber; onGo: (step: Bookin
               className={["relative -mt-px border-t-2 pt-space-md", current || done ? "border-primary" : "border-transparent"].join(" ")}
             >
               {done ? (
-                <button type="button" onClick={() => onGo(number)} className="flex items-center gap-space-sm text-left hover:text-secondary">
+                <button type="button" onClick={() => onGo(number)} className="flex min-h-12 items-center gap-space-sm text-left hover:text-secondary">
                   {content}
                 </button>
               ) : (
-                <span className="flex items-center gap-space-sm">{content}</span>
+                <span className="flex min-h-12 items-center gap-space-sm">{content}</span>
               )}
             </li>
           );
@@ -703,10 +697,15 @@ function Progress({ step, onGo }: { step: BookingStepNumber; onGo: (step: Bookin
   );
 }
 
-/** Shown before the form loads, and inside the page's Suspense fallback. */
+/**
+ * Shown before the form loads, and inside the page's Suspense fallback.
+ * It holds the room of the step 1 form (886px at its shortest, 1440px wide)
+ * so the swap doesn't push the call section down: that section starts below
+ * the fold on phones and desktops, so no visible content shifts.
+ */
 export function BookingLoading() {
   return (
-    <div className="border border-border bg-card p-space-lg md:p-10 lg:p-12">
+    <div className="flex min-h-[55rem] items-start rounded-card border border-border bg-card p-space-lg md:p-10 lg:p-12">
       <p className="text-body-md text-muted" role="status">
         {t.loading}
       </p>

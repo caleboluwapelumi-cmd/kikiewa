@@ -17,7 +17,7 @@ export function UtilityBar() {
           </span>
           <span className="text-foreground">{utilityBar.locations}</span>
         </p>
-        <Link href={utilityBar.hoursLink.href} className="link-rule text-muted hover:text-primary">
+        <Link href={utilityBar.hoursLink.href} className="link-rule relative text-muted after:absolute after:inset-x-0 after:-inset-y-[13px] hover:text-primary">
           {utilityBar.hoursLink.label}
         </Link>
       </div>

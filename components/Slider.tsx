@@ -10,8 +10,11 @@ import { Icon } from "@/components/Icon";
  *
  * - Autoplay every 6s. It holds while the pointer is over the slides or
  *   keyboard focus is inside them, so a focused link never fades away.
- * - Visible pause/play, previous/next and one dot per slide. All are
- *   native buttons with labels, so they work from the keyboard.
+ * - Visible pause/play, previous/next and, from md, one dot per slide
+ *   (phones show "2 / 4" instead, so every control keeps a 48px target).
+ *   All are native buttons with labels, so they work from the keyboard.
+ * - The shown slide carries data-slide-active="true" once motion is
+ *   allowed, and --slide-duration, for the hero's Ken Burns zoom.
  * - prefers-reduced-motion: no autoplay and no fade. Slide 1 shows, static;
  *   the controls still step through slides, and Play is there if wanted.
  * - Swipe left/right on touch screens. Vertical scrolling is untouched.
@@ -19,6 +22,10 @@ import { Icon } from "@/components/Icon";
  *   the active slide is exposed: the rest are inert and aria-hidden.
  * - The server render (and a page without JS) shows slide 1 with nothing
  *   moving. Autoplay only starts once the client knows motion is allowed.
+ * - Slides not yet shown stay out of the layout (display: none) until the
+ *   page has finished loading, so their lazy images don't compete with
+ *   slide 1's (the hero's largest paint). They then load in the background,
+ *   well before the first crossfade.
  *
  * Pattern: WAI-ARIA APG carousel. The controls come first in the DOM, so
  * pause is the first stop inside the slider; `controlsClassName` places
@@ -75,7 +82,19 @@ export function Slider({
   const [userPaused, setUserPaused] = useState<boolean | null>(null);
   const [hovered, setHovered] = useState(false);
   const [focused, setFocused] = useState(false);
+  /** True once the page has loaded: the other slides may load their images. */
+  const [armed, setArmed] = useState(false);
   const swipe = useRef<{ x: number; y: number } | null>(null);
+
+  useEffect(() => {
+    const arm = () => setArmed(true);
+    if (document.readyState === "complete") {
+      const timer = window.setTimeout(arm, 0);
+      return () => window.clearTimeout(timer);
+    }
+    window.addEventListener("load", arm, { once: true });
+    return () => window.removeEventListener("load", arm);
+  }, []);
 
   // On the server and during hydration this reads as "reduced", so nothing
   // moves until the client has checked the real preference.
@@ -101,7 +120,7 @@ export function Slider({
   const dark = tone === "dark";
 
   const buttonClass = [
-    "flex size-11 shrink-0 items-center justify-center rounded-xs border transition-colors duration-200",
+    "flex size-12 shrink-0 items-center justify-center rounded-full border transition-[color,background-color,border-color,transform] duration-200 active:scale-[0.94]",
     dark
       ? "border-on-primary/40 text-on-primary hover:border-on-primary hover:bg-on-primary/10"
       : "border-border-strong text-primary hover:border-primary hover:bg-surface",
@@ -137,7 +156,16 @@ export function Slider({
           >
             <Icon name="chevronLeft" className="size-4" />
           </button>
-          <ul className="flex items-center">
+          <p
+            aria-hidden="true"
+            className={[
+              "min-w-12 text-center text-body-sm tabular-nums md:hidden",
+              dark ? "text-on-primary" : "text-muted",
+            ].join(" ")}
+          >
+            {active + 1} / {count}
+          </p>
+          <ul className="hidden items-center gap-2 md:flex">
             {slides.map((_, index) => {
               const current = index === active;
               const name = slideLabels?.[index];
@@ -149,12 +177,12 @@ export function Slider({
                     aria-label={`Slide ${index + 1} of ${count}${name ? ": " + name : ""}`}
                     aria-current={current ? "true" : undefined}
                     aria-controls={id}
-                    className="group flex size-11 items-center justify-center"
+                    className="group flex size-12 items-center justify-center"
                   >
                     <span
                       aria-hidden="true"
                       className={[
-                        "block h-0.5 transition-[width,background-color] duration-300 ease-out-soft",
+                        "block h-1 rounded-full transition-[width,background-color] duration-300 ease-out-soft",
                         current ? "w-7" : "w-3",
                         dark
                           ? current
@@ -208,6 +236,7 @@ export function Slider({
         onPointerCancel={() => {
           swipe.current = null;
         }}
+        style={{ "--slide-duration": interval + 700 + "ms" } as React.CSSProperties}
         className={["grid touch-pan-y", viewportClassName].join(" ")}
       >
         {slides.map((slide, index) => {
@@ -220,9 +249,11 @@ export function Slider({
               aria-label={`${index + 1} of ${count}`}
               aria-hidden={!current}
               inert={!current}
+              data-slide-active={current && !reducedMotion ? "true" : undefined}
               className={[
                 "[grid-area:1/1] transition-opacity duration-700 ease-out-soft",
                 current ? "z-10 opacity-100" : "pointer-events-none opacity-0",
+                !current && !armed ? "hidden" : "",
               ].join(" ")}
             >
               {slide}

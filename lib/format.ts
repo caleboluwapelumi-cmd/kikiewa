@@ -48,14 +48,15 @@ const SHORT_DAY: Record<Weekday, string> = {
   sunday: "Sun",
 };
 
-/** ["monday", …, "friday"] -> "Mon – Fri"; ["monday", "wednesday"] -> "Mon, Wed" */
+/** ["monday", …, "friday"] -> "Mon to Fri"; ["monday", "wednesday"] -> "Mon, Wed".
+    Ranges read "to", never a dash: the site shows no dashes. */
 export function formatDays(days: Weekday[]): string {
   const sorted = [...days].sort((a, b) => WEEKDAYS.indexOf(a) - WEEKDAYS.indexOf(b));
   if (sorted.length === 0) return "";
   const first = WEEKDAYS.indexOf(sorted[0]);
   const consecutive = sorted.every((day, index) => WEEKDAYS.indexOf(day) === first + index);
   if (consecutive && sorted.length > 2) {
-    return `${SHORT_DAY[sorted[0]]} – ${SHORT_DAY[sorted[sorted.length - 1]]}`;
+    return `${SHORT_DAY[sorted[0]]} to ${SHORT_DAY[sorted[sorted.length - 1]]}`;
   }
   return sorted.map((day) => SHORT_DAY[day]).join(", ");
 }
@@ -68,9 +69,9 @@ export function formatTime(time: string): string {
   return `${hour}:${String(m).padStart(2, "0")} ${suffix}`;
 }
 
-/** { opens: "09:00", closes: "18:00" } -> "9:00 am – 6:00 pm" */
+/** { opens: "09:00", closes: "18:00" } -> "9:00 am to 6:00 pm" */
 export function formatTimeRange(row: Pick<OpeningHours, "opens" | "closes">): string {
-  return `${formatTime(row.opens)} – ${formatTime(row.closes)}`;
+  return `${formatTime(row.opens)} to ${formatTime(row.closes)}`;
 }
 
 /** One row as a line: "Mon – Fri 9:00 am – 6:00 pm" */

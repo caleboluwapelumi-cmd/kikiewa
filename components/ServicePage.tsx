@@ -1,4 +1,4 @@
-import { Button } from "@/components/Button";
+import { Button, ButtonGroup } from "@/components/Button";
 import { CtaBand } from "@/components/CtaBand";
 import { Faq } from "@/components/Faq";
 import { GalleryGrid } from "@/components/GalleryGrid";
@@ -59,14 +59,12 @@ export function ServicePage({ slug }: { slug: ServiceSlug }) {
         image={category.heroImage ?? category.image}
         imageTone={clinical ? "neutral" : "warm"}
       >
-        <div className="flex flex-wrap items-center gap-x-space-xl gap-y-space-sm">
-          <Button href={primary.href} size="lg" icon="arrowRight">
-            {primary.label}
-          </Button>
-          <Button href={chat} size="lg" variant="quiet" icon="whatsapp" iconPosition="leading">
+        <ButtonGroup stack>
+          <Button href={primary.href}>{primary.label}</Button>
+          <Button href={chat} variant="whatsapp">
             {cta.whatsapp}
           </Button>
-        </div>
+        </ButtonGroup>
       </PageHero>
 
       <IntroStatement text={category.intro} />
@@ -80,9 +78,9 @@ export function ServicePage({ slug }: { slug: ServiceSlug }) {
       {work.length ? (
         <section className="section-y w-full border-t border-border bg-background">
           <div className="shell">
-            <div className="mb-space-2xl flex flex-col gap-space-lg md:flex-row md:items-end md:justify-between">
+            <div className="mb-space-xl flex flex-col gap-space-lg md:mb-space-2xl md:flex-row md:items-end md:justify-between">
               <SectionHeading heading={servicePage.workHeading} />
-              <Button href={"/gallery?service=" + slug} variant="quiet" icon="arrowRight" className="self-start md:self-auto">
+              <Button href={"/gallery?service=" + slug} variant="secondary" className="self-start md:self-auto">
                 {cta.seeWork}
               </Button>
             </div>

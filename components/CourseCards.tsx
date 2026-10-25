@@ -1,14 +1,15 @@
-import Link from "next/link";
+import { Button } from "@/components/Button";
 import { Confirmable } from "@/components/Confirmable";
-import { Icon } from "@/components/Icon";
 import { ImageFrame } from "@/components/ImageFrame";
 import { academy, courses, cta, type Course } from "@/data/site";
 import { formatNaira } from "@/lib/format";
 
 /**
  * The two course cards. `compact` (Home) shows the name, what it covers and
- * "View course". The full card (/academy) adds a class photograph and the
- * facts, with "To be confirmed" for anything the client hasn't supplied.
+ * a "View course" button. The full card (/academy) adds a class photograph
+ * and the facts, with "To be confirmed" for anything the client hasn't
+ * supplied. The button's ::after stretches over the card, so the whole card
+ * is clickable while the button stays the one link.
  */
 type CourseCardsProps = {
   compact?: boolean;
@@ -26,13 +27,13 @@ function facts(course: Course) {
 
 export function CourseCards({ compact = false, titleAs: Title = "h3" }: CourseCardsProps) {
   return (
-    <ul className={["grid grid-cols-1 gap-gutter", compact ? "" : "md:grid-cols-2 lg:gap-gutter-desktop"].join(" ")}>
+    <ul data-reveal-stagger className={["grid grid-cols-1 gap-gutter", compact ? "" : "md:grid-cols-2 lg:gap-gutter-desktop"].join(" ")}>
       {courses.map((course) => (
         <li
           key={course.slug}
           className={[
-            "group relative flex flex-col border border-border bg-card",
-            compact ? "border-t-2 border-t-primary p-space-lg md:p-8" : "",
+            "group relative flex flex-col overflow-hidden rounded-card border border-border bg-card",
+            compact ? "p-space-lg md:p-8" : "",
           ].join(" ")}
         >
           {compact ? null : (
@@ -46,9 +47,9 @@ export function CourseCards({ compact = false, titleAs: Title = "h3" }: CourseCa
               zoomOnHover
             />
           )}
-          <div className={compact ? "contents" : "flex flex-1 flex-col border-t-2 border-t-primary p-space-lg md:p-8"}>
+          <div className={compact ? "contents" : "flex flex-1 flex-col p-space-lg md:p-8"}>
             <Title className="text-headline-md text-primary">{course.name}</Title>
-            <p className="mt-space-sm text-pretty text-body-md text-muted">{course.cardLine}</p>
+            <p className="mt-space-sm text-body-md text-muted">{course.cardLine}</p>
 
             {compact ? null : (
               <dl className="mt-space-lg divide-y divide-border border-y border-border">
@@ -64,17 +65,16 @@ export function CourseCards({ compact = false, titleAs: Title = "h3" }: CourseCa
               </dl>
             )}
 
-            <Link
-              href={course.href}
-              className="mt-auto flex w-fit items-center pt-space-lg gap-space-sm text-label-md uppercase text-primary transition-colors duration-200 after:absolute after:inset-0 group-hover:text-secondary focus-visible:outline-none focus-visible:after:outline-2 focus-visible:after:outline-offset-3 focus-visible:after:outline-secondary"
-            >
-              {cta.viewCourse}
-              <span className="sr-only">: {course.name}</span>
-              <Icon
-                name="arrowRight"
-                className="size-4 shrink-0 transition-transform duration-300 ease-out-soft group-hover:translate-x-1"
-              />
-            </Link>
+            <div className="mt-auto pt-space-lg">
+              <Button
+                href={course.href}
+                variant="secondary"
+                className="after:absolute after:inset-0 group-hover:border-primary-hover group-hover:bg-primary/8"
+              >
+                {cta.viewCourse}
+                <span className="sr-only">: {course.name}</span>
+              </Button>
+            </div>
           </div>
         </li>
       ))}

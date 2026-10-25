@@ -22,7 +22,7 @@ export function LocationsStrip({ eyebrow, heading, body, link }: LocationsStripP
       <div className="shell grid grid-cols-1 gap-space-xl lg:grid-cols-12 lg:items-end lg:gap-gutter-desktop">
         <div className="flex flex-col items-start gap-space-md lg:col-span-5">
           <SectionHeading eyebrow={eyebrow} heading={heading} body={body} />
-          <Button href={link.href} variant="quiet" icon="arrowRight">
+          <Button href={link.href} variant="secondary">
             {link.label}
           </Button>
         </div>

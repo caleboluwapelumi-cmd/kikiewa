@@ -14,8 +14,9 @@ import { isProductionSite } from "@/lib/env";
  * SVGs never go through next/image (and images.dangerouslyAllowSVG stays
  * off): an ImageAsset pointing at an .svg fails loudly instead.
  *
- * Every frame carries an inset hairline, so placeholders and real photographs
- * share the same finished edge.
+ * Frames have soft 16px corners (radius-card) and an inset hairline with
+ * matching concentric corners, so placeholders and real photographs share
+ * the same finished edge. Full-bleed frames (the hero) have neither.
  *
  * Temporary images (source "stock-temp" or "instagram-temp") carry a small
  * "Temp image" badge on previews, so nobody mistakes them for final. Kept
@@ -51,8 +52,11 @@ type ImageFrameProps = {
   className?: string;
   /** Overlays rendered above the image (captions, badges). */
   children?: React.ReactNode;
-  /** Slow, slight zoom when an ancestor `group` is hovered. */
+  /** Slow, slight zoom when an ancestor `group` is hovered. Hover devices
+      only, and never under reduced motion. */
   zoomOnHover?: boolean;
+  /** Extra classes on the photograph itself (the hero's Ken Burns). */
+  imageClassName?: string;
   /** Full-bleed: no rounding and no inset hairline (the hero). */
   bleed?: boolean;
 };
@@ -68,6 +72,7 @@ export function ImageFrame({
   className = "",
   children,
   zoomOnHover = false,
+  imageClassName = "",
   bleed = false,
 }: ImageFrameProps) {
   const dark = tone === "dark";
@@ -78,14 +83,14 @@ export function ImageFrame({
   }
 
   const zoom = zoomOnHover
-    ? "transition-transform duration-700 ease-out-soft group-hover:scale-[1.03]"
+    ? "motion-safe:transition-transform motion-safe:duration-700 motion-safe:ease-out-soft [@media(hover:hover)]:motion-safe:group-hover:scale-[1.04]"
     : "";
 
   return (
     <div
       className={[
-        "relative w-full overflow-hidden",
-        bleed ? "" : "rounded-xs",
+        "relative isolate w-full overflow-hidden",
+        bleed ? "" : "rounded-card",
         tones[tone],
         ratio,
         className,
@@ -101,7 +106,7 @@ export function ImageFrame({
           // is the recommended way to load an above-the-fold image first.
           loading={priority ? "eager" : undefined}
           fetchPriority={priority ? "high" : undefined}
-          className={["object-cover", zoom].join(" ")}
+          className={["object-cover", zoom, imageClassName].join(" ")}
         />
       ) : (
         <>
@@ -129,7 +134,7 @@ export function ImageFrame({
       {bleed ? null : (
         <span
           aria-hidden="true"
-          className="pointer-events-none absolute inset-3 border border-primary/10 md:inset-4"
+          className="pointer-events-none absolute inset-3 rounded-inset border border-primary/10"
         />
       )}
 
@@ -139,7 +144,7 @@ export function ImageFrame({
         <span
           aria-hidden="true"
           title={image.source === "stock-temp" ? "Stock photo (Unsplash), to be replaced" : "Instagram photo, to be replaced"}
-          className="pointer-events-none absolute top-1.5 left-1.5 z-10 whitespace-nowrap bg-foreground/80 px-1.5 py-0.5 text-label-sm uppercase text-on-primary sm:top-3 sm:left-3 sm:px-2 sm:py-1 md:top-4 md:left-4"
+          className="pointer-events-none absolute top-2 left-2 z-10 whitespace-nowrap rounded-chip bg-foreground/80 px-2 py-0.5 text-label-sm uppercase text-on-primary sm:top-4 sm:left-4 sm:px-2.5 sm:py-1"
         >
           Temp image
         </span>

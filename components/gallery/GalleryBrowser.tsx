@@ -4,6 +4,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
 import { useRef, useState } from "react";
+import { Button } from "@/components/Button";
 import { ImageFrame } from "@/components/ImageFrame";
 import { Icon } from "@/components/Icon";
 import { galleryPage, type GalleryCategory, type GalleryItem } from "@/data/site";
@@ -79,7 +80,7 @@ export function GalleryView({ items, filters, active }: GalleryProps & { active:
       scroll={false}
       aria-current={isCurrent ? "page" : undefined}
       className={[
-        "inline-flex h-11 items-center border px-space-md text-label-md uppercase transition-colors duration-200",
+        "inline-flex min-h-12 items-center rounded-chip border px-5 text-body-sm font-semibold transition-[color,background-color,border-color,transform] duration-200 active:scale-[0.97]",
         isCurrent
           ? "border-primary bg-primary text-on-primary"
           : "border-border-strong text-primary hover:border-primary hover:bg-surface",
@@ -91,7 +92,7 @@ export function GalleryView({ items, filters, active }: GalleryProps & { active:
 
   return (
     <>
-      <nav aria-label={galleryPage.filtersLabel} className="mb-space-xl flex flex-wrap gap-space-sm">
+      <nav aria-label={galleryPage.filtersLabel} className="mb-space-xl flex flex-wrap gap-2">
         {filterLink("/gallery", galleryPage.all, !current && !unknownFilter)}
         {available.map((filter) => filterLink("/gallery?service=" + filter.slug, filter.label, current?.slug === filter.slug))}
       </nav>
@@ -99,12 +100,12 @@ export function GalleryView({ items, filters, active }: GalleryProps & { active:
       {shown.length === 0 ? (
         <div className="flex flex-col items-start gap-space-md border-t border-border py-space-xl">
           <p className="text-body-lg text-muted">{galleryPage.filterEmpty}</p>
-          <Link href="/gallery" scroll={false} className="link-rule text-label-md uppercase text-primary hover:text-secondary">
+          <Button href="/gallery" variant="secondary">
             {galleryPage.seeAll}
-          </Link>
+          </Button>
         </div>
       ) : (
-        <ul className="grid grid-flow-dense auto-rows-[44vw] grid-cols-2 gap-space-sm md:auto-rows-[30vw] md:gap-gutter lg:auto-rows-[20rem] lg:grid-cols-3">
+        <ul data-reveal-stagger className="grid grid-flow-dense auto-rows-[44vw] grid-cols-2 gap-space-sm md:auto-rows-[30vw] md:gap-gutter lg:auto-rows-[20rem] lg:grid-cols-3">
           {shown.map((item, index) => (
             <li key={item.src} className={tileShape(index)}>
               <button
@@ -114,7 +115,7 @@ export function GalleryView({ items, filters, active }: GalleryProps & { active:
                 type="button"
                 aria-haspopup="dialog"
                 onClick={() => show(index)}
-                className="group relative block size-full text-left"
+                className="group relative block size-full rounded-card text-left"
               >
                 <span className="sr-only">
                   {galleryPage.viewLarger}: {item.alt}
@@ -151,7 +152,7 @@ export function GalleryView({ items, filters, active }: GalleryProps & { active:
           // A click on the backdrop (the dialog itself, not its content) closes it.
           if (event.target === event.currentTarget) dialogRef.current?.close();
         }}
-        className="m-0 size-full max-h-none max-w-none bg-foreground/95 p-0 text-on-primary backdrop:bg-foreground/80"
+        className="m-auto h-[calc(100dvh-1.5rem)] w-[calc(100vw-1.5rem)] max-h-none max-w-none overflow-hidden rounded-card bg-foreground/95 p-0 text-on-primary backdrop:bg-foreground/80"
       >
         {photo ? (
           <div className="pointer-events-none flex size-full flex-col p-space-md md:p-space-lg">
@@ -163,7 +164,7 @@ export function GalleryView({ items, filters, active }: GalleryProps & { active:
                 type="button"
                 autoFocus
                 onClick={() => dialogRef.current?.close()}
-                className="inline-flex size-11 items-center justify-center text-on-primary hover:bg-on-primary/10"
+                className="inline-flex size-12 items-center justify-center rounded-full text-on-primary transition-[background-color,transform] duration-200 hover:bg-on-primary/10 active:scale-[0.94]"
               >
                 <Icon name="close" className="size-6" />
                 <span className="sr-only">{galleryPage.lightbox.close}</span>
@@ -185,7 +186,7 @@ export function GalleryView({ items, filters, active }: GalleryProps & { active:
                 <button
                   type="button"
                   onClick={() => move(-1)}
-                  className="inline-flex size-12 items-center justify-center border border-on-primary/40 hover:border-on-primary hover:bg-on-primary/10"
+                  className="inline-flex size-12 items-center justify-center rounded-full border border-on-primary/40 transition-[border-color,background-color,transform] duration-200 hover:border-on-primary hover:bg-on-primary/10 active:scale-[0.94]"
                 >
                   <Icon name="chevronLeft" className="size-5" />
                   <span className="sr-only">{galleryPage.lightbox.previous}</span>
@@ -193,7 +194,7 @@ export function GalleryView({ items, filters, active }: GalleryProps & { active:
                 <button
                   type="button"
                   onClick={() => move(1)}
-                  className="inline-flex size-12 items-center justify-center border border-on-primary/40 hover:border-on-primary hover:bg-on-primary/10"
+                  className="inline-flex size-12 items-center justify-center rounded-full border border-on-primary/40 transition-[border-color,background-color,transform] duration-200 hover:border-on-primary hover:bg-on-primary/10 active:scale-[0.94]"
                 >
                   <Icon name="chevronRight" className="size-5" />
                   <span className="sr-only">{galleryPage.lightbox.next}</span>

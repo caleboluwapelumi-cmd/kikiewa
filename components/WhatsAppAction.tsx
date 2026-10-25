@@ -1,4 +1,4 @@
-import { Button, type ButtonVariant } from "@/components/Button";
+import { Button, type ButtonTone } from "@/components/Button";
 import { contact } from "@/data/site";
 import { whatsappLink } from "@/lib/whatsapp";
 
@@ -9,19 +9,15 @@ import { whatsappLink } from "@/lib/whatsapp";
 type WhatsAppActionProps = {
   label: string;
   message: string;
-  variant?: ButtonVariant;
+  /** "dark" on plum surfaces. */
+  tone?: ButtonTone;
   /** A specific number (a location's); defaults to the business number. */
   number?: string | null;
 };
 
-export function WhatsAppAction({ label, message, variant = "primary", number }: WhatsAppActionProps) {
+export function WhatsAppAction({ label, message, tone = "light", number }: WhatsAppActionProps) {
   return (
-    <Button
-      href={whatsappLink(number ?? contact.whatsapp, message)}
-      variant={variant}
-      icon="whatsapp"
-      iconPosition="leading"
-    >
+    <Button href={whatsappLink(number ?? contact.whatsapp, message)} variant="whatsapp" tone={tone}>
       {label}
     </Button>
   );

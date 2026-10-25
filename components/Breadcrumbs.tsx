@@ -11,7 +11,7 @@ export function Breadcrumbs({ trail, className = "" }: { trail: NavLink[]; class
   return (
     <nav aria-label="Breadcrumb" className={className}>
       <JsonLd data={breadcrumbJsonLd(trail)} />
-      <ol className="flex flex-wrap items-center gap-x-space-sm gap-y-space-xs text-label-sm uppercase text-muted">
+      <ol className="flex flex-wrap items-center gap-x-space-sm text-label-sm uppercase text-muted">
         {trail.map((link, index) => {
           const current = index === trail.length - 1;
           return (
@@ -22,7 +22,7 @@ export function Breadcrumbs({ trail, className = "" }: { trail: NavLink[]; class
                 </span>
               ) : (
                 <>
-                  <Link href={link.href} className="link-rule py-1 hover:text-primary">
+                  <Link href={link.href} className="link-touch hover:text-primary">
                     {link.label}
                   </Link>
                   <span aria-hidden="true" className="inline-block h-px w-3 bg-border-strong" />

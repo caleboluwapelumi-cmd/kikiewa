@@ -26,28 +26,39 @@ export function bookingWhatsappNumber(location: Location): string | null {
   return null;
 }
 
-/** The request as WhatsApp text: one labelled line per detail. */
+/**
+ * The request as WhatsApp text: one labelled line per detail, the service
+ * and its category on separate lines, then "Sent from kikiewa.com" as the
+ * last line. No trailing blank line.
+ *
+ *   Service: Deep Cleansing Facial
+ *   Category: Facials
+ *
+ * "Not sure" (no treatment chosen) reads "Service: Not sure yet, please
+ * help me choose" with the category underneath.
+ */
 export function buildBookingMessage(request: BookingRequest): string {
   const choice = resolveService(request.serviceSlug);
   const location = locations.find((entry) => entry.id === request.locationId);
-  const service = choice
-    ? choice.item
-      ? `${choice.category.name}: ${choice.item.name}`
-      : `${choice.category.name} (${bookingMessage.helpChoose})`
-    : request.serviceSlug;
+  const service = choice ? (choice.item ? choice.item.name : bookingMessage.helpChoose) : request.serviceSlug;
 
   const lines = [
     bookingMessage.greeting,
     "",
     `${bookingMessage.service}: ${service}`,
+    choice ? `${bookingMessage.category}: ${choice.category.name}` : null,
     `${bookingMessage.location}: ${location?.title ?? request.locationId}`,
     `${bookingMessage.preferred}: ${longDate(request.preferredDate)}, ${formatTime(request.preferredTime)}`,
     `${bookingMessage.name}: ${request.customer.name}`,
     `${bookingMessage.phone}: ${formatNigerianPhone(request.customer.phone)}`,
     request.customer.email ? `${bookingMessage.email}: ${request.customer.email}` : null,
     request.customer.notes ? `${bookingMessage.notes}: ${request.customer.notes}` : null,
+    bookingMessage.signature,
   ];
-  return lines.filter((line) => line !== null).join("\n");
+  return lines
+    .filter((line) => line !== null)
+    .join("\n")
+    .trim();
 }
 
 export function submitBooking(request: BookingRequest): SubmitResult {

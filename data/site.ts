@@ -187,7 +187,7 @@ export const seo = {
     path: "/services/facials",
     title: "Facials in Ikorodu, Lagos | Kikiewa",
     description:
-      "Deep-cleansing, hydrating and glow facials at Kikiewa in Ikorodu, Lagos, matched to your skin. See prices and book online.",
+      "Deep cleansing, hydrating and glow facials at Kikiewa in Ikorodu, Lagos, matched to your skin. See prices and book online.",
   },
   massage: {
     path: "/services/massage",
@@ -223,7 +223,7 @@ export const seo = {
     path: "/academy",
     title: "Beauty School in Ikorodu, Lagos | Kikiewa Academy",
     description:
-      "Hands-on cosmetology and aesthetics courses at Kikiewa Academy, Ikorodu. Learn from the people who practise the craft.",
+      "Practical cosmetology and aesthetics courses at Kikiewa Academy, Ikorodu. Learn from the people who practise the craft.",
   },
   cosmetology: {
     path: "/academy/cosmetology",
@@ -235,7 +235,7 @@ export const seo = {
     path: "/academy/aesthetics",
     title: "Aesthetics Course in Ikorodu | Kikiewa Academy",
     description:
-      "Learn facials and massage at Kikiewa Academy in Ikorodu, Lagos. Hands-on training from working professionals. See how to apply.",
+      "Learn facials and massage at Kikiewa Academy in Ikorodu, Lagos. Practical training from working professionals. See how to apply.",
   },
   gallery: {
     path: "/gallery",
@@ -470,7 +470,7 @@ export const serviceCategories: ServiceCategory[] = [
     name: "Facials",
     href: serviceHref("facials"),
     icon: "face",
-    cardLine: "Deep-cleansing, hydrating and glow facials, matched to your skin.",
+    cardLine: "Deep cleansing, hydrating and glow facials, matched to your skin.",
     image: {
       alt: "Facial treatment at Kikiewa, Ikorodu",
       image: {
@@ -513,7 +513,7 @@ export const serviceCategories: ServiceCategory[] = [
         alt: "Signs your facial is overdue, from Kikiewa's Instagram",
         image: {
           src: "/images/services/facials-overdue-cover.jpg",
-          alt: "Close-up of a woman's glowing skin under the Kikiewa logo, with the words \"Signs that your facials are overdue\"",
+          alt: "A close view of a woman's glowing skin under the Kikiewa logo, with the words \"Signs that your facials are overdue\"",
           width: 864,
           height: 1079,
           source: "instagram-temp",
@@ -575,7 +575,7 @@ export const serviceCategories: ServiceCategory[] = [
       alt: "Aesthetic skin consultation at Kikiewa, Ikorodu",
       image: {
         src: "/images/services/aesthetics.jpg",
-        alt: "A clean, white skin-care treatment room with a made-up treatment bed",
+        alt: "A clean, white skincare treatment room with a freshly made treatment bed",
         width: 1600,
         height: 1988,
         source: "stock",
@@ -600,7 +600,7 @@ export const serviceCategories: ServiceCategory[] = [
       },
       {
         title: "Aftercare",
-        body: "Clear aftercare advice, and a follow-up where your treatment calls for one.",
+        body: "Clear aftercare advice, and we check in afterwards where your treatment calls for it.",
       },
     ],
     faqs: [
@@ -630,7 +630,7 @@ export const serviceCategories: ServiceCategory[] = [
       alt: "Hair styling at Kikiewa, Ikorodu",
       image: {
         src: "/images/services/hair.jpg",
-        alt: "Close-up of hands braiding neat rows into dark hair",
+        alt: "A close view of hands braiding neat rows into dark hair",
         width: 1600,
         height: 2000,
         source: "stock",
@@ -640,7 +640,7 @@ export const serviceCategories: ServiceCategory[] = [
       alt: "Barbering at Kikiewa, Ikorodu",
       image: {
         src: "/images/services/hair-barber.jpg",
-        alt: "A barber shaping a man's curly high-top fade",
+        alt: "A barber shaping a man's curly high top fade",
         width: 1600,
         height: 1840,
         source: "stock",
@@ -679,7 +679,7 @@ export const serviceCategories: ServiceCategory[] = [
       alt: "Manicure at Kikiewa, Ikorodu",
       image: {
         src: "/images/services/nails.jpg",
-        alt: "A smiling woman with short white-polished nails resting her hand at her chin",
+        alt: "A smiling woman with short nails in white polish, resting her hand at her chin",
         width: 1600,
         height: 2400,
         source: "stock",
@@ -770,7 +770,7 @@ export const serviceMenus: Record<ServiceSlug, ServiceItem[]> = {
   facials: [
     {
       slug: "deep-cleansing-facial",
-      name: "Deep-Cleansing Facial",
+      name: "Deep Cleansing Facial",
       summary: "A thorough cleanse for congested or oily skin.",
       durationMins: TBC,
       priceFrom: TBC,
@@ -779,7 +779,7 @@ export const serviceMenus: Record<ServiceSlug, ServiceItem[]> = {
     {
       slug: "hydrating-facial",
       name: "Hydrating Facial",
-      summary: "Moisture for dry, tight or tired-feeling skin.",
+      summary: "Moisture for dry, tight or tired skin.",
       durationMins: TBC,
       priceFrom: TBC,
       confirmed: false,
@@ -883,7 +883,7 @@ export const serviceMenus: Record<ServiceSlug, ServiceItem[]> = {
     {
       slug: "haircut-barbing",
       name: "Haircut & Barbing",
-      summary: "Clean, sharp cuts and line-ups.",
+      summary: "Clean, sharp cuts and crisp line ups.",
       durationMins: TBC,
       priceFrom: TBC,
       confirmed: false,
@@ -1031,7 +1031,7 @@ export const hero: { label: string; slides: HeroSlide[] } = {
         alt: "Facial in progress at Kikiewa, Ikorodu",
         image: {
           src: "/images/home/hero-2.jpg",
-          alt: "A therapist giving a woman a facial with a handheld skin-care device",
+          alt: "A therapist giving a woman a facial with a handheld skincare device",
           width: 2400,
           height: 1600,
           source: "stock",
@@ -1125,7 +1125,7 @@ export type ClassSlide = { alt: string; caption?: string; image?: OwnImageAsset 
 export const academyHome = {
   eyebrow: "Kikiewa Academy",
   heading: "Learn the craft from the people who practise it.",
-  body: "Hands-on training in cosmetology and aesthetics, taught by the team behind Kikiewa.",
+  body: "Practical training in cosmetology and aesthetics, taught by the team behind Kikiewa.",
   cta: { label: cta.seeCourses, href: "/academy" },
   slideshowLabel: "Inside our classes",
 };
@@ -1162,8 +1162,8 @@ export const studentTestimonials: Testimonial[] = [];
 export const testimonialsSection = {
   heading: "What our clients say",
   label: "Client testimonials",
-  placeholder: "Client testimonial — to be supplied",
-  studentPlaceholder: "Student testimonial — to be supplied",
+  placeholder: "Client testimonial, to be supplied",
+  studentPlaceholder: "Student testimonial, to be supplied",
   placeholderCount: 3,
 } as const;
 
@@ -1372,7 +1372,7 @@ export const courses: Course[] = [
       },
     },
     overview:
-      "A hands-on course across the beauty services we offer every day, taught by the team behind Kikiewa.",
+      "A practical course across the beauty services we offer every day, taught by the team behind Kikiewa.",
     modules: [
       "Hair dressing and styling",
       "Barbing",
@@ -1425,13 +1425,13 @@ export const academy = {
   intro: {
     eyebrow: "Kikiewa Academy",
     heading: "Learn the craft from the people who practise it.",
-    body: "Hands-on courses in cosmetology and aesthetics at Kikiewa, Ikorodu.",
+    body: "Practical courses in cosmetology and aesthetics at Kikiewa, Ikorodu.",
   } satisfies PageCopy,
   image: {
     alt: "A class in progress at Kikiewa Academy, Ikorodu",
     image: {
       src: "/images/academy/hero.jpg",
-      alt: "Close-up of hands painting nail polish onto another person's nails",
+      alt: "A close view of hands painting nail polish onto another person's nails",
       width: 2400,
       height: 1600,
       source: "stock",
@@ -1441,7 +1441,7 @@ export const academy = {
   /** `confirmed: false` points are hidden in production. */
   why: [
     { title: "Taught by working professionals", confirmed: true },
-    { title: "Hands-on, practical classes", confirmed: true },
+    { title: "Practical classes, learned by doing", confirmed: true },
     { title: "Small groups", confirmed: false },
   ],
   coursesHeading: "Our courses",
@@ -1604,6 +1604,8 @@ export const bookPage = {
   },
   review: {
     summaryHeading: "Your booking",
+    /** The summary panel's value for a choice not made yet. */
+    notChosen: "Not chosen yet",
     service: "Service",
     location: "Location",
     dateTime: "Preferred time",
@@ -1654,13 +1656,17 @@ export const bookPage = {
 export const bookingMessage = {
   greeting: "Hello Kikiewa, I'd like to request an appointment.",
   service: "Service",
-  helpChoose: "help me choose",
+  category: "Category",
+  helpChoose: "Not sure yet, please help me choose",
   location: "Location",
   preferred: "Preferred",
   name: "Name",
   phone: "Phone",
   email: "Email",
   notes: "Notes",
+  /** Last line of every booking message, so the client can tell which
+      bookings came from the website. */
+  signature: "Sent from kikiewa.com",
 } as const;
 
 export type ContactTopic = "services" | "academy" | "other";

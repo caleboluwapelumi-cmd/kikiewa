@@ -27,7 +27,7 @@ export function CallSheetList({ onNavigate }: { onNavigate?: () => void }) {
               <span className="text-title-md text-primary">{row.title}</span>
               <span className="text-body-sm text-muted">{tel ? row.phone : callSheet.fallback}</span>
             </span>
-            <Icon name={tel ? "phone" : "arrowRight"} className="size-5 shrink-0 text-secondary" />
+            <Icon name={tel ? "phone" : "chevronRight"} className="size-5 shrink-0 text-secondary" />
           </>
         );
 

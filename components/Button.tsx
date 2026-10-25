@@ -1,101 +1,127 @@
 import Link from "next/link";
-import { Icon, type IconName } from "@/components/Icon";
-
-export type ButtonVariant =
-  | "primary"
-  | "outline"
-  | "quiet"
-  | "subtle"
-  | "inverse"
-  | "inverseOutline";
-export type ButtonSize = "sm" | "md" | "lg";
+import { Icon } from "@/components/Icon";
 
 /**
- * Sharp-cornered editorial button. Renders as a link — every action on the
- * site navigates.
+ * The one button for every call to action on the site.
  *
- * States: colour shifts on hover, a 1px press on active, and the shared
- * focus ring from globals.css. Transitions are short and skipped entirely
- * under prefers-reduced-motion.
+ * Pill shaped, at least 48px tall, Outfit 600 in sentence case. No arrows:
+ * the only icon is WhatsApp's, on the left of the whatsapp variant.
+ *
+ * - primary: filled plum, cream text. The main action in a group.
+ * - secondary: plum outline. The quieter action beside it.
+ * - onDark: cream fill, plum text. The main action on plum or photography.
+ * - whatsapp: outline with the WhatsApp icon on the left.
+ *
+ * secondary and whatsapp take `tone="dark"` on plum surfaces, where the
+ * outline turns cream.
+ *
+ * With an `href` it renders a link (Next's Link, which also handles wa.me,
+ * tel: and map links); without one, a native <button> for forms and steps.
+ *
+ * States: hover darkens, the shared focus ring from globals.css follows the
+ * pill, pressing scales to 0.97, and disabled buttons fade and stop
+ * responding. Transitions skip under prefers-reduced-motion.
  */
 
+export type ButtonVariant = "primary" | "secondary" | "onDark" | "whatsapp";
+export type ButtonTone = "light" | "dark";
+
 const base =
-  "group inline-flex items-center justify-center gap-space-sm rounded-xs text-label-md uppercase whitespace-nowrap transition-[color,background-color,border-color,text-decoration-color,transform] duration-200 ease-out-soft active:translate-y-px";
+  "inline-flex min-h-12 items-center justify-center gap-2.5 rounded-chip border px-7 py-3 text-center text-button transition-[background-color,border-color,color,transform] duration-200 ease-out-soft select-none active:scale-[0.97] disabled:pointer-events-none disabled:opacity-45 aria-disabled:pointer-events-none aria-disabled:opacity-45";
 
-const variants: Record<ButtonVariant, string> = {
-  primary: "bg-primary text-on-primary hover:bg-primary-hover",
-  outline:
-    "border border-primary text-primary hover:bg-primary hover:text-on-primary",
-  // Underlined text action, used beside a primary button. No side padding,
-  // so it lines up with the text column when the buttons wrap.
-  quiet:
-    "text-primary underline decoration-border-strong decoration-1 underline-offset-8 hover:text-secondary hover:decoration-secondary",
-  // Hairline secondary action on a light surface
-  subtle:
-    "border border-border-strong text-primary hover:border-primary hover:bg-surface",
-  // Solid light action on a plum surface
-  inverse: "bg-on-primary text-primary hover:bg-surface",
-  // Hairline secondary action on a plum surface
-  inverseOutline:
-    "border border-on-primary/40 text-on-primary hover:border-on-primary hover:bg-on-primary/10",
+const outline: Record<ButtonTone, string> = {
+  light: "border-primary text-primary hover:border-primary-hover hover:bg-primary/8 hover:text-primary-hover",
+  dark: "border-on-primary/60 text-on-primary hover:border-on-primary hover:bg-on-primary/12",
 };
 
-// Heights keep every action at or above a 44px touch target.
-const sizes: Record<ButtonSize, string> = {
-  sm: "h-11 px-5",
-  md: "h-12 px-6",
-  lg: "h-14 px-8",
-};
-
-const quietSizes: Record<ButtonSize, string> = {
-  sm: "h-11",
-  md: "h-12",
-  lg: "h-14",
-};
-
-/** The same classes for a real <button> (forms), so both look identical. */
-export function buttonClass(variant: ButtonVariant = "primary", size: ButtonSize = "md", className = ""): string {
-  return [base, variants[variant], variant === "quiet" ? quietSizes[size] : sizes[size], className].join(" ");
+function variantClass(variant: ButtonVariant, tone: ButtonTone): string {
+  switch (variant) {
+    case "primary":
+      return "border-transparent bg-primary text-on-primary hover:bg-primary-hover";
+    case "onDark":
+      return "border-transparent bg-cream text-primary hover:bg-surface-3";
+    case "secondary":
+    case "whatsapp":
+      return outline[tone];
+  }
 }
 
-type ButtonProps = {
-  href: string;
+/** The same classes for anything that has to render its own element. */
+export function buttonClass(variant: ButtonVariant = "primary", tone: ButtonTone = "light", className = ""): string {
+  return [base, variantClass(variant, tone), className].filter(Boolean).join(" ");
+}
+
+type CommonProps = {
   children: React.ReactNode;
   variant?: ButtonVariant;
-  size?: ButtonSize;
-  icon?: IconName;
-  iconPosition?: "leading" | "trailing";
+  tone?: ButtonTone;
   className?: string;
 };
 
-export function Button({
-  href,
-  children,
-  variant = "primary",
-  size = "md",
-  icon,
-  iconPosition = "trailing",
-  className = "",
-}: ButtonProps) {
-  const glyph = icon ? (
-    <Icon
-      name={icon}
-      className={
-        iconPosition === "trailing"
-          ? "size-4 shrink-0 transition-transform duration-300 ease-out-soft group-hover:translate-x-1"
-          : "size-4 shrink-0"
-      }
-    />
-  ) : null;
+type LinkButtonProps = CommonProps & {
+  href: string;
+  target?: string;
+  rel?: string;
+  onClick?: React.MouseEventHandler<HTMLAnchorElement>;
+};
 
-  return (
-    <Link
-      href={href}
-      className={buttonClass(variant, size, className)}
-    >
-      {icon && iconPosition === "leading" ? glyph : null}
+type NativeButtonProps = CommonProps &
+  Omit<React.ButtonHTMLAttributes<HTMLButtonElement>, keyof CommonProps> & {
+    href?: undefined;
+  };
+
+export function Button(props: LinkButtonProps | NativeButtonProps) {
+  const { children, variant = "primary", tone = "light", className = "" } = props;
+  const classes = buttonClass(variant, tone, className);
+  const content = (
+    <>
+      {variant === "whatsapp" ? <Icon name="whatsapp" className="size-5 shrink-0" /> : null}
       <span>{children}</span>
-      {icon && iconPosition === "trailing" ? glyph : null}
-    </Link>
+    </>
+  );
+
+  if (props.href !== undefined) {
+    const { href, target, rel, onClick } = props;
+    return (
+      <Link href={href} target={target} rel={rel} onClick={onClick} className={classes}>
+        {content}
+      </Link>
+    );
+  }
+
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const { children: _children, variant: _variant, tone: _tone, className: _className, href: _href, type = "button", ...rest } = props;
+  return (
+    <button type={type} className={classes} {...rest}>
+      {content}
+    </button>
+  );
+}
+
+/**
+ * A row of buttons with at least 12px between them. `stack` (heroes and the
+ * closing band): full width and stacked on phones, side by side from sm.
+ * Otherwise they sit at their natural width and wrap.
+ */
+export function ButtonGroup({
+  children,
+  stack = false,
+  className = "",
+}: {
+  children: React.ReactNode;
+  stack?: boolean;
+  className?: string;
+}) {
+  return (
+    <div
+      className={[
+        stack
+          ? "flex flex-col gap-3 sm:flex-row sm:flex-wrap sm:items-center [&>*]:w-full sm:[&>*]:w-auto"
+          : "flex flex-wrap items-center gap-3",
+        className,
+      ].join(" ")}
+    >
+      {children}
+    </div>
   );
 }

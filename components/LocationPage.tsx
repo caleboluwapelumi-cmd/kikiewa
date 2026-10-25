@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { Breadcrumbs } from "@/components/Breadcrumbs";
-import { Button } from "@/components/Button";
+import { Button, ButtonGroup } from "@/components/Button";
 import { CtaBand } from "@/components/CtaBand";
 import { DirectionsAction } from "@/components/DirectionsAction";
 import { Icon } from "@/components/Icon";
@@ -46,23 +46,20 @@ export function LocationPage({ location }: { location: Location }) {
           <div className="grid grid-cols-1 items-start gap-space-2xl lg:grid-cols-2 lg:gap-16">
             <div className="flex flex-col">
               <LocationDetails location={location} withLandmark strong />
-              <div className="mt-space-lg flex flex-wrap items-center gap-x-space-xl gap-y-space-md">
-                <Button href={location.bookHref} icon="arrowRight">
-                  {cta.bookHere}
-                </Button>
+              <ButtonGroup className="mt-space-lg">
+                <Button href={location.bookHref}>{cta.bookHere}</Button>
                 {tel ? (
-                  <Button href={tel} variant="subtle" icon="phone" iconPosition="leading">
+                  <Button href={tel} variant="secondary">
                     {locationLabels.call}
                   </Button>
                 ) : null}
                 <WhatsAppAction
                   label={cta.whatsapp}
-                  variant="subtle"
                   message={whatsappMessages.general}
                   number={bookingWhatsappNumber(location)}
                 />
                 <DirectionsAction location={location} />
-              </div>
+              </ButtonGroup>
             </div>
 
             <div>
@@ -103,7 +100,7 @@ export function LocationPage({ location }: { location: Location }) {
               <li key={other.id}>
                 <Link
                   href={other.href}
-                  className="group inline-flex items-center gap-space-md font-display text-headline-md text-primary hover:text-secondary"
+                  className="group inline-flex min-h-12 items-center gap-space-md font-display text-headline-md text-primary hover:text-secondary"
                 >
                   {other.title}
                   <Icon name="arrowRight" className="size-5 transition-transform duration-300 ease-out-soft group-hover:translate-x-1" />

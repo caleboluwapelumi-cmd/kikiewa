@@ -22,7 +22,7 @@ export default function BookPage() {
       <section className="w-full border-t border-border bg-surface py-space-2xl lg:py-space-3xl">
         <div className="shell">
           <noscript>
-            <div className="mb-space-xl flex flex-col items-start gap-space-md border border-border bg-card p-space-lg">
+            <div className="mb-space-xl flex flex-col items-start gap-space-md rounded-card border border-border bg-card p-space-lg">
               <p className="text-body-md text-foreground">{bookPage.noscript}</p>
               <WhatsAppAction label={cta.whatsapp} message={whatsappMessages.general} />
             </div>
@@ -40,7 +40,7 @@ export default function BookPage() {
             </h2>
             <p className="mt-space-sm text-body-md text-muted">{bookPage.callBody}</p>
           </div>
-          <div className="border border-border bg-card lg:col-span-7">
+          <div className="overflow-hidden rounded-card border border-border bg-card lg:col-span-7">
             <CallSheetList />
           </div>
         </div>

@@ -53,76 +53,84 @@
      never reads as an accent. 7.4:1 on background. Always paired with text. */
   --color-error: #a3123a;
 
-  /* Type families — the CSS variables come from next/font in app/layout.tsx */
-  --font-display: var(--font-bodoni-moda), "Bodoni Moda", Didot, Georgia, serif;
-  --font-body: var(--font-plus-jakarta), "Plus Jakarta Sans", ui-sans-serif,
-    system-ui, sans-serif;
+  /* Type families. The CSS variables come from next/font in app/layout.tsx.
+     Fraunces (variable: wght 400 to 600, opsz, SOFT) for headings, Outfit
+     for body and UI. */
+  --font-display: var(--font-fraunces), "Fraunces", Georgia, serif;
+  --font-body: var(--font-outfit), "Outfit", ui-sans-serif, system-ui, sans-serif;
 
-  /* Type scale */
-  --text-display-hero: 64px;
-  --text-display-hero--line-height: 68px;
-  --text-display-hero--letter-spacing: -0.028em;
+  /* Fluid type scale. Each size runs from its 360px value to its 1440px
+     value with clamp(), so one class serves every width. Body text never
+     drops below 16px; nothing but uppercase labels goes below 14px.
+     Headings: line-height 1.1 to 1.2. Body: 1.5 to 1.6. */
+  --text-display-hero: clamp(2.125rem, 1.5rem + 2.778vw, 4rem); /* 34 to 64px */
+  --text-display-hero--line-height: 1.1;
+  --text-display-hero--letter-spacing: -0.02em;
   --text-display-hero--font-weight: 400;
 
-  --text-display-hero-mobile: 40px;
-  --text-display-hero-mobile--line-height: 44px;
-  --text-display-hero-mobile--letter-spacing: -0.02em;
-  --text-display-hero-mobile--font-weight: 400;
-
-  --text-headline-lg: 46px;
-  --text-headline-lg--line-height: 52px;
-  --text-headline-lg--letter-spacing: -0.022em;
+  --text-headline-lg: clamp(1.75rem, 1.375rem + 1.667vw, 2.875rem); /* 28 to 46px */
+  --text-headline-lg--line-height: 1.12;
+  --text-headline-lg--letter-spacing: -0.015em;
   --text-headline-lg--font-weight: 400;
 
-  --text-headline-lg-mobile: 31px;
-  --text-headline-lg-mobile--line-height: 36px;
-  --text-headline-lg-mobile--letter-spacing: -0.015em;
-  --text-headline-lg-mobile--font-weight: 400;
-
-  --text-headline-md: 28px;
-  --text-headline-md--line-height: 34px;
-  --text-headline-md--letter-spacing: -0.012em;
+  --text-headline-md: clamp(1.375rem, 1.25rem + 0.556vw, 1.75rem); /* 22 to 28px */
+  --text-headline-md--line-height: 1.2;
+  --text-headline-md--letter-spacing: -0.01em;
   --text-headline-md--font-weight: 500;
 
-  --text-headline-sm: 22px;
-  --text-headline-sm--line-height: 28px;
+  --text-headline-sm: clamp(1.25rem, 1.208rem + 0.185vw, 1.375rem); /* 20 to 22px */
+  --text-headline-sm--line-height: 1.2;
   --text-headline-sm--letter-spacing: -0.005em;
   --text-headline-sm--font-weight: 500;
 
-  --text-title-lg: 18px;
-  --text-title-lg--line-height: 26px;
-  --text-title-lg--letter-spacing: -0.01em;
+  /* Editorial lead paragraph, set in the display face */
+  --text-lead: clamp(1.25rem, 1.167rem + 0.37vw, 1.5rem); /* 20 to 24px */
+  --text-lead--line-height: 1.45;
+  --text-lead--letter-spacing: -0.005em;
+  --text-lead--font-weight: 400;
+
+  --text-title-lg: 1.125rem; /* 18px */
+  --text-title-lg--line-height: 1.4;
+  --text-title-lg--letter-spacing: 0em;
   --text-title-lg--font-weight: 600;
 
-  --text-title-md: 16px;
-  --text-title-md--line-height: 24px;
+  --text-title-md: 1rem;
+  --text-title-md--line-height: 1.5;
   --text-title-md--letter-spacing: 0em;
   --text-title-md--font-weight: 600;
 
-  --text-body-lg: 18px;
-  --text-body-lg--line-height: 30px;
+  --text-body-lg: clamp(1.0625rem, 1.042rem + 0.093vw, 1.125rem); /* 17 to 18px */
+  --text-body-lg--line-height: 1.6;
   --text-body-lg--letter-spacing: 0em;
   --text-body-lg--font-weight: 400;
 
-  --text-body-md: 16px;
-  --text-body-md--line-height: 26px;
+  --text-body-md: 1rem;
+  --text-body-md--line-height: 1.6;
   --text-body-md--letter-spacing: 0em;
   --text-body-md--font-weight: 400;
 
-  --text-body-sm: 14px;
-  --text-body-sm--line-height: 22px;
+  --text-body-sm: 0.875rem; /* 14px: the smallest running text */
+  --text-body-sm--line-height: 1.55;
   --text-body-sm--letter-spacing: 0.005em;
   --text-body-sm--font-weight: 400;
 
-  --text-label-md: 12px;
-  --text-label-md--line-height: 16px;
-  --text-label-md--letter-spacing: 0.14em;
+  /* Button text: Outfit 600, sentence case, no tracking */
+  --text-button: 1rem;
+  --text-button--line-height: 1.25;
+  --text-button--letter-spacing: 0em;
+  --text-button--font-weight: 600;
+
+  /* Uppercase labels and eyebrows: Outfit, 13px, 0.12em tracking. Never the
+     serif. label-md is the slightly heavier one for captions on images. */
+  --text-label-md: 0.8125rem;
+  --text-label-md--line-height: 1.4;
+  --text-label-md--letter-spacing: 0.12em;
   --text-label-md--font-weight: 600;
 
-  --text-label-sm: 11px;
-  --text-label-sm--line-height: 14px;
-  --text-label-sm--letter-spacing: 0.16em;
-  --text-label-sm--font-weight: 600;
+  --text-label-sm: 0.8125rem;
+  --text-label-sm--line-height: 1.4;
+  --text-label-sm--letter-spacing: 0.12em;
+  --text-label-sm--font-weight: 500;
 
   /* Spacing steps used by the layout */
   --spacing-space-xs: 0.25rem;
@@ -138,31 +146,27 @@
   --spacing-margin-tablet: 2.5rem;
   --spacing-margin-desktop: 4rem;
 
-  /* Sharp corners — no pills anywhere */
-  --radius-xs: 0.125rem;
-  --radius-sm: 0.25rem;
-  --radius-md: 0.5rem;
+  /* Soft shape. Cards, image frames, sheets and the lightbox: 16px.
+     Inputs and choice tiles: 12px. Buttons, chips and tags: fully round. */
+  --radius-card: 1rem;
+  --radius-input: 0.75rem;
+  --radius-chip: 999px;
+  /* The inset hairline inside an image frame (12px in): concentric with the card */
+  --radius-inset: 0.25rem;
+  /* The floating mobile action bar */
+  --radius-bar: 1.5rem;
 
   --container-shell: 1360px;
 
   /* Fixed chrome. Header: 80px bar, plus a 36px utility bar from lg up.
-     Mobile action bar: 64px, below md only (plus the safe-area inset). */
+     Mobile action bar: a 66px floating bar, inset 12px from the screen
+     edges, below md only (plus the safe-area inset). */
   --spacing-header: 5rem;
   --spacing-header-desktop: 7.25rem;
-  --spacing-action-bar: 4rem;
+  --spacing-action-bar: 4.125rem;
+  --spacing-action-bar-inset: 0.75rem;
 
-  /* Editorial lead paragraph, set in the display face */
-  --text-lead: 24px;
-  --text-lead--line-height: 36px;
-  --text-lead--letter-spacing: -0.01em;
-  --text-lead--font-weight: 400;
-
-  --text-lead-mobile: 20px;
-  --text-lead-mobile--line-height: 30px;
-  --text-lead-mobile--letter-spacing: -0.005em;
-  --text-lead-mobile--font-weight: 400;
-
-  /* Depth — flat by default. One soft plum-tinted lift for hover and
+  /* Depth: flat by default. One soft plum-tinted lift for hover and
      floating panels, never a resting drop shadow. */
   --shadow-lift: 0 1px 2px color-mix(in oklab, var(--color-primary) 6%, transparent),
     0 18px 40px -20px color-mix(in oklab, var(--color-primary) 28%, transparent);
@@ -176,6 +180,10 @@
 @layer base {
   html {
     color-scheme: light;
+    /* No automatic hyphenation anywhere. Long words wrap whole; only a
+       word wider than its line (a URL, an email) may break. */
+    hyphens: none;
+    overflow-wrap: break-word;
     /* Anchor targets clear the fixed header */
     scroll-padding-top: calc(var(--spacing-header) + 1rem);
   }
@@ -197,11 +205,11 @@
     color: var(--color-primary);
   }
 
-  /* One focus treatment everywhere: a sharp 2px ring offset from the element */
+  /* One focus treatment everywhere: a 2px ring offset from the element. It
+     follows the element's own corners, so pills get a pill ring. */
   :focus-visible {
     outline: 2px solid var(--color-secondary);
     outline-offset: 3px;
-    border-radius: 0;
   }
 
   /* On plum surfaces the ring switches to white to keep its contrast */
@@ -216,6 +224,7 @@
       animation-duration: 0.01ms !important;
       animation-iteration-count: 1 !important;
       transition-duration: 0.01ms !important;
+      transition-delay: 0s !important;
       scroll-behavior: auto !important;
     }
   }
@@ -228,31 +237,111 @@
     line-height: var(--text-body-md--line-height);
   }
 
-  /* Headings are editorial serif by default */
+  /* Headings are editorial serif by default, balanced across their lines */
   h1,
   h2,
   h3,
   h4 {
     font-family: var(--font-display);
+    text-wrap: balance;
   }
 
-  /* Bodoni optical sizes, set per tier rather than automatically: at its
-     automatic setting the hairlines fall below a pixel on standard (1x)
-     screens. Contrast rises with size, but every stroke stays visible. */
+  /* Paragraphs avoid a single orphaned word on the last line */
+  p,
+  li,
+  blockquote,
+  figcaption {
+    text-wrap: pretty;
+  }
+
+  /* Fraunces axes, set per tier. Optical size (opsz) runs low on small
+     headings for sturdier strokes and more open spacing, and higher on
+     display sizes for finer contrast. SOFT 50 rounds the serifs a little,
+     warmer than the default sharp cut. */
   h1,
   h2,
   h3,
   h4,
   [class*="font-display"] {
-    font-variation-settings: "opsz" 14;
+    font-variation-settings: "opsz" 14, "SOFT" 50;
+  }
+
+  [class*="text-headline-md"] {
+    font-variation-settings: "opsz" 18, "SOFT" 50;
   }
 
   [class*="text-headline-lg"] {
-    font-variation-settings: "opsz" 20;
+    font-variation-settings: "opsz" 36, "SOFT" 50;
   }
 
   [class*="text-display-hero"] {
-    font-variation-settings: "opsz" 24;
+    font-variation-settings: "opsz" 72, "SOFT" 50;
+  }
+
+  /* Headings set in the body face (uppercase labels) take no serif axes */
+  [class*="font-body"] {
+    font-variation-settings: normal;
+  }
+}
+
+/* ---------------------------------------------------------------------------
+   Motion. Transform and opacity only, and nothing moves under
+   prefers-reduced-motion: every rule below sits inside no-preference.
+--------------------------------------------------------------------------- */
+
+@media (prefers-reduced-motion: no-preference) {
+  /* Scroll reveal (components/RevealOnScroll.tsx). Hidden only once the
+     script has marked the page ready, so without JavaScript everything
+     shows. Elements already on screen at load are revealed before the
+     page is marked, so above-the-fold content never animates. */
+  .reveal-ready [data-reveal]:not([data-revealed]),
+  .reveal-ready [data-reveal-stagger]:not([data-revealed]) > * {
+    opacity: 0;
+    transform: translateY(16px);
+  }
+
+  .reveal-ready [data-reveal],
+  .reveal-ready [data-reveal-stagger] > * {
+    transition:
+      opacity 500ms var(--ease-out-soft),
+      transform 500ms var(--ease-out-soft);
+  }
+
+  .reveal-ready [data-reveal-stagger] > * {
+    transition-delay: calc(var(--reveal-index, 0) * 70ms);
+  }
+
+  /* Hero Ken Burns: the shown slide zooms from 1 to 1.06 over its time on
+     screen. A slide leaving holds its zoom until it has faded out, then
+     resets unseen. */
+  .ken-burns {
+    transform: scale(1);
+    transition: transform 0s linear 800ms;
+  }
+
+  [data-slide-active="true"] .ken-burns {
+    transform: scale(1.06);
+    transition: transform var(--slide-duration, 6700ms) linear;
+  }
+
+  /* Accordions: <details> opens and closes smoothly where the browser can
+     animate to auto height. Elsewhere it simply opens. */
+  @supports (interpolate-size: allow-keywords) {
+    details {
+      interpolate-size: allow-keywords;
+    }
+
+    details::details-content {
+      block-size: 0;
+      overflow: clip;
+      transition:
+        block-size 350ms var(--ease-out-soft),
+        content-visibility 350ms allow-discrete;
+    }
+
+    details[open]::details-content {
+      block-size: auto;
+    }
   }
 }
 
@@ -311,5 +400,71 @@
   &:focus-visible,
   &[aria-current="page"] {
     background-size: 100% 1px;
+  }
+}
+
+@utility scroll-row {
+  /* Mobile swipe row: one card and a peek of the next, snapping to each.
+     Bleeds to the screen edges so the peek reaches the edge, while the
+     first card lines up with the page gutter. From md the parent switches
+     to a grid (md:scroll-row-off). */
+  display: flex;
+  gap: var(--spacing-space-md);
+  overflow-x: auto;
+  overscroll-behavior-x: contain;
+  scroll-snap-type: x mandatory;
+  scroll-padding-inline: var(--spacing-margin);
+  margin-inline: calc(var(--spacing-margin) * -1);
+  padding-inline: var(--spacing-margin);
+  scrollbar-width: none;
+  /* Room inside the clipped row for focus rings */
+  padding-block: 0.5rem;
+  margin-block: -0.5rem;
+
+  &::-webkit-scrollbar {
+    display: none;
+  }
+
+  & > * {
+    flex: 0 0 auto;
+    width: min(80%, 22rem);
+    scroll-snap-align: start;
+  }
+}
+
+@utility scroll-row-off {
+  /* Undo scroll-row (from md up) so the parent's grid classes apply */
+  display: grid;
+  overflow: visible;
+  scroll-snap-type: none;
+  margin: 0;
+  padding: 0;
+
+  & > * {
+    width: auto;
+  }
+}
+
+@utility link-touch {
+  /* Standalone text link with a 48px touch target. The underline stays
+     under the text (text-decoration, not the box) and shows on hover,
+     focus and the current page. Inline links inside sentences don't need
+     this: they stay plain underlined text. */
+  display: inline-flex;
+  align-items: center;
+  min-height: 3rem;
+  min-width: 3rem;
+  text-decoration-line: underline;
+  text-decoration-color: transparent;
+  text-decoration-thickness: 1px;
+  text-underline-offset: 4px;
+  transition:
+    color 200ms var(--ease-out-soft),
+    text-decoration-color 200ms var(--ease-out-soft);
+
+  &:hover,
+  &:focus-visible,
+  &[aria-current="page"] {
+    text-decoration-color: currentColor;
   }
 }

@@ -12,9 +12,10 @@ import { telHref } from "@/lib/phone";
  * AA on plum, and `data-tone="dark"` switches the focus ring to white.
  */
 
-const columnHeading = "mb-space-sm font-body text-label-sm uppercase text-on-primary/75";
+const columnHeading = "mb-space-xs font-body text-label-sm uppercase text-on-primary/75";
 
-const linkClass = "link-rule w-fit py-0.5 text-body-md text-on-primary/80 hover:text-on-primary";
+// link-touch: 48px rows for touch, underline under the text (globals.css)
+const linkClass = "link-touch w-fit text-body-md text-on-primary/80 hover:text-on-primary";
 
 export function Footer() {
   const tel = telHref(contact.phone);
@@ -30,14 +31,14 @@ export function Footer() {
             {tel ? (
               <p className="text-body-md text-on-primary/80">
                 {footer.phoneLabel}{" "}
-                <a href={tel} className="link-rule text-on-primary hover:text-on-primary">
+                <a href={tel} className="link-touch text-on-primary">
                   {contact.phone}
                 </a>
               </p>
             ) : null}
           </div>
 
-          <nav aria-label={footer.servicesHeading} className="flex flex-col gap-space-sm lg:col-span-2">
+          <nav aria-label={footer.servicesHeading} className="flex flex-col lg:col-span-2">
             <h2 className={columnHeading}>{footer.servicesHeading}</h2>
             {serviceLinks.map((link) => (
               <Link key={link.href} href={link.href} className={linkClass}>
@@ -46,7 +47,7 @@ export function Footer() {
             ))}
           </nav>
 
-          <nav aria-label={footer.kikiewaHeading} className="flex flex-col gap-space-sm lg:col-span-2">
+          <nav aria-label={footer.kikiewaHeading} className="flex flex-col lg:col-span-2">
             <h2 className={columnHeading}>{footer.kikiewaHeading}</h2>
             {footer.kikiewaLinks.map((link) => (
               <Link key={link.href} href={link.href} className={linkClass}>
@@ -60,7 +61,7 @@ export function Footer() {
             <div className="grid grid-cols-1 gap-space-lg sm:grid-cols-2 lg:grid-cols-1">
               {locations.map((location) => (
                 <div key={location.id} className="flex flex-col gap-space-xs">
-                  <Link href={location.href} className="link-rule w-fit text-title-md hover:text-on-primary">
+                  <Link href={location.href} className="link-touch w-fit text-title-md hover:text-on-primary">
                     {location.title}
                   </Link>
                   <span className="text-body-sm text-on-primary/75">
@@ -79,7 +80,7 @@ export function Footer() {
           </div>
 
           {socials.length ? (
-            <nav aria-label={footer.followHeading} className="flex flex-col gap-space-sm lg:col-span-2">
+            <nav aria-label={footer.followHeading} className="flex flex-col lg:col-span-2">
               <h2 className={columnHeading}>{footer.followHeading}</h2>
               {socials.map((link) => (
                 <a key={link.href} href={link.href} className={linkClass} rel="noopener">
@@ -96,9 +97,9 @@ export function Footer() {
           <span>
             © {site.copyrightYear} {site.name}
           </span>
-          <nav aria-label="Legal" className="flex items-center gap-space-lg">
+          <nav aria-label="Legal" className="flex flex-wrap items-center gap-x-space-lg">
             {footer.legalLinks.map((link) => (
-              <Link key={link.href} href={link.href} className="link-rule py-0.5 hover:text-on-primary">
+              <Link key={link.href} href={link.href} className="link-touch hover:text-on-primary">
                 {link.label}
               </Link>
             ))}

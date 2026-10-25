@@ -45,7 +45,7 @@ export function CallSheet({ className }: { className: string }) {
         onClick={show}
         className={className}
       >
-        <Icon name="phone" className="size-5" />
+        <Icon name="phone" className="size-5 shrink-0" />
         {callSheet.trigger}
       </button>
 
@@ -57,10 +57,10 @@ export function CallSheet({ className }: { className: string }) {
           // The dialog element itself only receives clicks on its backdrop.
           if (event.target === event.currentTarget) close();
         }}
-        className="fixed inset-x-0 top-auto bottom-0 m-0 w-full max-w-none border-t border-border bg-background p-0 text-foreground backdrop:bg-foreground/40"
+        className="fixed inset-x-0 top-auto bottom-0 m-0 w-full max-w-none overflow-hidden rounded-t-card border-t border-border bg-background p-0 text-foreground shadow-float backdrop:bg-foreground/40"
       >
         <div className="pb-[env(safe-area-inset-bottom)]">
-          <div className="flex items-center justify-between gap-space-md border-b border-border py-space-sm pr-space-xs pl-space-lg">
+          <div className="flex items-center justify-between gap-space-md border-b border-border py-space-sm pr-space-sm pl-space-lg">
             <h2 id={titleId} className="text-headline-sm text-primary">
               {callSheet.title}
             </h2>
@@ -68,7 +68,7 @@ export function CallSheet({ className }: { className: string }) {
               type="button"
               onClick={close}
               aria-label={callSheet.close}
-              className="flex size-11 items-center justify-center text-primary hover:text-secondary"
+              className="flex size-12 items-center justify-center rounded-full border border-border-strong text-primary transition-[border-color,background-color,transform] duration-200 hover:border-primary hover:bg-surface active:scale-[0.94]"
             >
               <Icon name="close" className="size-5" />
             </button>

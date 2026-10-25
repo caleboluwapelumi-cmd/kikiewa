@@ -23,7 +23,7 @@ export default function ContactPage() {
     {
       label: contactPage.phoneLabel,
       value: tel ? (
-        <a href={tel} className="link-rule hover:text-secondary">
+        <a href={tel} className="link-touch hover:text-secondary">
           {contact.phone}
         </a>
       ) : (
@@ -37,7 +37,7 @@ export default function ContactPage() {
           value={contact.whatsapp}
           format={(number) =>
             isUsableWhatsAppNumber(number) ? (
-              <a href={whatsappHref} className="link-rule hover:text-secondary">
+              <a href={whatsappHref} className="link-touch hover:text-secondary">
                 {number}
               </a>
             ) : (
@@ -53,7 +53,7 @@ export default function ContactPage() {
         <Confirmable
           value={contact.email}
           format={(email) => (
-            <a href={"mailto:" + email} className="link-rule hover:text-secondary">
+            <a href={"mailto:" + email} className="link-touch hover:text-secondary">
               {email}
             </a>
           )}
@@ -99,7 +99,7 @@ export default function ContactPage() {
             body={contactPage.form.body}
             className="lg:col-span-5"
           />
-          <div className="border border-border bg-card p-space-lg md:p-10 lg:col-span-7">
+          <div className="rounded-card border border-border bg-card p-space-lg md:p-10 lg:col-span-7">
             <ContactForm />
           </div>
         </div>

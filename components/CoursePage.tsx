@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { Button } from "@/components/Button";
+import { Button, ButtonGroup } from "@/components/Button";
 import { Confirmable } from "@/components/Confirmable";
 import { CtaBand } from "@/components/CtaBand";
 import { FactTable } from "@/components/FactTable";
@@ -44,14 +44,12 @@ export function CoursePage({ slug }: { slug: CourseSlug }) {
         breadcrumbs={[breadcrumbRoots.home, breadcrumbRoots.academy, { label: course.name, href: course.href }]}
         image={course.image}
       >
-        <div className="flex flex-wrap items-center gap-x-space-xl gap-y-space-sm">
-          <Button href={chat} size="lg" icon="whatsapp" iconPosition="leading">
+        <ButtonGroup stack>
+          <Button href="#apply">{academy.applyHeading}</Button>
+          <Button href={chat} variant="whatsapp">
             {cta.whatsapp}
           </Button>
-          <Button href="#apply" size="lg" variant="quiet" icon="arrowRight">
-            {academy.applyHeading}
-          </Button>
-        </div>
+        </ButtonGroup>
       </PageHero>
 
       <IntroStatement text={course.overview} label={academy.overviewLabel} />
@@ -103,12 +101,12 @@ export function CoursePage({ slug }: { slug: CourseSlug }) {
         <div className="shell grid grid-cols-1 gap-space-xl lg:grid-cols-12 lg:items-end lg:gap-gutter-desktop">
           <div className="flex flex-col items-start gap-space-lg lg:col-span-7">
             <SectionHeading heading={academy.courseCta.heading} body={academy.courseCta.body} />
-            <div className="flex flex-wrap items-center gap-x-space-xl gap-y-space-sm">
+            <ButtonGroup>
               <WhatsAppAction label={cta.whatsapp} message={whatsappMessages.academy} />
-              <Button href={academy.courseCta.secondary.href} variant="quiet" icon="arrowRight">
+              <Button href={academy.courseCta.secondary.href} variant="secondary">
                 {academy.courseCta.secondary.label}
               </Button>
-            </div>
+            </ButtonGroup>
           </div>
 
           {other ? (

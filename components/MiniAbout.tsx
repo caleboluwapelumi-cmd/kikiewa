@@ -14,10 +14,10 @@ export function MiniAbout() {
       <div className="shell grid grid-cols-1 gap-space-2xl lg:grid-cols-12 lg:items-center lg:gap-gutter-desktop">
         <div className="flex flex-col items-start lg:col-span-6">
           <SectionHeading eyebrow={miniAbout.eyebrow} heading={miniAbout.heading} />
-          <p className="mt-space-lg max-w-[56ch] text-pretty text-body-lg text-muted">
+          <p className="mt-space-lg max-w-[56ch] text-body-lg text-muted">
             {miniAbout.body}
           </p>
-          <Button href={miniAbout.link.href} variant="quiet" icon="arrowRight" className="mt-space-lg">
+          <Button href={miniAbout.link.href} variant="secondary" className="mt-space-xl">
             {miniAbout.link.label}
           </Button>
         </div>

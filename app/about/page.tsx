@@ -37,7 +37,7 @@ export default function AboutPage() {
                   key={paragraph}
                   className={
                     index === 0
-                      ? "max-w-[34em] text-pretty font-display text-lead-mobile text-foreground lg:text-lead"
+                      ? "max-w-[34em] font-display text-lead text-foreground"
                       : "max-w-[60ch] text-pretty text-body-lg text-muted"
                   }
                 >
@@ -66,7 +66,7 @@ export default function AboutPage() {
                   <span aria-hidden="true" className="inline-block h-px w-8 shrink-0 bg-accent" />
                   {statement.heading}
                 </h2>
-                <p className="mt-space-lg text-pretty font-display text-lead-mobile text-primary md:text-lead lg:text-headline-lg-mobile">
+                <p className="mt-space-lg font-display text-lead text-primary lg:text-headline-md">
                   {statement.body}
                 </p>
               </div>
