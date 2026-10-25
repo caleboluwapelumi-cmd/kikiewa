@@ -52,19 +52,37 @@ export type FaqItem = { question: string; answer: OrTBC<string> };
 export type Point = { title: string; body?: string };
 
 /**
+ * Where a photograph comes from. Both temp sources are stand-ins until the
+ * photoshoot: `npm run check:images` lists every one still referenced and
+ * fails a production build, and previews badge them "Temp image".
+ * - "final": cleared, final photography (the default).
+ * - "instagram-temp": a client photo taken from Kikiewa's Instagram.
+ * - "stock-temp": an Unsplash photo, credited in public/images/CREDITS.md.
+ */
+export type ImageSource = "final" | "instagram-temp" | "stock-temp";
+
+/**
  * A photograph, stored under public/images/{folder}/. `source` defaults to
- * "final"; "instagram-temp" marks a stand-in from Instagram, kept in a temp/
- * folder. `npm run check:images` lists every temp image still referenced.
+ * "final".
  *
- * Alt text pattern: "{what is shown} at Kikiewa, Ikorodu".
+ * Alt text for Kikiewa's own photographs: "{what is shown} at Kikiewa,
+ * Ikorodu". Stock photographs describe only what is shown, never claiming
+ * to be Kikiewa.
  */
 export type ImageAsset = {
   src: string;
   alt: string;
   width: number;
   height: number;
-  source?: "final" | "instagram-temp";
+  source?: ImageSource;
 };
+
+/**
+ * A photograph of Kikiewa's own work, people or places: Our work, Gallery,
+ * Inside our classes, the team, Locations, Testimonials. Stock is a type
+ * error here.
+ */
+export type OwnImageAsset = ImageAsset & { source?: Exclude<ImageSource, "stock-temp"> };
 
 /** A picture position with its alt text, waiting for a photograph. */
 export type ImageSlot = { alt: string; image?: ImageAsset };
@@ -87,8 +105,12 @@ export const site = {
   copyrightYear: 2026,
 } as const;
 
-/** Business-wide contact details. Phones live on each location. */
-export const contact: { whatsapp: OrTBC<string>; email: OrTBC<string> } = {
+/**
+ * Business-wide contact details. `phone` is the main line (from the client's
+ * Instagram); each location keeps its own number, TBC until confirmed.
+ */
+export const contact: { phone: OrTBC<string>; whatsapp: OrTBC<string>; email: OrTBC<string> } = {
+  phone: "0706 621 2933",
   whatsapp: TBC,
   email: TBC,
 };
@@ -346,12 +368,17 @@ export const nitelLocation: Location = {
 /** Alphabetical, so neither reads as the main one. */
 export const locations: Location[] = [ebuteLocation, nitelLocation];
 
-/** The mobile Call sheet. Rows with a TBC phone open /contact instead. */
+/**
+ * The mobile Call sheet: the main line first, then one row per location.
+ * Rows with a TBC phone open /contact instead.
+ */
 // DRAFT COPY - client approval needed
 export const callSheet = {
   trigger: "Call",
-  title: "Which location?",
+  title: "Call Kikiewa",
   close: "Close",
+  /** Row label for the business-wide number (contact.phone). */
+  mainLine: "Main line",
   /** Shown under a row while that location's phone is TBC. */
   fallback: "See contact details",
 } as const;
@@ -400,19 +427,31 @@ export type ServiceCategory = {
   icon: IconName;
   /** One line for the cards on Home and /services. */
   cardLine: string;
+  /** Card photograph, and the service page's hero unless `heroImage` is set. */
   image: ImageSlot;
+  /** Service page hero, when it should differ from the card. */
+  heroImage?: ImageSlot;
   /** The service page's H1 and line. */
   heading: string;
   line: string;
   intro: string;
   /** "What to expect", 3–4 short steps. Left out where the plan has none. */
   expect?: Point[];
+  /** A titled list beside a photograph, after "What to expect" (facials). */
+  signs?: ServiceSigns;
   faqs: FaqItem[];
   /** Small print on the page (aesthetics). */
   disclaimer?: string;
   /** Aesthetics: every booking is a consultation. */
   consultationLed: boolean;
   seo: PageMeta;
+};
+
+export type ServiceSigns = {
+  heading: string;
+  items: Point[];
+  cta: NavLink;
+  image: ImageSlot;
 };
 
 export function serviceHref(slug: ServiceSlug): string {
@@ -427,7 +466,16 @@ export const serviceCategories: ServiceCategory[] = [
     href: serviceHref("facials"),
     icon: "face",
     cardLine: "Deep-cleansing, hydrating and glow facials, matched to your skin.",
-    image: { alt: "Facial treatment at Kikiewa, Ikorodu" },
+    image: {
+      alt: "Facial treatment at Kikiewa, Ikorodu",
+      image: {
+        src: "/images/services/facials.jpg",
+        alt: "A woman smoothing a dab of cream onto her cheek",
+        width: 1600,
+        height: 2400,
+        source: "stock-temp",
+      },
+    },
     heading: "Facials",
     line: "Skin that feels as good as it looks.",
     intro:
@@ -438,8 +486,40 @@ export const serviceCategories: ServiceCategory[] = [
       { title: "Treat & massage" },
       { title: "Finish & advice" },
     ],
+    signs: {
+      heading: "Signs your facial is overdue",
+      items: [
+        {
+          title: "Your makeup looks patchy.",
+          body: "Uneven texture stops makeup sitting smoothly; a facial with dermaplaning can help it apply more evenly.",
+        },
+        { title: "Dry or rough patches.", body: "Usually dead skin that's ready to come off." },
+        {
+          title: "Blackheads or congestion.",
+          body: "Pores clogged with dirt and oil look bigger; a facial helps clear them.",
+        },
+        {
+          title: "It's been more than four weeks.",
+          body: "Facials work best as part of a regular routine.",
+        },
+      ],
+      cta: { label: "Book a facial", href: bookingHref + "?service=facials" },
+      image: {
+        alt: "Signs your facial is overdue, from Kikiewa's Instagram",
+        image: {
+          src: "/images/services/facials-overdue-cover.jpg",
+          alt: "Close-up of a woman's glowing skin under the Kikiewa logo, with the words \"Signs that your facials are overdue\"",
+          width: 864,
+          height: 1079,
+          source: "instagram-temp",
+        },
+      },
+    },
     faqs: [
-      { question: "How often should I have a facial?", answer: TBC },
+      {
+        question: "How often should I have a facial?",
+        answer: "Every four weeks or so works well for most skin. We'll suggest a rhythm that suits yours.",
+      },
       { question: "Can I wear makeup afterwards?", answer: TBC },
       { question: "Is it suitable for sensitive skin?", answer: TBC },
     ],
@@ -452,7 +532,16 @@ export const serviceCategories: ServiceCategory[] = [
     href: serviceHref("massage"),
     icon: "spa",
     cardLine: "Massages that release tension and help you fully switch off.",
-    image: { alt: "Massage treatment at Kikiewa, Ikorodu" },
+    image: {
+      alt: "Massage treatment at Kikiewa, Ikorodu",
+      image: {
+        src: "/images/services/massage.jpg",
+        alt: "A woman resting on a massage table beside warm stones, towels and a candle",
+        width: 1600,
+        height: 1036,
+        source: "stock-temp",
+      },
+    },
     heading: "Massage & Spa",
     line: "Switch off. Breathe out.",
     intro:
@@ -477,7 +566,16 @@ export const serviceCategories: ServiceCategory[] = [
     href: serviceHref("aesthetics"),
     icon: "sparkle",
     cardLine: "Advanced skin treatments, always starting with a consultation.",
-    image: { alt: "Aesthetic skin consultation at Kikiewa, Ikorodu" },
+    image: {
+      alt: "Aesthetic skin consultation at Kikiewa, Ikorodu",
+      image: {
+        src: "/images/services/aesthetics.jpg",
+        alt: "A clean, white skin-care treatment room with a made-up treatment bed",
+        width: 1600,
+        height: 1988,
+        source: "stock-temp",
+      },
+    },
     heading: "Aesthetics",
     line: "Advanced skin care, always starting with a consultation.",
     intro:
@@ -523,7 +621,26 @@ export const serviceCategories: ServiceCategory[] = [
     href: serviceHref("hair"),
     icon: "scissors",
     cardLine: "Styling, treatments and clean, sharp cuts.",
-    image: { alt: "Hair styling at Kikiewa, Ikorodu" },
+    image: {
+      alt: "Hair styling at Kikiewa, Ikorodu",
+      image: {
+        src: "/images/services/hair.jpg",
+        alt: "Close-up of hands braiding neat rows into dark hair",
+        width: 1600,
+        height: 2000,
+        source: "stock-temp",
+      },
+    },
+    heroImage: {
+      alt: "Barbering at Kikiewa, Ikorodu",
+      image: {
+        src: "/images/services/hair-barber.jpg",
+        alt: "A barber shaping a man's curly high-top fade",
+        width: 1600,
+        height: 1840,
+        source: "stock-temp",
+      },
+    },
     heading: "Hair & Barbing",
     line: "Styled, cut and cared for.",
     intro:
@@ -553,7 +670,16 @@ export const serviceCategories: ServiceCategory[] = [
     href: serviceHref("nails"),
     icon: "hand",
     cardLine: "Manicures, pedicures and nail art, finished with precision.",
-    image: { alt: "Manicure at Kikiewa, Ikorodu" },
+    image: {
+      alt: "Manicure at Kikiewa, Ikorodu",
+      image: {
+        src: "/images/services/nails.jpg",
+        alt: "A smiling woman with short white-polished nails resting her hand at her chin",
+        width: 1600,
+        height: 2400,
+        source: "stock-temp",
+      },
+    },
     heading: "Nails",
     line: "Finished with precision.",
     intro:
@@ -584,7 +710,16 @@ export const serviceCategories: ServiceCategory[] = [
     href: serviceHref("makeup"),
     icon: "brush",
     cardLine: "For your big day, a night out, or a photoshoot.",
-    image: { alt: "Makeup artist at work at Kikiewa, Ikorodu" },
+    image: {
+      alt: "Makeup artist at work at Kikiewa, Ikorodu",
+      image: {
+        src: "/images/services/makeup.jpg",
+        alt: "A woman with shimmering eyeshadow lining her lips with a pencil",
+        width: 1600,
+        height: 2400,
+        source: "stock-temp",
+      },
+    },
     heading: "Makeup",
     line: "For the moments you want to remember.",
     intro:
@@ -651,6 +786,15 @@ export const serviceMenus: Record<ServiceSlug, ServiceItem[]> = {
       durationMins: TBC,
       priceFrom: TBC,
       confirmed: false,
+    },
+    // Confirmed: offered on the client's Instagram.
+    {
+      slug: "dermaplaning",
+      name: "Dermaplaning",
+      summary: "Gently clears dead skin and fine facial hair for a smoother surface that makeup sits well on.",
+      durationMins: TBC,
+      priceFrom: TBC,
+      confirmed: true,
     },
     {
       slug: "facial-for-men",
@@ -863,25 +1007,61 @@ export const hero: { label: string; slides: HeroSlide[] } = {
       heading: "Your beauty, seen and felt.",
       line: "Everyone is beautiful in their own way. At Kikiewa, we bring it out.",
       cta: { label: cta.book, href: bookingHref },
-      image: { alt: "A calm treatment room at Kikiewa, Ikorodu" },
+      image: {
+        alt: "A calm treatment room at Kikiewa, Ikorodu",
+        image: {
+          src: "/images/home/hero-1.jpg",
+          alt: "A candlelit steam room with warm lights over a stone bench",
+          width: 2400,
+          height: 1601,
+          source: "stock-temp",
+        },
+      },
     },
     {
       heading: "Skin that feels as good as it looks.",
       line: "Facials and skin treatments, matched to your skin.",
       cta: { label: "Explore facials", href: serviceHref("facials") },
-      image: { alt: "Facial in progress at Kikiewa, Ikorodu" },
+      image: {
+        alt: "Facial in progress at Kikiewa, Ikorodu",
+        image: {
+          src: "/images/home/hero-2.jpg",
+          alt: "A therapist giving a woman a facial with a handheld skin-care device",
+          width: 2400,
+          height: 1600,
+          source: "stock-temp",
+        },
+      },
     },
     {
       heading: "Switch off. Breathe out.",
       line: "Massage and spa treatments to release the week.",
       cta: { label: "Explore massage", href: serviceHref("massage") },
-      image: { alt: "Massage treatment at Kikiewa, Ikorodu" },
+      image: {
+        alt: "Massage treatment at Kikiewa, Ikorodu",
+        image: {
+          src: "/images/home/hero-3.jpg",
+          alt: "A woman relaxing with her eyes closed during a back massage",
+          width: 2400,
+          height: 1600,
+          source: "stock-temp",
+        },
+      },
     },
     {
       heading: "Finished to be seen.",
       line: "Hair, barbing, nails and makeup, done with care.",
       cta: { label: cta.viewServices, href: "/services" },
-      image: { alt: "Finished hair, nails and makeup at Kikiewa, Ikorodu" },
+      image: {
+        alt: "Finished hair, nails and makeup at Kikiewa, Ikorodu",
+        image: {
+          src: "/images/home/hero-4.jpg",
+          alt: "A smiling woman with her braids styled in a high, beaded updo",
+          width: 2400,
+          height: 1898,
+          source: "stock-temp",
+        },
+      },
     },
   ],
 };
@@ -893,7 +1073,16 @@ export const miniAbout = {
   body: "Kikiewa exists to bring that beauty out. We bring expertise and professional know-how to every treatment, so your beauty can be seen and felt. Facials, massage, aesthetics, hair, nails and makeup, all under one name in Ikorodu, Lagos.",
   link: { label: "More about us", href: "/about" },
   valuesHeading: "How we work",
-  image: { alt: "A member of the Kikiewa team in Ikorodu" } as ImageSlot,
+  image: {
+    alt: "A member of the Kikiewa team in Ikorodu",
+    image: {
+      src: "/images/home/about.jpg",
+      alt: "Portrait of a woman with glowing skin, eyes closed, in warm light",
+      width: 1600,
+      height: 2400,
+      source: "stock-temp",
+    },
+  } as ImageSlot,
 };
 
 // DRAFT COPY - client approval needed
@@ -902,7 +1091,7 @@ export const whatWeDo = {
   intro: "Whatever brings you in, it's the same care and the same standards.",
 };
 
-export type WorkItem = { category: ServiceSlug; alt: string; image?: ImageAsset };
+export type WorkItem = { category: ServiceSlug; alt: string; image?: OwnImageAsset };
 
 /**
  * Home "Our work" tiles. Each links to its service page. No client faces or
@@ -925,7 +1114,7 @@ export const ourWork: { heading: string; intro: string; link: NavLink; items: Wo
   ],
 };
 
-export type ClassSlide = { alt: string; caption?: string; image?: ImageAsset };
+export type ClassSlide = { alt: string; caption?: string; image?: OwnImageAsset };
 
 // DRAFT COPY - client approval needed
 export const academyHome = {
@@ -1013,6 +1202,8 @@ export const utilityBar = {
 // DRAFT COPY - client approval needed
 export const footer = {
   tagline: "Your beauty, seen and felt.",
+  /** Before the main line: "Call 0706 621 2933". */
+  phoneLabel: "Call",
   servicesHeading: "Services",
   kikiewaHeading: "Kikiewa",
   kikiewaLinks: [
@@ -1042,7 +1233,7 @@ export const breadcrumbRoots = {
    About (site plan, section 4)
 --------------------------------------------------------------------------- */
 
-export type TeamMember = { name: string; role: string; image?: ImageAsset };
+export type TeamMember = { name: string; role: string; image?: OwnImageAsset };
 
 // DRAFT COPY - client approval needed
 export const about = {
@@ -1064,6 +1255,43 @@ export const about = {
   },
   valuesHeading: "How we work",
   valuesImage: { alt: "A Kikiewa treatment in progress in Ikorodu" } as ImageSlot,
+  /** After "How we work": the team's training, photographed by Kikiewa. */
+  learning: {
+    heading: "We keep learning",
+    body: "To serve you better, our team keeps training and growing, inside the beauty industry and beyond.",
+    images: [
+      {
+        alt: "Kikiewa team training",
+        image: {
+          src: "/images/about/learning-01.jpg",
+          alt: "A member of the Kikiewa team holding a certificate of participation at a training workshop, with the two trainers",
+          width: 1440,
+          height: 1920,
+          source: "instagram-temp",
+        },
+      },
+      {
+        alt: "Kikiewa team training",
+        image: {
+          src: "/images/about/learning-02.jpg",
+          alt: "A member of the Kikiewa team smiling with a fellow participant at a training workshop",
+          width: 1440,
+          height: 1920,
+          source: "instagram-temp",
+        },
+      },
+      {
+        alt: "Kikiewa team training",
+        image: {
+          src: "/images/about/learning-03.jpg",
+          alt: "A member of the Kikiewa team receiving a certificate from a trainer at a workshop",
+          width: 1440,
+          height: 1920,
+          source: "instagram-temp",
+        },
+      },
+    ] as ImageSlot[],
+  },
   /** Hidden until real names and roles exist. */
   team: {
     heading: "Our team",
@@ -1129,7 +1357,16 @@ export const courses: Course[] = [
     name: "Cosmetology",
     href: "/academy/cosmetology",
     cardLine: "Hair, barbing, nails, makeup, manicure and pedicure.",
-    image: { alt: "A cosmetology class at Kikiewa Academy, Ikorodu" },
+    image: {
+      alt: "A cosmetology class at Kikiewa Academy, Ikorodu",
+      image: {
+        src: "/images/academy/cosmetology.jpg",
+        alt: "Hands with pink nails braiding a section of dark hair",
+        width: 1600,
+        height: 2000,
+        source: "stock-temp",
+      },
+    },
     overview:
       "A hands-on course across the beauty services we offer every day, taught by the team behind Kikiewa.",
     modules: [
@@ -1151,7 +1388,16 @@ export const courses: Course[] = [
     name: "Aesthetics",
     href: "/academy/aesthetics",
     cardLine: "Facials and massage.",
-    image: { alt: "An aesthetics class at Kikiewa Academy, Ikorodu" },
+    image: {
+      alt: "An aesthetics class at Kikiewa Academy, Ikorodu",
+      image: {
+        src: "/images/academy/aesthetics.jpg",
+        alt: "A therapist brushing a facial mask onto a woman's face",
+        width: 1600,
+        height: 1067,
+        source: "stock-temp",
+      },
+    },
     overview:
       "Practical training in facials and massage, taught by the people who give them at Kikiewa.",
     modules: ["Facials", "Massage"],
@@ -1177,7 +1423,16 @@ export const academy = {
     heading: "Learn the craft from the people who practise it.",
     body: "Hands-on courses in cosmetology and aesthetics at Kikiewa, Ikorodu.",
   } satisfies PageCopy,
-  image: { alt: "A class in progress at Kikiewa Academy, Ikorodu" } as ImageSlot,
+  image: {
+    alt: "A class in progress at Kikiewa Academy, Ikorodu",
+    image: {
+      src: "/images/academy/hero.jpg",
+      alt: "Close-up of hands painting nail polish onto another person's nails",
+      width: 2400,
+      height: 1600,
+      source: "stock-temp",
+    },
+  } as ImageSlot,
   whyHeading: "Why train with us",
   /** `confirmed: false` points are hidden in production. */
   why: [
@@ -1229,7 +1484,7 @@ export const academy = {
 
 export type GalleryCategory = ServiceSlug | "academy";
 
-export interface GalleryItem extends ImageAsset {
+export interface GalleryItem extends OwnImageAsset {
   category: GalleryCategory;
   caption?: string;
 }
@@ -1384,7 +1639,7 @@ export const bookPage = {
     another: "Make another booking",
   },
   callHeading: "Prefer to talk?",
-  callBody: "Call either location and we'll book you in.",
+  callBody: "Call us and we'll book you in.",
 };
 
 /**
@@ -1413,6 +1668,7 @@ export const contactPage = {
     heading: "Contact us",
     body: "The quickest way to reach us is WhatsApp.",
   } satisfies PageCopy,
+  phoneLabel: "Phone",
   whatsappLabel: "WhatsApp",
   emailLabel: "Email",
   locationsHeading: "Our locations",

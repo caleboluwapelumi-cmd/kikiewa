@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { PeacockDivider } from "@/components/brand/PeacockDivider";
 import { CtaBand } from "@/components/CtaBand";
 import { ImageFrame } from "@/components/ImageFrame";
+import { LearningStrip } from "@/components/LearningStrip";
 import { LocationsStrip } from "@/components/LocationsStrip";
 import { SectionHeading } from "@/components/SectionHeading";
 import { TeamGrid } from "@/components/TeamGrid";
@@ -14,8 +15,8 @@ export const metadata: Metadata = pageMetadata(seo.about);
 
 /**
  * About (site plan, section 4): hero, our story (hidden until supplied),
- * vision and mission side by side, how we work, our team (hidden until real
- * names exist), the two locations, closing band.
+ * vision and mission side by side, how we work, we keep learning, our team
+ * (hidden until real names exist), the two locations, closing band.
  *
  * The page's one peacock divider opens the vision and mission.
  */
@@ -92,6 +93,8 @@ export default function AboutPage() {
           </div>
         </div>
       </section>
+
+      <LearningStrip heading={about.learning.heading} body={about.learning.body} images={about.learning.images} />
 
       <TeamGrid heading={about.team.heading} body={about.team.body} members={about.team.members} />
 

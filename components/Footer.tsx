@@ -2,7 +2,8 @@ import Link from "next/link";
 import { Logo } from "@/components/brand/Logo";
 import { Confirmable, TbcLabel } from "@/components/Confirmable";
 import { formatOpeningHours } from "@/lib/format";
-import { footer, isTBC, locations, serviceLinks, site, socials } from "@/data/site";
+import { contact, footer, isTBC, locations, serviceLinks, site, socials } from "@/data/site";
+import { telHref } from "@/lib/phone";
 
 /**
  * Plum footer (site plan, section 3.9): logo and line, then Services,
@@ -16,6 +17,7 @@ const columnHeading = "mb-space-sm font-body text-label-sm uppercase text-on-pri
 const linkClass = "link-rule w-fit py-0.5 text-body-md text-on-primary/80 hover:text-on-primary";
 
 export function Footer() {
+  const tel = telHref(contact.phone);
   return (
     <footer data-tone="dark" className="w-full bg-primary pb-space-lg text-on-primary">
       <div className="shell">
@@ -25,6 +27,14 @@ export function Footer() {
               <Logo variant="mono" className="h-16 w-auto text-cream" />
             </Link>
             <p className="font-display text-headline-sm text-on-primary">{footer.tagline}</p>
+            {tel ? (
+              <p className="text-body-md text-on-primary/80">
+                {footer.phoneLabel}{" "}
+                <a href={tel} className="link-rule text-on-primary hover:text-on-primary">
+                  {contact.phone}
+                </a>
+              </p>
+            ) : null}
           </div>
 
           <nav aria-label={footer.servicesHeading} className="flex flex-col gap-space-sm lg:col-span-2">

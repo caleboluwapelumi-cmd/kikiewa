@@ -6,9 +6,9 @@ import { Icon } from "@/components/Icon";
 import { callSheet } from "@/data/site";
 
 /**
- * The mobile action bar's Call button and the "Which location?" sheet it
- * opens: one row per location, each calling that location's number. A row
- * whose number is still TBC opens /contact instead.
+ * The mobile action bar's Call button and the sheet it opens: the main
+ * line, then one row per location, each calling that number. A row whose
+ * number is still TBC opens /contact instead.
  *
  * Built on a native modal <dialog>: it traps focus, closes on Escape,
  * returns focus to the Call button and makes the page behind inert. A tap

@@ -1,5 +1,6 @@
 import Image from "next/image";
 import type { ImageAsset } from "@/data/site";
+import { isProductionSite } from "@/lib/env";
 
 /**
  * Photography frame.
@@ -15,6 +16,10 @@ import type { ImageAsset } from "@/data/site";
  *
  * Every frame carries an inset hairline, so placeholders and real photographs
  * share the same finished edge.
+ *
+ * Temporary images (source "stock-temp" or "instagram-temp") carry a small
+ * "Temp image" badge on previews, so nobody mistakes them for final. The
+ * badge never renders in production, where check:images blocks them anyway.
  */
 
 export type ImageTone = "neutral" | "warm" | "dark";
@@ -128,8 +133,23 @@ export function ImageFrame({
       )}
 
       {children}
+
+      {image && isTemporary(image) && !isProductionSite ? (
+        <span
+          aria-hidden="true"
+          title={image.source === "stock-temp" ? "Stock photo (Unsplash), to be replaced" : "Instagram photo, to be replaced"}
+          className="pointer-events-none absolute top-1.5 left-1.5 z-10 whitespace-nowrap bg-foreground/80 px-1.5 py-0.5 text-label-sm uppercase text-on-primary sm:top-3 sm:left-3 sm:px-2 sm:py-1 md:top-4 md:left-4"
+        >
+          Temp image
+        </span>
+      ) : null}
     </div>
   );
+}
+
+/** Stand-ins until the photoshoot: badged on previews, blocked in production by check:images. */
+function isTemporary(image: ImageAsset): boolean {
+  return image.source === "stock-temp" || image.source === "instagram-temp";
 }
 
 /**

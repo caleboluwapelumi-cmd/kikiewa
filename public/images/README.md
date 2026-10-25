@@ -12,7 +12,7 @@ Photographs for the site. Everything here is served publicly, so only add files 
 | `locations/` | Building exteriors, reception areas, street views (Ebute and Nitel) |
 | `team/` | Team portraits |
 | `gallery/` | Our work |
-| `{folder}/temp/` | **Temporary** images taken from Instagram (see below) |
+| `about/` | About page images |
 
 ## Naming
 
@@ -49,13 +49,19 @@ Images are wired up in `data/site.ts` as an `ImageAsset`:
 
 Write alt text that describes the photograph for someone who cannot see it. Never leave it blank or write "image".
 
-## Temporary Instagram images
+## Temporary images
 
-Until the photoshoot, an approved Instagram photo can stand in:
+Until the photoshoot, two kinds of stand-in are allowed:
 
-1. Put it in `public/images/{folder}/temp/`.
-2. Tag it in `data/site.ts` with `source: "instagram-temp"`.
-3. `npm run check:images` lists every temporary image still in use. It exits with an error when `NEXT_PUBLIC_SITE_ENV=production`, so temporary images can't ship to the live site unnoticed.
+- **`source: "instagram-temp"`**: an approved photo from Kikiewa's Instagram.
+- **`source: "stock-temp"`**: an Unsplash photo, with a row in [CREDITS.md](CREDITS.md). Never in Our work, Gallery, Inside our classes, Locations, the team or Testimonials (a type error there).
+
+1. Put it in its normal folder with a plain name (no phone numbers or hashtags from the original filename).
+2. Tag it in `data/site.ts` with its `source`.
+3. Previews show a small "Temp image" badge on it.
+4. `npm run check:images` lists every temporary image still in use, and checks each file exists and each stock image is credited. It exits with an error when `NEXT_PUBLIC_SITE_ENV=production`, so temporary images can't ship to the live site unnoticed.
+
+When the final photograph arrives, replace the file (or point `src` at the new one) and remove the `source` tag.
 
 ## Consent
 

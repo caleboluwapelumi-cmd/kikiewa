@@ -1,4 +1,5 @@
 import {
+  contact,
   isTBC,
   site,
   socials,
@@ -9,6 +10,7 @@ import {
   type ServiceCategory,
   type Weekday,
 } from "@/data/site";
+import { phoneE164 } from "@/lib/phone";
 
 /**
  * Structured data builders (site plan, section 8). Only verified fields go
@@ -31,6 +33,7 @@ const organizationRef = { "@id": ORG_ID };
 
 /** Organization, site-wide (app/layout.tsx). */
 export function organizationJsonLd(): JsonLdObject {
+  const telephone = phoneE164(contact.phone);
   return {
     "@context": "https://schema.org",
     "@type": "Organization",
@@ -39,6 +42,7 @@ export function organizationJsonLd(): JsonLdObject {
     ...(isTBC(site.legalName) ? {} : { legalName: site.legalName }),
     url: site.url,
     logo: absolute("/icons/icon-512.png"),
+    ...(telephone ? { telephone } : {}),
     ...(socials.length ? { sameAs: socials.map((link) => link.href) } : {}),
   };
 }

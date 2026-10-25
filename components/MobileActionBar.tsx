@@ -14,7 +14,7 @@ import { bookingHref, whatsappHref } from "@/data/site";
  * content.
  *
  * WhatsApp opens the contact page until the number is confirmed. Call opens
- * a "Which location?" sheet (components/CallSheet.tsx).
+ * a sheet with the main line and both locations (components/CallSheet.tsx).
  */
 
 const links: { label: string; href: string; icon: IconName; primary?: boolean }[] = [

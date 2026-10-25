@@ -1,23 +1,29 @@
 /**
  * npm run check:images
  *
- * Lists temporary Instagram images the site still uses: any path under
- * /images/{folder}/temp/ and any asset tagged source: "instagram-temp" in
- * data/, app/ or components/. Also lists temp files on disk that nothing
- * uses, and tags pointing outside a temp/ folder.
+ * Lists every temporary image the site still uses: any ImageAsset in data/,
+ * app/, components/ or lib/ tagged `source: "instagram-temp"` (a client photo
+ * from Instagram) or `source: "stock-temp"` (an Unsplash photo).
  *
- * Exits non-zero when NEXT_PUBLIC_SITE_ENV is "production" and any temporary
- * image is still referenced, so a production build step can block on it.
+ * Also fails when:
+ * - a tagged image's file is missing from public/,
+ * - a stock-temp image has no row in public/images/CREDITS.md,
+ * - the old temp/ folder convention is used without a tag,
+ * - NEXT_PUBLIC_SITE_ENV is "production" and any temporary image is still
+ *   referenced, so a production build step can block on it.
  */
-import { readdirSync, readFileSync, statSync } from "node:fs";
+import { existsSync, readdirSync, readFileSync, statSync } from "node:fs";
 import { dirname, join, relative, sep } from "node:path";
 import { fileURLToPath } from "node:url";
 
 const root = join(dirname(fileURLToPath(import.meta.url)), "..");
 const SOURCE_DIRS = ["data", "app", "components", "lib"];
 const SOURCE_EXT = /\.(tsx?|jsx?|mjs|json|css)$/;
-const TEMP_PATH = /\/images\/[\w-]+\/temp\/[^"'`\s)]+/g;
-const TEMP_TAG = /source\s*:\s*["'`]instagram-temp["'`]/g;
+const TEMP_SOURCES = ["instagram-temp", "stock-temp"];
+const TAG = /source\s*:\s*["'`](instagram-temp|stock-temp)["'`]/g;
+const SRC = /src\s*:\s*["'`]([^"'`]+)["'`]/;
+const LEGACY_TEMP_PATH = /\/images\/[\w-]+\/temp\/[^"'`\s)]+/g;
+const CREDITS = join(root, "public", "images", "CREDITS.md");
 
 function walk(dir, files = []) {
   let entries;
@@ -35,67 +41,75 @@ function walk(dir, files = []) {
 }
 
 const rel = (path) => relative(root, path).split(sep).join("/");
+const lineOf = (text, index) => text.slice(0, index).split("\n").length;
 
-// References in source
-const references = [];
-const tags = [];
+/**
+ * Each tag belongs to the object literal around it: from the last "{" before
+ * the tag to the first "}" after it. ImageAssets hold no nested objects, so
+ * that span is the whole asset, and its `src` is the image's path.
+ */
+const tagged = [];
+const legacy = [];
 for (const file of SOURCE_DIRS.flatMap((dir) => walk(join(root, dir)))) {
   if (!SOURCE_EXT.test(file)) continue;
-  const lines = readFileSync(file, "utf8").split(/\r?\n/);
-  lines.forEach((line, index) => {
-    for (const [match] of line.matchAll(TEMP_PATH)) {
-      references.push({ src: match, at: `${rel(file)}:${index + 1}` });
-    }
-    if (TEMP_TAG.test(line)) tags.push({ at: `${rel(file)}:${index + 1}` });
-    TEMP_TAG.lastIndex = 0;
-  });
+  const text = readFileSync(file, "utf8");
+  for (const match of text.matchAll(TAG)) {
+    const open = text.lastIndexOf("{", match.index);
+    const close = text.indexOf("}", match.index);
+    const src = text.slice(open, close).match(SRC)?.[1] ?? null;
+    tagged.push({ source: match[1], src, at: `${rel(file)}:${lineOf(text, match.index)}` });
+  }
+  for (const match of text.matchAll(LEGACY_TEMP_PATH)) {
+    legacy.push({ src: match[0], at: `${rel(file)}:${lineOf(text, match.index)}` });
+  }
 }
 
-// Temp files on disk
-const imagesDir = join(root, "public", "images");
-const onDisk = walk(imagesDir)
-  .filter((file) => file.split(sep).includes("temp") && !file.endsWith(".gitkeep"))
-  .map((file) => "/" + relative(join(root, "public"), file).split(sep).join("/"));
-
-const referenced = new Set(references.map((ref) => ref.src));
-const unused = onDisk.filter((src) => !referenced.has(src));
-const missing = [...referenced].filter((src) => !onDisk.includes(src));
+const credits = existsSync(CREDITS) ? readFileSync(CREDITS, "utf8") : "";
+const problems = [];
 
 const env = process.env.NEXT_PUBLIC_SITE_ENV ?? "(not set)";
 console.log(`check:images  NEXT_PUBLIC_SITE_ENV=${env}\n`);
 
-if (references.length === 0 && tags.length === 0) {
-  console.log("No temporary Instagram images are referenced.");
-} else {
-  console.log(`Temporary Instagram images still referenced (${referenced.size}):`);
-  for (const ref of references) console.log(`  ${ref.src}  <- ${ref.at}`);
-  if (tags.length) {
-    console.log(`\nAssets tagged source: "instagram-temp" (${tags.length}):`);
-    for (const tag of tags) console.log(`  ${tag.at}`);
+for (const source of TEMP_SOURCES) {
+  const rows = tagged.filter((item) => item.source === source);
+  if (!rows.length) {
+    console.log(`No "${source}" images are referenced.\n`);
+    continue;
   }
-  if (tags.length !== references.length) {
-    console.log(
-      `\nNote: ${references.length} temp path(s) but ${tags.length} instagram-temp tag(s). ` +
-        "Every temp image should live in a temp/ folder and carry the tag.",
-    );
-  }
+  const unique = new Set(rows.map((row) => row.src));
+  console.log(`"${source}" images still referenced (${unique.size} files, ${rows.length} uses):`);
+  for (const row of rows) console.log(`  ${row.src ?? "(no src found)"}  <- ${row.at}`);
+  console.log("");
 }
 
-if (missing.length) {
-  console.log("\nReferenced but missing from public/images:");
-  for (const src of missing) console.log(`  ${src}`);
+for (const row of tagged) {
+  if (!row.src) {
+    problems.push(`Tag without a src at ${row.at}`);
+    continue;
+  }
+  if (!existsSync(join(root, "public", row.src))) {
+    problems.push(`Missing file ${row.src} (${row.at})`);
+  }
+  if (row.source === "stock-temp" && !credits.includes(row.src.replace(/^\/images\//, ""))) {
+    problems.push(`No credit for ${row.src} in public/images/CREDITS.md (${row.at})`);
+  }
 }
-if (unused.length) {
-  console.log("\nTemp files on disk that nothing references (safe to delete):");
-  for (const src of unused) console.log(`  ${src}`);
+for (const row of legacy) {
+  problems.push(`Old temp/ folder path ${row.src} (${row.at}): move it out of temp/ and tag its source instead`);
 }
 
-const inUse = references.length > 0 || tags.length > 0;
-if (inUse && process.env.NEXT_PUBLIC_SITE_ENV === "production") {
+if (problems.length) {
+  console.error("Problems:");
+  for (const problem of [...new Set(problems)]) console.error(`  ${problem}`);
+  process.exit(1);
+}
+
+if (tagged.length && process.env.NEXT_PUBLIC_SITE_ENV === "production") {
   console.error(
-    "\nFAIL: temporary Instagram images are still referenced in a production build. " +
+    "FAIL: temporary images (instagram-temp or stock-temp) are still referenced in a production build. " +
       "Replace them with final photography (see public/images/README.md).",
   );
   process.exit(1);
 }
-if (missing.length) process.exit(1);
+
+console.log(tagged.length ? "OK for previews. Production builds fail until every temporary image is replaced." : "OK.");

@@ -5,6 +5,7 @@ import { LocationCard } from "@/components/LocationCard";
 import { PageIntro } from "@/components/PageIntro";
 import { SectionHeading } from "@/components/SectionHeading";
 import { contact, contactPage, locations, seo } from "@/data/site";
+import { telHref } from "@/lib/phone";
 import { pageMetadata } from "@/lib/seo";
 
 export const metadata: Metadata = pageMetadata(seo.contact);
@@ -16,7 +17,18 @@ export const metadata: Metadata = pageMetadata(seo.contact);
  * confirmed.
  */
 export default function ContactPage() {
+  const tel = telHref(contact.phone);
   const rows = [
+    {
+      label: contactPage.phoneLabel,
+      value: tel ? (
+        <a href={tel} className="link-rule hover:text-secondary">
+          {contact.phone}
+        </a>
+      ) : (
+        <Confirmable value={contact.phone} />
+      ),
+    },
     { label: contactPage.whatsappLabel, value: <Confirmable value={contact.whatsapp} /> },
     {
       label: contactPage.emailLabel,

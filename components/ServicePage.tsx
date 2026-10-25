@@ -8,6 +8,7 @@ import { PageHero } from "@/components/PageHero";
 import { PageNote } from "@/components/PageNote";
 import { SectionHeading } from "@/components/SectionHeading";
 import { ServiceMenu } from "@/components/ServiceMenu";
+import { ServiceSigns } from "@/components/ServiceSigns";
 import { Steps } from "@/components/Steps";
 import { Testimonials } from "@/components/Testimonials";
 import {
@@ -29,7 +30,8 @@ import { whatsappLink } from "@/lib/whatsapp";
 
 /**
  * The service page template (site plan, section 5), shared by all six:
- * hero, intro, menu, what to expect, our work (hidden while empty), FAQs
+ * hero, intro, menu, what to expect, signs (facials only), our work
+ * (hidden while empty), FAQs
  * (confirmed answers only), testimonials (same rules as Home), the
  * disclaimer where there is one, closing band.
  *
@@ -54,7 +56,7 @@ export function ServicePage({ slug }: { slug: ServiceSlug }) {
       <PageHero
         copy={{ eyebrow: servicePage.eyebrow, heading: category.heading, body: category.line }}
         breadcrumbs={[breadcrumbRoots.home, breadcrumbRoots.services, { label: category.name, href: category.href }]}
-        image={category.image}
+        image={category.heroImage ?? category.image}
         imageTone={clinical ? "neutral" : "warm"}
       >
         <div className="flex flex-wrap items-center gap-x-space-xl gap-y-space-sm">
@@ -73,6 +75,7 @@ export function ServicePage({ slug }: { slug: ServiceSlug }) {
       {category.expect ? (
         <Steps heading={servicePage.expectHeading} steps={category.expect} surface="surface" />
       ) : null}
+      {category.signs ? <ServiceSigns signs={category.signs} /> : null}
 
       {work.length ? (
         <section className="section-y w-full border-t border-border bg-background">
