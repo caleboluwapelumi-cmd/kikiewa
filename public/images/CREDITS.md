@@ -32,7 +32,6 @@ From Kikiewa's own Instagram, renamed and re-encoded (metadata stripped). Origin
 
 | Slot | File | Notes |
 |---|---|---|
-| Facials, "Signs your facial is overdue" | `services/facials-overdue-cover.jpg` | Carousel cover slide. Text and logo are baked into the image. Only 864px wide |
-| About, "We keep learning" 1 | `about/learning-01.jpg` | Training workshop. A certificate with a name on it is visible |
+| Facials, "Signs your facial is overdue" | `services/facials-overdue-cover.jpg` | Carousel cover slide. Text and logo are baked into the image. Only 864px wide, so it renders at 432px at most |
+| About, "We keep learning" 1 | `about/learning-01.jpg` | Training workshop. The name on the certificate is blurred |
 | About, "We keep learning" 2 | `about/learning-02.jpg` | Training workshop |
-| About, "We keep learning" 3 | `about/learning-03.jpg` | Training workshop. A certificate with a name on it is visible |

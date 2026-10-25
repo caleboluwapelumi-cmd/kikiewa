@@ -1280,16 +1280,6 @@ export const about = {
           source: "instagram-temp",
         },
       },
-      {
-        alt: "Kikiewa team training",
-        image: {
-          src: "/images/about/learning-03.jpg",
-          alt: "A member of the Kikiewa team receiving a certificate from a trainer at a workshop",
-          width: 1440,
-          height: 1920,
-          source: "instagram-temp",
-        },
-      },
     ] as ImageSlot[],
   },
   /** Hidden until real names and roles exist. */
