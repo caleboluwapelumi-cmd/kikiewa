@@ -2,6 +2,7 @@ import { Button, ButtonGroup } from "@/components/Button";
 import { CtaBand } from "@/components/CtaBand";
 import { Faq } from "@/components/Faq";
 import { GalleryGrid } from "@/components/GalleryGrid";
+import { MethodStrip } from "@/components/MethodStrip";
 import { IntroStatement } from "@/components/IntroStatement";
 import { JsonLd } from "@/components/JsonLd";
 import { PageHero } from "@/components/PageHero";
@@ -11,6 +12,7 @@ import { ServiceMenu } from "@/components/ServiceMenu";
 import { ServiceSigns } from "@/components/ServiceSigns";
 import { Steps } from "@/components/Steps";
 import { Testimonials } from "@/components/Testimonials";
+import { WorkPlaceholderGrid } from "@/components/WorkPlaceholderGrid";
 import {
   bookingHref,
   breadcrumbRoots,
@@ -19,6 +21,7 @@ import {
   cta,
   findServiceCategory,
   gallery,
+  howWeWork,
   servicePage,
   testimonials,
   whatsappHref,
@@ -30,9 +33,10 @@ import { whatsappLink } from "@/lib/whatsapp";
 
 /**
  * The service page template (site plan, section 5), shared by all six:
- * hero, intro, menu, what to expect, signs (facials only), our work
- * (hidden while empty), FAQs
- * (confirmed answers only), testimonials (same rules as Home), the
+ * hero, intro, menu, what to expect (the four steps of the Kikiewa method,
+ * with this service's line for each, under the method strip), signs
+ * (facials only), our work (three placeholder tiles until photographs
+ * arrive), FAQs (confirmed answers only), testimonials (same rules as Home), the
  * disclaimer where there is one, closing band.
  *
  * Aesthetics books a consultation, never a treatment: the hero, menu and
@@ -44,6 +48,7 @@ export function ServicePage({ slug }: { slug: ServiceSlug }) {
   const work = gallery.filter((item) => item.category === slug);
   const reviews = testimonials.filter((item) => item.service === slug);
   const clinical = category.consultationLed;
+  const expect = howWeWork.steps.map((step) => ({ title: step.name, body: category.expect[step.id] }));
 
   const primary = clinical
     ? { label: cta.consultation, href: consultationHref }
@@ -70,24 +75,20 @@ export function ServicePage({ slug }: { slug: ServiceSlug }) {
       <IntroStatement text={category.intro} />
       <ServiceMenu slug={slug} />
 
-      {category.expect ? (
-        <Steps heading={servicePage.expectHeading} steps={category.expect} surface="surface" />
-      ) : null}
+      <Steps lead={<MethodStrip />} heading={servicePage.expectHeading} steps={expect} surface="surface" />
       {category.signs ? <ServiceSigns signs={category.signs} /> : null}
 
-      {work.length ? (
-        <section className="section-y w-full border-t border-border bg-background">
-          <div className="shell">
-            <div className="mb-space-xl flex flex-col gap-space-lg md:mb-space-2xl md:flex-row md:items-end md:justify-between">
-              <SectionHeading heading={servicePage.workHeading} />
-              <Button href={"/gallery?service=" + slug} variant="secondary" className="self-start md:self-auto">
-                {cta.seeWork}
-              </Button>
-            </div>
-            <GalleryGrid items={work} />
+      <section className="section-y w-full border-t border-border bg-background">
+        <div className="shell">
+          <div className="mb-space-xl flex flex-col gap-space-lg md:mb-space-2xl md:flex-row md:items-end md:justify-between">
+            <SectionHeading heading={servicePage.workHeading} />
+            <Button href={"/gallery?service=" + slug} variant="secondary" className="self-start md:self-auto">
+              {cta.seeWork}
+            </Button>
           </div>
-        </section>
-      ) : null}
+          {work.length ? <GalleryGrid items={work} /> : <WorkPlaceholderGrid categories={[slug, slug, slug]} />}
+        </div>
+      </section>
 
       <Faq heading={servicePage.faqHeading} items={category.faqs} />
       <Testimonials items={reviews} />

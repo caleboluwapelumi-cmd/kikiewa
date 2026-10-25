@@ -4,13 +4,16 @@
  * Checks the built site against reference/site-plan.md, sections 2 and 8:
  *
  * 1. Routes: every page in the site plan is prerendered, and no page exists
- *    that the plan doesn't list.
+ *    that the plan doesn't list. /shop is required on previews; in
+ *    production it is a 404 until real products exist. Product pages
+ *    (/shop/{slug}) are allowed whenever they are built.
  * 2. Metadata: every page's title (and og:/twitter: title) is ≤ 60
  *    characters, every description ≤ 155, and none contains "TBC" or "{{".
  * 3. Redirects: each old URL redirects permanently (308) to its new home,
  *    no redirect source is also a page, and every destination is a page.
- * 4. Words: no page shows "branch", "head office", "division" or "house",
- *    or anything the plan keeps off the website (section 0).
+ * 4. Words: no page shows "head office", "division" or "house", or
+ *    anything the plan keeps off the website (section 0). "Branch" is
+ *    allowed: Ebute and Nitel are "our branches".
  * 5. Dashes: no built page contains an em dash (—) or an en dash (–)
  *    anywhere in its HTML: visible text, attributes, metadata, JSON-LD and
  *    the page data. Copy uses commas, full stops or colons instead.
@@ -55,6 +58,12 @@ const EXPECTED_ROUTES = [
   "/privacy",
 ];
 
+/** On previews the shop always builds (sample products); in production only once real products exist. */
+const SHOP_ROUTE = "/shop";
+if (process.env.NEXT_PUBLIC_SITE_ENV !== "production") EXPECTED_ROUTES.push(SHOP_ROUTE);
+/** Built pages the plan allows without listing them one by one. */
+const isAllowedExtra = (route) => route === SHOP_ROUTE || /^\/shop\/[a-z0-9-]+$/.test(route);
+
 /** Old URLs and where they must land (site plan, section 2, "Redirects"). */
 const EXPECTED_REDIRECTS = [
   ["/salon-spa", "/services"],
@@ -72,11 +81,10 @@ const EXPECTED_REDIRECTS = [
 ];
 
 /**
- * Words that must never reach the screen. One brand with equal locations
- * (site plan, section 1), and nothing from "Not on the website" (section 0).
+ * Words that must never reach the screen. One brand with equal branches
+ * (site plan, section 1; "branch" itself is allowed), and nothing from "Not on the website" (section 0).
  */
 const BANNED_WORDS = [
-  [/\bbranch(es)?\b/i, "branch"],
   [/\bhead office\b/i, "head office"],
   [/\bdivisions?\b/i, "division"],
   [/\bhouse\b/i, "house"],
@@ -109,12 +117,24 @@ function walk(dir, files = []) {
     else if (
       name.endsWith(".html") &&
       !SKIP.has(relative(appDir, path)) &&
-      !DYNAMIC_SHELL.test(relative(appDir, path))
+      !DYNAMIC_SHELL.test(relative(appDir, path)) &&
+      !isNotFound(path)
     ) {
       files.push(path);
     }
   }
   return files;
+}
+
+/** Pages prerendered as a 404 (the shop with no products in production) are not pages. */
+function isNotFound(htmlPath) {
+  const meta = htmlPath.replace(/\.html$/, ".meta");
+  if (!existsSync(meta)) return false;
+  try {
+    return JSON.parse(readFileSync(meta, "utf8")).status === 404;
+  } catch {
+    return false;
+  }
 }
 
 function decode(text) {
@@ -164,7 +184,7 @@ for (const route of EXPECTED_ROUTES) {
   if (!routes.has(route)) problems.push(`${route}: in the site plan but not built`);
 }
 for (const route of routes) {
-  if (!EXPECTED_ROUTES.includes(route)) problems.push(`${route}: built, but not in the site plan`);
+  if (!EXPECTED_ROUTES.includes(route) && !isAllowedExtra(route)) problems.push(`${route}: built, but not in the site plan`);
 }
 
 // 2. Metadata, 4. Words

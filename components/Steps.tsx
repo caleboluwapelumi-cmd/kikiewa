@@ -11,13 +11,15 @@ type StepsProps = {
   id?: string;
   eyebrow?: string;
   heading: string;
+  /** A line above the heading (the method strip on service pages). */
+  lead?: React.ReactNode;
   steps: Point[];
   /** Small print under the steps (e.g. entry requirements). */
   note?: React.ReactNode;
   surface?: "background" | "surface";
 };
 
-export function Steps({ id, eyebrow, heading, steps, note, surface = "background" }: StepsProps) {
+export function Steps({ id, eyebrow, heading, lead, steps, note, surface = "background" }: StepsProps) {
   const columns = steps.length === 3 ? "lg:grid-cols-3" : "lg:grid-cols-4";
   return (
     <section
@@ -28,6 +30,7 @@ export function Steps({ id, eyebrow, heading, steps, note, surface = "background
       ].join(" ")}
     >
       <div className="shell">
+        {lead ? <div className="mb-space-xl">{lead}</div> : null}
         <SectionHeading eyebrow={eyebrow} heading={heading} className="mb-space-2xl lg:mb-space-3xl" />
 
         <ol className={["grid grid-cols-1 border-l border-primary/30 lg:border-t lg:border-l-0", columns].join(" ")}>

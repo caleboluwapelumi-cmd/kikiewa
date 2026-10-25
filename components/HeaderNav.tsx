@@ -6,7 +6,8 @@ import { usePathname } from "next/navigation";
 import { Button } from "@/components/Button";
 import { Icon } from "@/components/Icon";
 import { useMenuState } from "@/components/MenuState";
-import { bookingHref, cta, primaryNav, whatsappHref, type NavItem } from "@/data/site";
+import { bookingHref, cta, whatsappHref, type NavItem } from "@/data/site";
+import { primaryNavItems } from "@/lib/shop";
 import { WHATSAPP_FALLBACK_HREF } from "@/lib/whatsapp";
 
 type HeaderNavProps = {
@@ -81,7 +82,7 @@ export function HeaderNav({ logo }: HeaderNavProps) {
 
         <nav ref={navRef} aria-label="Primary" className="hidden lg:block">
           <ul className="flex items-center gap-5 xl:gap-8">
-            {primaryNav.map((item) => {
+            {primaryNavItems.map((item) => {
               const current = isCurrentGroup(item);
               const linkClass = [
                 // The after: layer stretches the hit area to 48px tall without moving the text

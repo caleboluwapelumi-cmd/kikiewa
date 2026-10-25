@@ -1,13 +1,15 @@
 import { Confirmable, TbcLabel } from "@/components/Confirmable";
 import { Icon, type IconName } from "@/components/Icon";
-import { isTBC, locationLabels, site, type Location } from "@/data/site";
-import { formatDays, formatTimeRange } from "@/lib/format";
+import { branchPhone, isTBC, locationLabels, site, type Location } from "@/data/site";
+import { formatDays, formatTimeRange, groupHours } from "@/lib/format";
 import { telHref } from "@/lib/phone";
 
 /**
- * A location's address, hours and phone as hairline-ruled rows. Unconfirmed
- * values show the "To be confirmed" label; the phone becomes a tel: link once
- * it is confirmed. `withLandmark` adds the landmark row (location pages).
+ * A branch's address, hours and phone as hairline-ruled rows. Unconfirmed
+ * values show the "To be confirmed" label. Hours come from the per-day data,
+ * grouped ("Mon to Sat", "Sun closed"). The phone is the branch's own line,
+ * else the business line, as a tel: link. `withLandmark` adds the landmark
+ * row (branch pages).
  */
 
 type LocationDetailsProps = {
@@ -24,7 +26,8 @@ export function LocationDetails({
   strong = false,
   className = "",
 }: LocationDetailsProps) {
-  const tel = telHref(location.phone);
+  const phone = branchPhone(location);
+  const tel = telHref(phone);
 
   const rows: { icon: IconName; label: string; value: React.ReactNode }[] = [
     {
@@ -35,9 +38,11 @@ export function LocationDetails({
           <span>
             <Confirmable value={location.address} />
           </span>
-          <span>
-            {location.name}, {site.area}
-          </span>
+          {isTBC(location.address) ? (
+            <span>
+              {location.name}, {site.area}
+            </span>
+          ) : null}
         </span>
       ),
     },
@@ -58,12 +63,14 @@ export function LocationDetails({
       ) : (
         <table className="w-full max-w-sm text-left">
           <tbody>
-            {location.hours.map((row) => (
-              <tr key={row.days.join("-")}>
-                <th scope="row" className="py-0.5 pr-space-md font-normal text-muted">
-                  {formatDays(row.days)}
+            {groupHours(location.hours).map((group) => (
+              <tr key={group.days.join("-")}>
+                <th scope="row" className="py-0.5 pr-space-md font-normal whitespace-nowrap text-muted">
+                  {formatDays(group.days)}
                 </th>
-                <td className="py-0.5 tabular-nums">{formatTimeRange(row)}</td>
+                <td className="py-0.5 whitespace-nowrap tabular-nums">
+                  {group.hours ? formatTimeRange(group.hours) : locationLabels.closed}
+                </td>
               </tr>
             ))}
           </tbody>
@@ -75,10 +82,10 @@ export function LocationDetails({
       label: locationLabels.phone,
       value: tel ? (
         <a href={tel} className="link-touch hover:text-secondary">
-          {location.phone}
+          {phone}
         </a>
       ) : (
-        <Confirmable value={location.phone} />
+        <Confirmable value={phone} />
       ),
     },
   ];

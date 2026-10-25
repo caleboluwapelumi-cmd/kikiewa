@@ -581,7 +581,10 @@ export function BookingFlow() {
       <div>
         {stepHeading(whatsapp ? t.sent.heading : t.sent.fallbackHeading)}
         <div className="flex flex-col gap-space-xl">
-          <p className="max-w-[60ch] text-pretty text-body-lg text-muted">{whatsapp ? t.sent.body : t.sent.fallbackBody}</p>
+          <div className="flex flex-col gap-space-sm">
+            <p className="max-w-[60ch] text-pretty text-body-lg text-foreground">{whatsapp ? t.sent.body : t.sent.fallbackBody}</p>
+            {whatsapp ? <p className="max-w-[60ch] text-pretty text-body-md text-muted">{t.sent.note}</p> : null}
+          </div>
           {result ? (
             <div className="rounded-card border border-border bg-surface p-space-lg">
               <p className="mb-space-sm text-label-sm uppercase text-muted">{t.review.summaryHeading}</p>

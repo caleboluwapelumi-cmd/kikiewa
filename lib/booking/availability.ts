@@ -5,8 +5,8 @@ import { WEEKDAYS } from "@/lib/format";
  * Preferred dates and times for /book.
  *
  * These are preferences, not live availability: the team confirms on
- * WhatsApp. When a location's opening hours are confirmed, its times come
- * from those hours; until then they come from DEMO_SLOTS below, and the
+ * WhatsApp. When a branch's opening hours are set (per day, in
+ * data/site.ts), its times come from those hours; until then they come from DEMO_SLOTS below, and the
  * form says they are examples.
  *
  * Phase 2: replace preferredSlots() with real availability from the server.
@@ -81,7 +81,7 @@ export function usesExampleTimes(location: Location): boolean {
 /** Hourly starts within a location's confirmed hours for that weekday. */
 function slotsFor(location: Location, weekday: Weekday): string[] {
   if (isTBC(location.hours)) return DEMO_SLOTS;
-  const row = location.hours.find((entry) => entry.days.includes(weekday));
+  const row = location.hours[weekday];
   if (!row) return []; // closed that day
   const slots: string[] = [];
   // Last start one hour before closing.

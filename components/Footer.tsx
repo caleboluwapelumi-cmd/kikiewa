@@ -1,13 +1,15 @@
 import Link from "next/link";
 import { Logo } from "@/components/brand/Logo";
 import { Confirmable, TbcLabel } from "@/components/Confirmable";
-import { formatOpeningHours } from "@/lib/format";
-import { contact, footer, isTBC, locations, serviceLinks, site, socials } from "@/data/site";
+import { formatHoursGroup, groupHours } from "@/lib/format";
+import { contact, footer, isTBC, locationLabels, locations, serviceLinks, shopHref, site, socials } from "@/data/site";
+import { shopEnabled } from "@/lib/shop";
 import { telHref } from "@/lib/phone";
 
 /**
  * Plum footer (site plan, section 3.9): logo and line, then Services,
- * Kikiewa, Visit (both locations, same details) and Follow (hidden until
+ * Kikiewa (Shop only while the shop is on), Visit (both branches, same
+ * details) and Follow (hidden until
  * social links are confirmed). Text sits at white or white/75, both clear
  * AA on plum, and `data-tone="dark"` switches the focus ring to white.
  */
@@ -49,11 +51,13 @@ export function Footer() {
 
           <nav aria-label={footer.kikiewaHeading} className="flex flex-col lg:col-span-2">
             <h2 className={columnHeading}>{footer.kikiewaHeading}</h2>
-            {footer.kikiewaLinks.map((link) => (
-              <Link key={link.href} href={link.href} className={linkClass}>
-                {link.label}
-              </Link>
-            ))}
+            {footer.kikiewaLinks
+              .filter((link) => shopEnabled || link.href !== shopHref)
+              .map((link) => (
+                <Link key={link.href} href={link.href} className={linkClass}>
+                  {link.label}
+                </Link>
+              ))}
           </nav>
 
           <div className="flex flex-col gap-space-md md:col-span-2 lg:col-span-3">
@@ -71,7 +75,9 @@ export function Footer() {
                     {isTBC(location.hours) ? (
                       <TbcLabel>Hours to be confirmed</TbcLabel>
                     ) : (
-                      location.hours.map(formatOpeningHours).join(" · ")
+                      groupHours(location.hours)
+                        .map((group) => formatHoursGroup(group, locationLabels.closed.toLowerCase()))
+                        .join(" · ")
                     )}
                   </span>
                 </div>

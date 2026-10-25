@@ -6,10 +6,14 @@ import {
   type Course,
   type FaqItem,
   type Location,
+  branchPhone,
   type NavLink,
+  type Product,
   type ServiceCategory,
   type Weekday,
 } from "@/data/site";
+import { groupHours } from "@/lib/format";
+import { branchGeo, mapsPlaceUrl } from "@/lib/maps";
 import { phoneE164 } from "@/lib/phone";
 
 /**
@@ -58,37 +62,82 @@ const SCHEMA_DAY: Record<Weekday, string> = {
 };
 
 /**
- * BeautySalon for one location page. Town and region are confirmed; the
- * street address, phone, map and opening hours are added only once each is
- * confirmed. No geo, image, priceRange or reviews until they are real.
+ * BeautySalon for one branch page. Town and region are confirmed; the
+ * street address, phone and opening hours are added once set. geo and
+ * hasMap only for a branch with a Google pin (Ebute today; Nitel has none
+ * yet). The phone is the branch's own line, else the business line shown
+ * on the page. No image, priceRange or reviews until they are real.
  */
 export function locationJsonLd(location: Location): JsonLdObject {
+  const telephone = phoneE164(branchPhone(location));
+  const geo = branchGeo(location);
+  const hasMap = mapsPlaceUrl(location);
   return {
     "@context": "https://schema.org",
     "@type": "BeautySalon",
     "@id": absolute(location.href) + "#location",
-    name: location.title,
+    name: location.businessName,
     url: absolute(location.href),
     parentOrganization: organizationRef,
     address: {
       "@type": "PostalAddress",
-      ...(isTBC(location.address) ? {} : { streetAddress: location.address }),
+      ...(location.streetAddress && !isTBC(location.address) ? { streetAddress: location.streetAddress } : {}),
       addressLocality: "Ikorodu",
       addressRegion: "Lagos",
+      ...(location.postalCode ? { postalCode: location.postalCode } : {}),
       addressCountry: "NG",
     },
-    ...(isTBC(location.phone) ? {} : { telephone: location.phone }),
-    ...(isTBC(location.mapUrl) ? {} : { hasMap: location.mapUrl }),
+    ...(telephone ? { telephone } : {}),
+    ...(geo ? { geo: { "@type": "GeoCoordinates", latitude: geo.lat, longitude: geo.lng } } : {}),
+    ...(hasMap ? { hasMap } : {}),
     ...(isTBC(location.hours)
       ? {}
       : {
-          openingHoursSpecification: location.hours.map((row) => ({
-            "@type": "OpeningHoursSpecification",
-            dayOfWeek: row.days.map((day) => SCHEMA_DAY[day]),
-            opens: row.opens,
-            closes: row.closes,
-          })),
+          // Open days only: days with no specification read as closed.
+          openingHoursSpecification: groupHours(location.hours).flatMap((group) =>
+            group.hours
+              ? [
+                  {
+                    "@type": "OpeningHoursSpecification",
+                    dayOfWeek: group.days.map((day) => SCHEMA_DAY[day]),
+                    opens: group.hours.opens,
+                    closes: group.hours.closes,
+                  },
+                ]
+              : [],
+          ),
         }),
+  };
+}
+
+/**
+ * Product for a shop product page. Only what the client supplied: no brand,
+ * no ratings or reviews, and `offers` only once the price is confirmed.
+ */
+export function productJsonLd(product: Product, href: string): JsonLdObject {
+  const price = typeof product.price === "number" ? product.price : null;
+  return {
+    "@context": "https://schema.org",
+    "@type": "Product",
+    name: product.name,
+    description: product.description ?? product.summary,
+    url: absolute(href),
+    category: product.category,
+    ...(product.image ? { image: absolute(product.image.src) } : {}),
+    ...(price !== null
+      ? {
+          offers: {
+            "@type": "Offer",
+            price,
+            priceCurrency: "NGN",
+            url: absolute(href),
+            seller: organizationRef,
+            ...(product.inStock === undefined
+              ? {}
+              : { availability: product.inStock ? "https://schema.org/InStock" : "https://schema.org/OutOfStock" }),
+          },
+        }
+      : {}),
   };
 }
 

@@ -12,7 +12,8 @@ import { pageMetadata } from "@/lib/seo";
 export const metadata: Metadata = pageMetadata(seo.contact);
 
 /**
- * Contact (site plan, section 7): two location cards and a message form
+ * Contact (site plan, section 7): two branch cards (each with a
+ * click-to-load map) and a message form
  * that opens WhatsApp. Also the fallback for every WhatsApp and Call action
  * while those numbers are TBC, so it always shows what is (and isn't)
  * confirmed.
@@ -85,7 +86,7 @@ export default function ContactPage() {
           </h2>
           <div className="grid grid-cols-1 gap-gutter lg:grid-cols-2 lg:gap-gutter-desktop">
             {locations.map((location) => (
-              <LocationCard key={location.id} location={location} titleAs="h3" />
+              <LocationCard key={location.id} location={location} titleAs="h3" withMap />
             ))}
           </div>
         </div>

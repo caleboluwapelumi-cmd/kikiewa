@@ -1,9 +1,10 @@
 import type { Point } from "@/data/site";
 
 /**
- * The three values ("How we work") as a ruled list. `compact` is the small
- * list beside the Home portrait: titles only. The full version on /about
- * adds each value's line. Leave out `heading` when a section heading
+ * A numbered, ruled list: the steps of "How we work" and the facial signs.
+ * `compact` is the small list beside the Home portrait: titles only. The
+ * full version on /about adds each step's line. `ordered` renders an <ol>
+ * for steps that happen in sequence. Leave out `heading` when a section heading
  * already names the list.
  */
 type ValuesListProps = {
@@ -12,15 +13,17 @@ type ValuesListProps = {
   compact?: boolean;
   /** Heading level: h3 under a section heading, h2 as its own section. */
   headingAs?: "h2" | "h3";
+  ordered?: boolean;
 };
 
-export function ValuesList({ heading, items, compact = false, headingAs: Heading = "h3" }: ValuesListProps) {
+export function ValuesList({ heading, items, compact = false, headingAs: Heading = "h3", ordered = false }: ValuesListProps) {
+  const List = ordered ? "ol" : "ul";
   return (
     <div>
       {heading ? (
         <Heading className="mb-space-md font-body text-label-sm uppercase text-secondary">{heading}</Heading>
       ) : null}
-      <ul className="border-t border-border-strong">
+      <List className="border-t border-border-strong">
         {items.map((item, index) => (
           <li
             key={item.title}
@@ -43,7 +46,7 @@ export function ValuesList({ heading, items, compact = false, headingAs: Heading
             </span>
           </li>
         ))}
-      </ul>
+      </List>
     </div>
   );
 }

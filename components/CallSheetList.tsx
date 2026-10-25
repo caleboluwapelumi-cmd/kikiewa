@@ -1,18 +1,25 @@
 import Link from "next/link";
 import { Icon } from "@/components/Icon";
-import { callSheet, contact, contactHref, locations, type OrTBC } from "@/data/site";
+import { branchPhone, callSheet, contact, contactHref, locations, type OrTBC } from "@/data/site";
 import { telHref } from "@/lib/phone";
 
 /**
- * The main line first (once confirmed), then one row per location, each
- * calling that number; a row whose number is still TBC opens /contact
- * instead. Shared by the mobile Call sheet and /book. No hooks, so it
+ * One row per branch ("Ebute branch", "Nitel branch"), each calling the
+ * branch's own line or, until that is confirmed, the business line. The
+ * main line gets its own row only while a branch has no number at all;
+ * such a row opens /contact instead. Shared by the mobile Call sheet and /book. No hooks, so it
  * renders on the server or the client.
  */
 export function CallSheetList({ onNavigate }: { onNavigate?: () => void }) {
+  const branchRows = locations.map((location) => ({
+    id: location.id,
+    title: location.title,
+    phone: branchPhone(location),
+  }));
+  const needsMainLine = branchRows.some((row) => !telHref(row.phone)) && telHref(contact.phone);
   const rows: { id: string; title: string; phone: OrTBC<string> }[] = [
-    ...(telHref(contact.phone) ? [{ id: "main", title: callSheet.mainLine, phone: contact.phone }] : []),
-    ...locations.map((location) => ({ id: location.id, title: location.title, phone: location.phone })),
+    ...(needsMainLine ? [{ id: "main", title: callSheet.mainLine, phone: contact.phone }] : []),
+    ...branchRows,
   ];
 
   return (

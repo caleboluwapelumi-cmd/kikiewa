@@ -31,6 +31,7 @@ export function PageHero({ copy, breadcrumbs, image, imageTone = "warm", childre
             <ImageFrame
               image={image.image}
               alt={image.alt}
+          placeholder={image.caption}
               ratio="aspect-[4/3] lg:aspect-[5/4]"
               tone={imageTone}
               priority

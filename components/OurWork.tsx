@@ -3,11 +3,12 @@ import { Button } from "@/components/Button";
 import { ImageFrame } from "@/components/ImageFrame";
 import { PeacockDivider } from "@/components/brand/PeacockDivider";
 import { SectionHeading } from "@/components/SectionHeading";
-import { findServiceCategory, ourWork } from "@/data/site";
+import { findServiceCategory, ourWork, workCaption } from "@/data/site";
 
 /**
- * Home "Our work" (site plan, section 3.4): recent work as a swipe row on
- * phones (with a peek of the next tile) and a grid from md. Each tile
+ * Home "Our work" (site plan, section 3.4): six tiles of recent work as a
+ * swipe row on phones (with a peek of the next tile) and a grid from md.
+ * Until photographs arrive each tile shows the designed placeholder. Each tile
  * links to its service page and shows the service name on hover and focus.
  * Touch screens can't hover, so there the name always shows.
  *
@@ -26,7 +27,7 @@ export function OurWork() {
           </Button>
         </div>
 
-        <ul data-reveal-stagger className="scroll-row md:scroll-row-off md:grid-cols-2 md:gap-gutter lg:grid-cols-4 [&>li]:w-[min(68%,18rem)] md:[&>li]:w-auto">
+        <ul data-reveal-stagger className="scroll-row md:scroll-row-off md:grid-cols-3 md:gap-gutter lg:gap-gutter-desktop [&>li]:w-[min(68%,18rem)] md:[&>li]:w-auto">
           {ourWork.items.map((item) => {
             const category = findServiceCategory(item.category);
             return (
@@ -38,10 +39,11 @@ export function OurWork() {
                   <ImageFrame
                     image={item.image}
                     alt={item.alt}
+                    placeholder={workCaption(item.category)}
                     ratio="aspect-[4/5]"
                     orientation="portrait"
                     tone="warm"
-                    sizes="(max-width: 1024px) 50vw, 25vw"
+                    sizes="(max-width: 768px) 68vw, 33vw"
                     zoomOnHover
                   >
                     <span className="absolute bottom-3 left-3 flex items-center rounded-chip bg-primary/90 px-3.5 py-1.5 text-label-md uppercase text-on-primary transition-opacity duration-300 ease-out-soft [@media(hover:hover)]:opacity-0 [@media(hover:hover)]:group-hover:opacity-100 [@media(hover:hover)]:group-focus-visible:opacity-100">

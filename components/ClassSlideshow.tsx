@@ -18,6 +18,7 @@ export function ClassSlideshow({ label, sizes }: { label: string; sizes: string 
           <ImageFrame
             image={slide.image}
             alt={slide.alt}
+            placeholder={slide.placeholder}
             ratio="aspect-[4/3]"
             tone="warm"
             sizes={sizes}

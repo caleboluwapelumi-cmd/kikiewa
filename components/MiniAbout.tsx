@@ -2,11 +2,12 @@ import { Button } from "@/components/Button";
 import { ImageFrame } from "@/components/ImageFrame";
 import { SectionHeading } from "@/components/SectionHeading";
 import { ValuesList } from "@/components/ValuesList";
-import { miniAbout, values } from "@/data/site";
+import { howWeWork, miniAbout } from "@/data/site";
 
 /**
  * Home "About Kikiewa" (site plan, section 3.2): the vision in a sentence,
- * a link to /about, and beside it one portrait with the three values.
+ * a link to /about, and beside it one portrait with the four steps of
+ * "How we work" as a compact numbered list.
  */
 export function MiniAbout() {
   return (
@@ -31,7 +32,12 @@ export function MiniAbout() {
             tone="warm"
             sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 20vw"
           />
-          <ValuesList heading={miniAbout.valuesHeading} items={values} compact />
+          <ValuesList
+            heading={howWeWork.heading}
+            items={howWeWork.steps.map((step) => ({ title: step.name }))}
+            compact
+            ordered
+          />
         </div>
       </div>
     </section>

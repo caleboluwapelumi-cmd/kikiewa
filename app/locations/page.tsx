@@ -7,7 +7,7 @@ import { pageMetadata } from "@/lib/seo";
 
 export const metadata: Metadata = pageMetadata(seo.locations);
 
-/** Both locations, two equal cards (site plan, section 7). */
+/** Both branches, two equal cards with a click-to-load map each (site plan, section 7). */
 export default function LocationsPage() {
   return (
     <>
@@ -15,7 +15,7 @@ export default function LocationsPage() {
       <section className="w-full bg-background pb-space-3xl">
         <div className="shell grid grid-cols-1 gap-gutter lg:grid-cols-2 lg:gap-gutter-desktop">
           {locations.map((location) => (
-            <LocationCard key={location.id} location={location} titleAs="h2" />
+            <LocationCard key={location.id} location={location} titleAs="h2" withMap />
           ))}
         </div>
       </section>

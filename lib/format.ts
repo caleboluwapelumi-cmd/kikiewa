@@ -1,4 +1,4 @@
-import type { OpeningHours, Weekday } from "@/data/site";
+import type { DayHours, Weekday, WeeklyHours } from "@/data/site";
 
 /** Display formats for confirmed values from data/site.ts. */
 
@@ -70,11 +70,30 @@ export function formatTime(time: string): string {
 }
 
 /** { opens: "09:00", closes: "18:00" } -> "9:00 am to 6:00 pm" */
-export function formatTimeRange(row: Pick<OpeningHours, "opens" | "closes">): string {
-  return `${formatTime(row.opens)} to ${formatTime(row.closes)}`;
+export function formatTimeRange(hours: NonNullable<DayHours>): string {
+  return `${formatTime(hours.opens)} to ${formatTime(hours.closes)}`;
 }
 
-/** One row as a line: "Mon – Fri 9:00 am – 6:00 pm" */
-export function formatOpeningHours(row: OpeningHours): string {
-  return `${formatDays(row.days)} ${formatTimeRange(row)}`;
+/** Days in a row that share the same hours (null = closed). */
+export type HoursGroup = { days: Weekday[]; hours: DayHours };
+
+/**
+ * Per-day hours as display rows: consecutive days with the same hours are
+ * grouped, Monday first. Mon to Sat 8 to 6 and Sun closed gives two rows.
+ */
+export function groupHours(weekly: WeeklyHours): HoursGroup[] {
+  const same = (a: DayHours, b: DayHours) =>
+    a === b || (a !== null && b !== null && a.opens === b.opens && a.closes === b.closes);
+  const groups: HoursGroup[] = [];
+  for (const day of WEEKDAYS) {
+    const last = groups[groups.length - 1];
+    if (last && same(last.hours, weekly[day])) last.days.push(day);
+    else groups.push({ days: [day], hours: weekly[day] });
+  }
+  return groups;
+}
+
+/** One group as a line: "Mon to Sat 8:00 am to 6:00 pm", or "Sun closed". */
+export function formatHoursGroup(group: HoursGroup, closedLabel = "closed"): string {
+  return `${formatDays(group.days)} ${group.hours ? formatTimeRange(group.hours) : closedLabel}`;
 }

@@ -27,7 +27,8 @@ import { whatsappLink } from "@/lib/whatsapp";
 
 /**
  * Course page (site plan, section 6), shared by both courses: hero with the
- * course name, overview, what you'll learn, the facts table (each fact
+ * course name, overview, what you'll learn (the Kikiewa way first, then the
+ * modules), the facts table (each fact
  * "To be confirmed" until supplied), how to apply, a call to action, then
  * the closing band. Course JSON-LD carries confirmed fields only.
  */
@@ -58,7 +59,7 @@ export function CoursePage({ slug }: { slug: CourseSlug }) {
         <div className="shell grid grid-cols-1 gap-space-2xl lg:grid-cols-12 lg:gap-gutter-desktop">
           <SectionHeading heading={academy.learnHeading} className="lg:col-span-4" />
           <ul className="border-t border-border-strong lg:col-span-7 lg:col-start-6">
-            {course.modules.map((module, index) => (
+            {[academy.methodModule, ...course.modules].map((module, index) => (
               <li key={module} className="flex items-baseline gap-space-lg border-b border-border py-space-lg">
                 <span aria-hidden="true" className="text-label-sm tabular-nums text-secondary">
                   {String(index + 1).padStart(2, "0")}

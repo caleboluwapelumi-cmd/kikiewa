@@ -34,6 +34,7 @@ export function WideHero({ copy, image, children }: WideHeroProps) {
         <ImageFrame
           image={image.image}
           alt={image.alt}
+          placeholder={image.caption}
           ratio="aspect-[4/3] md:aspect-[16/9] lg:aspect-[21/9]"
           tone="warm"
           priority

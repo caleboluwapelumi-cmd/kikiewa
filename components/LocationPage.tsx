@@ -6,9 +6,11 @@ import { DirectionsAction } from "@/components/DirectionsAction";
 import { Icon } from "@/components/Icon";
 import { JsonLd } from "@/components/JsonLd";
 import { LocationDetails } from "@/components/LocationDetails";
+import { MapEmbed } from "@/components/MapEmbed";
 import { SectionHeading } from "@/components/SectionHeading";
 import { WhatsAppAction } from "@/components/WhatsAppAction";
 import {
+  branchPhone,
   breadcrumbRoots,
   cta,
   locationLabels,
@@ -23,13 +25,13 @@ import { locationJsonLd } from "@/lib/jsonld";
 import { telHref } from "@/lib/phone";
 
 /**
- * One location per page (/locations/ebute, /locations/nitel). Both use this
+ * One branch per page (/locations/ebute, /locations/nitel). Both use this
  * exact layout: they are equals, and differ only in their details. Every
- * service is listed at both unless a service says otherwise. The foot of
- * each page links to the other, the same way.
+ * service is listed at both unless a service says otherwise. The map loads
+ * only when tapped. The foot of each page links to the other, the same way.
  */
 export function LocationPage({ location }: { location: Location }) {
-  const tel = telHref(location.phone);
+  const tel = telHref(branchPhone(location));
   const others = locations.filter((entry) => entry.id !== location.id);
 
   return (
@@ -41,7 +43,13 @@ export function LocationPage({ location }: { location: Location }) {
             trail={[breadcrumbRoots.home, breadcrumbRoots.locations, { label: location.title, href: location.href }]}
             className="mb-space-xl lg:mb-space-2xl"
           />
-          <SectionHeading eyebrow={site.area} heading={location.heading} as="h1" size="xl" className="mb-space-2xl" />
+          <SectionHeading
+            eyebrow={site.name + ", " + site.area}
+            heading={location.title}
+            as="h1"
+            size="xl"
+            className="mb-space-2xl"
+          />
 
           <div className="grid grid-cols-1 items-start gap-space-2xl lg:grid-cols-2 lg:gap-16">
             <div className="flex flex-col">
@@ -60,6 +68,7 @@ export function LocationPage({ location }: { location: Location }) {
                 />
                 <DirectionsAction location={location} />
               </ButtonGroup>
+              <MapEmbed location={location} className="mt-space-xl" />
             </div>
 
             <div>

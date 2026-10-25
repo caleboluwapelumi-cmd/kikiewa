@@ -6,7 +6,8 @@ import { usePathname } from "next/navigation";
 import { Button } from "@/components/Button";
 import { Icon } from "@/components/Icon";
 import { useMenuState } from "@/components/MenuState";
-import { bookingHref, cta, primaryNav, whatsappHref } from "@/data/site";
+import { bookingHref, cta, whatsappHref } from "@/data/site";
+import { primaryNavItems } from "@/lib/shop";
 
 /**
  * The phone and tablet menu (below lg): a drawer that slides in from the
@@ -100,7 +101,7 @@ export function MobileMenu() {
 
         <nav aria-label="Primary mobile" className="flex flex-1 flex-col px-space-lg pt-space-sm pb-[calc(var(--spacing-space-lg)+env(safe-area-inset-bottom))]">
           <ul>
-            {primaryNav.map((item) => (
+            {primaryNavItems.map((item) => (
               <li key={item.href} className="border-b border-border">
                 <Link
                   href={item.href}
