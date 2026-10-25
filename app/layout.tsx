@@ -12,14 +12,16 @@ import { isProductionSite } from "@/lib/env";
 import { organizationJsonLd } from "@/lib/jsonld";
 import "./globals.css";
 
-// Headings: the variable font with its optical size and SOFT axes, both
-// set per type tier in app/globals.css. next/font only loads extra axes
-// with the full weight axis; the site uses 400 to 600 of it.
+// Headings: the variable font with its optical size axis, set per type
+// tier in app/globals.css. Latin only; the site uses weights 400 to 600.
+// next/font loads extra axes only with weight "variable", and Google serves
+// the same file for a 400 to 600 range anyway (65KB). SOFT is left out: it
+// nearly doubled the file (117KB).
 const fraunces = Fraunces({
   variable: "--font-fraunces",
   subsets: ["latin"],
   weight: "variable",
-  axes: ["opsz", "SOFT"],
+  axes: ["opsz"],
   display: "swap",
 });
 

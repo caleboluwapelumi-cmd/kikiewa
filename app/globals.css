@@ -54,7 +54,7 @@
   --color-error: #a3123a;
 
   /* Type families. The CSS variables come from next/font in app/layout.tsx.
-     Fraunces (variable: wght 400 to 600, opsz, SOFT) for headings, Outfit
+     Fraunces (variable: wght 400 to 600, opsz) for headings, Outfit
      for body and UI. */
   --font-display: var(--font-fraunces), "Fraunces", Georgia, serif;
   --font-body: var(--font-outfit), "Outfit", ui-sans-serif, system-ui, sans-serif;
@@ -256,26 +256,25 @@
 
   /* Fraunces axes, set per tier. Optical size (opsz) runs low on small
      headings for sturdier strokes and more open spacing, and higher on
-     display sizes for finer contrast. SOFT 50 rounds the serifs a little,
-     warmer than the default sharp cut. */
+     display sizes for finer contrast. */
   h1,
   h2,
   h3,
   h4,
   [class*="font-display"] {
-    font-variation-settings: "opsz" 14, "SOFT" 50;
+    font-variation-settings: "opsz" 14;
   }
 
   [class*="text-headline-md"] {
-    font-variation-settings: "opsz" 18, "SOFT" 50;
+    font-variation-settings: "opsz" 18;
   }
 
   [class*="text-headline-lg"] {
-    font-variation-settings: "opsz" 36, "SOFT" 50;
+    font-variation-settings: "opsz" 36;
   }
 
   [class*="text-display-hero"] {
-    font-variation-settings: "opsz" 72, "SOFT" 50;
+    font-variation-settings: "opsz" 72;
   }
 
   /* Headings set in the body face (uppercase labels) take no serif axes */

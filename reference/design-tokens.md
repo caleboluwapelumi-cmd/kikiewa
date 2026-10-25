@@ -38,7 +38,7 @@ Brand colours were sampled from the logo (`public/brand/kikiewa-logo.svg`) on 24
 
 Loaded with `next/font` in `app/layout.tsx`. Designed for 360px first.
 
-- Headings: **Fraunces**, variable (weights 400 to 600, axes `opsz` and `SOFT`). Optical size is set per tier: `opsz` 14 on small headings for sturdier strokes, rising to 18, 36 and 72 on the larger tiers. `SOFT` 50 everywhere for slightly rounded serifs.
+- Headings: **Fraunces**, variable, latin subset, with the `opsz` axis only (weights 400 to 600 used). Optical size is set per tier: `opsz` 14 on small headings for sturdier strokes, rising to 18, 36 and 72 on the larger tiers. The `SOFT` axis is not loaded: it nearly doubled the font file (117KB to 65KB without it).
 - Body and UI: **Outfit** 400, 500 and 600.
 - Fluid scale with `clamp()` from 360px to 1440px:
 
