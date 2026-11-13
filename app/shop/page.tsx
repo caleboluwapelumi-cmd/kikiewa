@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { Suspense } from "react";
 import { CtaBand } from "@/components/CtaBand";
+import { ImageFrame } from "@/components/ImageFrame";
 import { PageIntro } from "@/components/PageIntro";
 import { ShopBrowser, ShopView } from "@/components/shop/ShopBrowser";
 import { seo, shopPage } from "@/data/site";
@@ -17,6 +18,7 @@ export const metadata: Metadata = pageMetadata(seo.shop);
  *
  * In production with no products the shop is off and this is a 404.
  * Previews show three labelled sample products until real ones arrive.
+ * Under the intro: all products styled together (shop-cover).
  * The static page renders every product; in the browser ?category= filters.
  */
 export default function ShopPage() {
@@ -24,7 +26,18 @@ export default function ShopPage() {
 
   return (
     <>
-      <PageIntro copy={shopPage.intro} />
+      <PageIntro copy={shopPage.intro}>
+        <ImageFrame
+          image={shopPage.cover.image}
+          alt={shopPage.cover.alt}
+          placeholder={shopPage.cover.caption}
+          ratio="aspect-[3/2] md:aspect-[21/9]"
+          orientation="landscape"
+          tone="warm"
+          priority
+          sizes="(max-width: 1360px) 100vw, 1232px"
+        />
+      </PageIntro>
       <section className="w-full border-t border-border bg-background py-space-2xl lg:py-space-3xl">
         <div className="shell">
           <Suspense fallback={<ShopView items={shopProducts} active={null} />}>

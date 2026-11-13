@@ -12,11 +12,22 @@
  * - the old temp/ folder convention is used without a tag,
  * - NEXT_PUBLIC_SITE_ENV is "production" and any temporary image
  *   (stock-temp or instagram-temp) is still referenced, so a production
- *   build step can block on it. Kept stock is allowed in production.
+ *   build step can block on it. Kept stock is allowed in production,
+ * - a shoot photo listed in data/photos.generated.ts is missing from public/.
+ *
+ * Photo slots (data/photo-slots.ts): a slot's stock stand-in counts as in
+ * use only until its shoot photo is imported. Once replaced, it is listed
+ * as replaced and no longer referenced.
+ *
+ * Also reports (without failing) every file in public/images that nothing
+ * references any more, such as a stock or Instagram image a shoot photo
+ * replaced, so it can be deleted along with its CREDITS.md row.
  */
 import { existsSync, readdirSync, readFileSync, statSync } from "node:fs";
 import { dirname, join, relative, sep } from "node:path";
 import { fileURLToPath } from "node:url";
+import { photoSlots } from "../data/photo-slots.ts";
+import { shootPhotos } from "../data/photos.generated.ts";
 
 const root = join(dirname(fileURLToPath(import.meta.url)), "..");
 const SOURCE_DIRS = ["data", "app", "components", "lib"];
@@ -54,15 +65,32 @@ const lineOf = (text, index) => text.slice(0, index).split("\n").length;
  * the tag to the first "}" after it. ImageAssets hold no nested objects, so
  * that span is the whole asset, and its `src` is the image's path.
  */
+const SLOTS_FILE = "data/photo-slots.ts";
+/** Stock stand-ins whose slot now has its shoot photo: src -> slot id. */
+const replaced = new Map(
+  photoSlots
+    .filter((slot) => slot.id in shootPhotos)
+    .flatMap((slot) => [slot.stock, slot.stockHero].filter(Boolean).map((asset) => [asset.src, slot.id])),
+);
+/** Every /images/... path the site still uses. */
+const referenced = new Set(Object.values(shootPhotos).map((photo) => photo.src));
+const IMAGE_PATH = /["'`](\/images\/[^"'`\s)]+)["'`]/g;
+
 const tagged = [];
 const legacy = [];
 for (const file of SOURCE_DIRS.flatMap((dir) => walk(join(root, dir)))) {
   if (!SOURCE_EXT.test(file)) continue;
   const text = readFileSync(file, "utf8");
+  const inSlots = rel(file) === SLOTS_FILE;
+  for (const match of text.matchAll(IMAGE_PATH)) {
+    if (!(inSlots && replaced.has(match[1]))) referenced.add(match[1]);
+  }
   for (const match of text.matchAll(TAG)) {
     const open = text.lastIndexOf("{", match.index);
     const close = text.indexOf("}", match.index);
     const src = text.slice(open, close).match(SRC)?.[1] ?? null;
+    // A stand-in replaced by its shoot photo is no longer in use.
+    if (inSlots && src && replaced.has(src)) continue;
     tagged.push({ source: match[1], src, at: `${rel(file)}:${lineOf(text, match.index)}` });
   }
   for (const match of text.matchAll(LEGACY_TEMP_PATH)) {
@@ -104,6 +132,30 @@ for (const row of tagged) {
 for (const row of legacy) {
   problems.push(`Old temp/ folder path ${row.src} (${row.at}): move it out of temp/ and tag its source instead`);
 }
+
+const shootIds = Object.keys(shootPhotos);
+console.log(`Shoot photos imported: ${shootIds.length} (npm run photos:import)`);
+for (const [id, photo] of Object.entries(shootPhotos)) {
+  if (!existsSync(join(root, "public", photo.src))) problems.push(`Missing shoot photo ${photo.src} for "${id}"`);
+}
+if (replaced.size) {
+  console.log("Stock stand-ins replaced by shoot photos (no longer in use):");
+  for (const [src, id] of replaced) console.log(`  ${src}  <- ${id}`);
+}
+console.log("");
+
+const IMAGE_FILE = /\.(jpe?g|png|webp|avif|gif)$/i;
+const unreferenced = walk(join(root, "public", "images"))
+  .filter((file) => IMAGE_FILE.test(file))
+  .map((file) => "/" + rel(file).replace(/^public\//, ""))
+  .filter((src) => !referenced.has(src));
+if (unreferenced.length) {
+  console.log(`Unreferenced files in public/images (${unreferenced.length}), safe to delete with their CREDITS.md rows:`);
+  for (const src of unreferenced) console.log(`  ${src}`);
+} else {
+  console.log("No unreferenced files in public/images.");
+}
+console.log("");
 
 if (problems.length) {
   console.error("Problems:");

@@ -11,6 +11,9 @@ import { hero } from "@/data/site";
  * rising from the bottom, at least ~64% opaque wherever text sits, which
  * holds white text above 4.5:1 even on a white photograph.
  *
+ * Each slide switches to its phone crop (hero-0X-mobile) under 768px once
+ * that is imported (art direction in components/ImageFrame.tsx).
+ *
  * Slide 1's heading is the page's H1; the others share its styling as
  * paragraphs. Slide 1's image loads eagerly, the rest lazily.
  *
@@ -36,6 +39,7 @@ export function HeroSlider() {
           <div key={slide.heading} className="relative h-full">
             <ImageFrame
               image={slide.image.image}
+              mobileImage={slide.mobileImage}
               alt={slide.image.alt}
               ratio="h-full"
               orientation="landscape"

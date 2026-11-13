@@ -1,6 +1,6 @@
 # Image credits
 
-Stock and temporary images. Every row here is tagged in `data/site.ts`, and `npm run check:images` lists each one in use. Production builds fail while any temporary image (`stock-temp` or `instagram-temp`) remains; kept stock (`stock`) is allowed.
+Stock and temporary images. Every row here is tagged in `data/photo-slots.ts` (stand-ins for photo slots) or `data/site.ts`, and `npm run check:images` lists each one in use. When a shoot photo replaces a stand-in, check:images lists the old file as unreferenced: delete it and its row here. Production builds fail while any temporary image (`stock-temp` or `instagram-temp`) remains; kept stock (`stock`) is allowed.
 
 ## Stock (`source: "stock"` kept, or `source: "stock-temp"` still to replace)
 
@@ -16,7 +16,7 @@ Rules for stock: Black or African models, or no people; warm, natural light; no 
 | Home hero, slide 2 | `home/hero-2.jpg` | Iwaria Inc. | https://unsplash.com/photos/a-woman-getting-a-facial-massage-with-an-electric-device-_sYJQjqopus | Unsplash License | |
 | Home hero, slide 3 | `home/hero-3.jpg` | Iwaria Inc. | https://unsplash.com/photos/a-woman-getting-a-back-massage-at-a-beauty-salon-VWELT4w5jj8 | Unsplash License | |
 | Home hero, slide 4 | `home/hero-4.jpg` | Lisa Marie Theck | https://unsplash.com/photos/a-woman-smiles-with-her-hair-in-a-bun-wjSSZ7r-iA0 | Unsplash License | |
-| Home, About Kikiewa portrait; About, How we work portrait | `home/about.jpg` | Gideon Hezekiah | https://unsplash.com/photos/woman-in-black-tank-top-WCEMFqEIVek | Unsplash License | |
+| Home, About Kikiewa portrait | `home/about.jpg` | Gideon Hezekiah | https://unsplash.com/photos/woman-in-black-tank-top-WCEMFqEIVek | Unsplash License | |
 | Facials (card and page hero) | `services/facials.jpg` | Leighann Blackwood | https://unsplash.com/photos/a-woman-is-putting-a-lotion-on-her-face-OSC6FLeoEOE | Unsplash License | |
 | Massage & Spa (card and page hero) | `services/massage.jpg` | Iwaria Inc. | https://unsplash.com/photos/a-woman-laying-on-a-bed-with-a-towel-and-a-cup-of-coffee-Bv826LRAgIc | Unsplash License | |
 | Aesthetics (card and page hero) | `services/aesthetics.jpg` | Atikah Akhtar | https://unsplash.com/photos/white-wooden-vanity-table-with-mirror-6xlyKFFvufg | Unsplash License | Cropped to the right of the room to leave out branded products; two small labels softened |

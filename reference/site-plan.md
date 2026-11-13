@@ -1,6 +1,6 @@
 # Kikiewa — Site Plan & Copy (v4)
 
-**This file replaces `copy-deck.md` and `seo-plan.md`.** It is the single source for structure, copy and SEO. Written 24 Oct 2026 from the client's brief form. **v4 (25 Oct 2026, prompt E):** the Kikiewa method ("How we work") drives the copy; Ebute and Nitel are "branches"; Google Maps; Shop; designed image placeholders.
+**This file replaces `copy-deck.md` and `seo-plan.md`.** It is the single source for structure, copy and SEO. Written 24 Oct 2026 from the client's brief form. **v4 (25 Oct 2026, prompt E):** the Kikiewa method ("How we work") drives the copy; Ebute and Nitel are "branches"; Google Maps; Shop; designed image placeholders. **v5 (13 Nov 2026, prompt F):** real business data (registered name, hours, phones, addresses, Nitel pin, socials) and the photo-slot system (`reference/photoshoot.md`).
 
 Status: DRAFT copy for client approval. Store all copy in `data/site.ts`, marked `// DRAFT COPY - client approval needed`.
 
@@ -8,9 +8,13 @@ Status: DRAFT copy for client approval. Store all copy in `data/site.ts`, marked
 
 ## 0. What we know (from the client)
 
-- **Kikiewa is one business.** A med spa at its core, with beauty services (hair, barbing, nails, makeup) alongside, an academy and a shop. Registered name: to be confirmed (something like "Kikiewa Beauty & Spa"). On screen, the brand is simply **Kikiewa**.
+- **Kikiewa is one business.** A med spa at its core, with beauty services (hair, barbing, nails, makeup) alongside, an academy and a shop. Registered name (CAC): **Kiki Ewa Salon Spa And Makeover**, used in the Organization JSON-LD `legalName` and the footer legal line ("© {year} Kiki Ewa Salon Spa And Makeover. Trading as Kikiewa."). On screen, the brand is simply **Kikiewa**.
 - **Two branches, both in Ikorodu, Lagos: Ebute and Nitel.** They are equals: same layout, all six services, no "main" branch. Never call either one a head office, or a branch for one type of service.
 - **Customers:** within Lagos.
+- **Hours, both branches (client-supplied):** Monday to Saturday 9:00 to 18:00, Sunday closed.
+- **Phones (business lines):** main line and WhatsApp **0706 621 2933**; second line **0706 204 9358**. Both show on /contact and in the footer. Branch-specific numbers are unassigned; each branch shows the main line meanwhile.
+- **Socials:** Instagram https://www.instagram.com/kikiewa/ · Facebook https://www.facebook.com/p/Kikiewa-Salon-Spa-and-Makeover-100063597781525/ (footer Follow column and Organization `sameAs`).
+- **Photography:** the shot list and filenames are in `reference/photoshoot.md`, which is part of the source of truth with this file.
 - **Vision (her words):** everyone is beautiful in their own way, and Kikiewa brings that beauty out.
 - **Mission (her words):** bringing expertise and professional know-how to work on you, so your beauty can be seen and felt.
 - **Her method (how every visit works):** (1) Consultation: understand, feel and empathise. (2) A tailored solution. (3) Professional, problem-solving delivery. (4) The client leaves satisfied, their beauty brought out. Principles: Empathy · Tailored care · Professionalism · Problem-solving.
@@ -101,6 +105,9 @@ Services do not belong to a branch. Every service is offered at **both** branche
 ### Images: no empty spaces
 Every image slot without a photograph shows a designed placeholder in the same frame and aspect ratio: a soft gradient from cream into plum, the mono peacock mark centred at low opacity, and (previews only) a small sans caption saying what goes there, e.g. "Our work · Nails". Screen readers hear "Photo coming soon". Placeholders are not stock; Our work, Gallery, classes and team still refuse stock photographs.
 
+### Photo slots
+Every picture position is a named slot from `reference/photoshoot.md` (`data/photo-slots.ts`). A slot shows, in order: the shoot photo (`npm run photos:import`), else approved stock where the slot allows it (hero slides, service, academy and course covers), else the placeholder. Own-work slots (Our work, classes, branches, About, products, team) never fall back to stock. Where they appear: hero `hero-01..04` (phone crops `hero-0X-mobile` under 768px); service cover `<service>-cover`, "Our work" `<service>-01..03` (lightbox on tap); Home "Our work" `<service>-01`, each linking to its service; Academy `academy-cover`, slideshow `academy-class-01..04`, course cards `cosmetology-cover` / `aesthetics-course-cover`; branches `<branch>-exterior` (cards and pages) and `<branch>-interior` (pages); About `about-space` (hero), `about-consultation` (beside How we work, "We listen"), `about-team` (We keep learning), `about-founder` (beside Our story, so it shows once the story is supplied); Shop `shop-cover`, `product-<slug>`; team `team-<firstname>` (the team section shows only once real members exist).
+
 ---
 
 ## 3. Home `/`
@@ -167,9 +174,9 @@ Slider rules: autoplay 6s; pause on hover and focus; visible pause/play button; 
 - Buttons: Book an appointment · Chat on WhatsApp
 
 ### 3.9 Footer
-- Logo + line: *Your beauty, seen and felt.*
-- Columns: **Services** (six links) · **Kikiewa** (About, Shop, Academy, Gallery, Branches, Contact; Shop only while the shop is on) · **Visit** (Ebute address/hours, Nitel address/hours) · **Follow** (socials when confirmed)
-- Bottom: © {year} Kikiewa · Booking policy · Privacy
+- Logo + line: *Your beauty, seen and felt.* + both business lines ("Call 0706 621 2933 or 0706 204 9358")
+- Columns: **Services** (six links) · **Kikiewa** (About, Shop, Academy, Gallery, Branches, Contact; Shop only while the shop is on) · **Visit** (Ebute address/hours, Nitel address/hours) · **Follow** (Instagram, Facebook)
+- Bottom: © {year} Kiki Ewa Salon Spa And Makeover. Trading as Kikiewa. · Booking policy · Privacy
 - Small note: Aesthetic treatments follow a consultation and suitability assessment. Results vary from person to person.
 
 ---
@@ -271,17 +278,18 @@ Slider rules: autoplay 6s; pause on hover and focus; visible pause/play button; 
 
 ## 7. Other pages
 
-**Gallery** `/gallery`: H1 *Our work* · Sub: Recent work from our team. Filters: All · Facials · Massage & Spa · Aesthetics · Hair & Barbing · Nails · Makeup · Academy. Native `<dialog>` lightbox. No client faces or before/afters without written consent. Until photographs arrive: a short note and one placeholder tile per service.
+**Gallery** `/gallery`: H1 *Our work* · Sub: Recent work from our team. Every shoot photo, grouped and filterable: All · Facials · Massage & Spa · Aesthetics · Hair & Barbing · Nails · Makeup · Academy · Branches (filters show only once they have photos). Native `<dialog>` lightbox. No client faces or before/afters without written consent. Until photographs arrive: a short note and one placeholder tile per service.
 
-**Branches** `/locations`: H1 *Our branches* · Sub: Visit us at our Ebute or Nitel branch in Ikorodu, Lagos. Two equal cards, each with a click-to-load map. `/locations/ebute` and `/locations/nitel` use identical layouts: H1 *Ebute branch* / *Nitel branch*; address, landmark, hours table, phone, Book here, Call this branch, Chat on WhatsApp, Get directions, map, "Services at this branch" (all six), "Our other branch".
+**Branches** `/locations`: H1 *Our branches* · Sub: Visit us at our Ebute or Nitel branch in Ikorodu, Lagos. Two equal cards, each led by the branch's exterior photo and with a click-to-load map. `/locations/ebute` and `/locations/nitel` use identical layouts: H1 *Ebute branch* / *Nitel branch*; exterior and interior photos; address, landmark, hours table, phone, Book here, Call this branch, Chat on WhatsApp, Get directions, map, "Services at this branch" (all six), "Our other branch".
 
 **Branch data** (`data/site.ts`):
-- **Ebute** (FROM GOOGLE LISTING, client to confirm): 62 Beach Road, Ebute Ipakodo Road, beside Kingfield College, Ikorodu, Lagos 104101 · pin 6.6390909, 3.4734478 · place ID ChIJm-5QaI_vOxARHWLfjx849fI · phone TBC (shows the business line 0706 621 2933).
-- **Nitel:** Obafemi Awolowo Road, Oke-Ota Ona, Ikorodu, Lagos (street number TBC) · no pin or place ID yet (Maps searches the address; a pin can be added later with no code change) · phone TBC (shows the business line). Do not use the Oba Sekumade Road listing.
-- **Hours, both** (PROVISIONAL, client to confirm): Monday to Saturday 8:00 to 18:00, Sunday closed. Stored per day; drives the hours tables, booking times and JSON-LD.
+- **Ebute** (client-supplied address): 62 Beach Road, Ebute Ipakodo Road, beside Kingfield College, Ikorodu, Lagos · landmark: beside Kingfield College · pin 6.6390909, 3.4734478 and place ID ChIJm-5QaI_vOxARHWLfjx849fI (from the Google listing) · branch phone unassigned (shows the main line 0706 621 2933).
+- **Nitel** (client-supplied address): Nitel Estate, off Obafemi Awolowo Road, Oke-Ota Ona, Ikorodu, Lagos · landmark TBC · pin 6.6224238, 3.5209325, the **estate pin** from the client's Google Maps link (marked `// ESTATE PIN` in `data/site.ts`; replace with the shop-door pin when supplied) · no place ID yet · branch phone unassigned (shows the main line). Do not use the Oba Sekumade Road listing.
+- **Hours, both** (client-supplied): Monday to Saturday 9:00 to 18:00, Sunday closed. Stored per day; drives the hours tables, booking times (hourly starts 9:00 to 17:00) and JSON-LD.
+- **Photos:** `ebute-exterior`, `ebute-interior`, `nitel-exterior`, `nitel-interior` (placeholders until the shoot).
 
 **Google Maps** (no API key, no dependency):
-- *Get directions* on every branch card and page: `https://www.google.com/maps/dir/?api=1&destination={lat},{lng}&destination_place_id={place_id}`; without a pin, `destination=` the search text (Nitel: `Kikiewa+Obafemi+Awolowo+Road+Oke-Ota+Ona+Ikorodu+Lagos`). Opens the Maps app on phones.
+- *Get directions* on every branch card and page: `https://www.google.com/maps/dir/?api=1&destination={lat},{lng}&destination_place_id={place_id}`; with a pin but no place ID (Nitel today), the `destination_place_id` part is left out; without a pin, `destination=` a search text. Opens the Maps app on phones.
 - *Map* on branch pages, /locations and /contact: a click-to-load facade (styled card with the address and a *Show map* button). Only a tap loads the iframe: `https://maps.google.com/maps?q={lat},{lng}&z=16&output=embed` (without a pin: `q={address}&z=15`), title "Map showing Kikiewa {branch} branch", lazy, rounded, 16:10 (4:3 on phones). Never on initial page load.
 
 **Book** `/book`: H1 *Book an appointment* · Sub: Choose your treatment and a time that suits you. We'll confirm on WhatsApp.
@@ -327,7 +335,7 @@ Primary location keyword: **Ikorodu**. Titles ≤ 60 chars, descriptions ≤ 155
 | /book | Book an Appointment \| Kikiewa Ikorodu | Book facials, massage, aesthetics, hair, nails or makeup at Kikiewa in Ikorodu, Lagos. Choose a time; we'll confirm on WhatsApp. |
 | /contact | Contact Kikiewa \| Ikorodu, Lagos | Call, WhatsApp or message Kikiewa, or visit our Ebute or Nitel branch in Ikorodu, Lagos. |
 
-**Structured data:** `Organization` site-wide. On each branch page, `BeautySalon` named "Kikiewa Ebute" / "Kikiewa Nitel" (switch to `MedicalClinic` only if the client confirms a medical licence) with only verified fields: address, telephone, `openingHoursSpecification` from the per-day hours, and `geo` + `hasMap` (`https://www.google.com/maps/place/?q=place_id:{id}`) only for a branch with a pin (Ebute today). `Service` on service pages (no `offers` until prices are confirmed). `Product` on product pages (offers only when the price is confirmed; no rating or review markup). `Course` on course pages. `BreadcrumbList` on nested pages. `FAQPage` only for rendered, confirmed FAQs. No review schema until real reviews are shown.
+**Structured data:** `Organization` site-wide. On each branch page, `BeautySalon` named "Kikiewa Ebute" / "Kikiewa Nitel" (switch to `MedicalClinic` only if the client confirms a medical licence) with only verified fields: address, telephone, `openingHoursSpecification` from the per-day hours, `geo` for a branch with a pin (both; Nitel's is the estate pin for now), and `hasMap` (`https://www.google.com/maps/place/?q=place_id:{id}`) only with a place ID (Ebute today). `Service` on service pages (no `offers` until prices are confirmed). `Product` on product pages (offers only when the price is confirmed; no rating or review markup). `Course` on course pages. `BreadcrumbList` on nested pages. `FAQPage` only for rendered, confirmed FAQs. No review schema until real reviews are shown.
 
 **Google Business Profile:** one per branch, named to match the signage at each (likely "Kikiewa"). Both list the same categories (primary: Medical spa or Beauty salon, depending on licence; secondary: Facial spa, Massage spa, Hair salon, Nail salon). Name, address and phone identical to the site.
 
@@ -335,8 +343,8 @@ Primary location keyword: **Ikorodu**. Titles ≤ 60 chars, descriptions ≤ 155
 
 ## 9. Client checklist (before launch)
 
-1. Registered business name
-2. **Ebute:** confirm the Google listing address, pin, landmark, and its own phone/WhatsApp. **Nitel:** street number, landmark, a Google Maps pin (place ID), phone/WhatsApp. **Both:** confirm the provisional hours (Mon to Sat 8:00 to 18:00, Sun closed)
+1. ~~Registered business name~~ (supplied: Kiki Ewa Salon Spa And Makeover)
+2. **Ebute:** its own phone/WhatsApp if it gets one. **Nitel:** landmark, the shop-door pin (and place ID once listed), its own phone/WhatsApp if it gets one. (Addresses and hours supplied.)
 3. Confirm all services are offered at both branches (or say which aren't)
 4. Service menus: names, durations and from-prices
 5. Aesthetics: written list of treatments that are licensed and safe to advertise
@@ -345,8 +353,8 @@ Primary location keyword: **Ikorodu**. Titles ≤ 60 chars, descriptions ≤ 155
 8. Founder story, the meaning of "Kikiewa", year founded
 9. Team names and roles (optional)
 10. 3–6 real testimonials with permission, or a Google reviews link
-11. Photos: hero slides (4), service images (6+), past work (6+), academy classes (4+)
-12. Social links
+11. Photos: the shot list in `reference/photoshoot.md` (43 core shots), imported with `npm run photos:import`
+12. ~~Social links~~ (supplied: Instagram, Facebook)
 13. Booking and cancellation policy
 14. Approve the "How we work" copy and the per-service "What to expect" lines
 15. Shop: products with name, category, size, price, photo, NAFDAC number, description and how to use, exactly as on the pack

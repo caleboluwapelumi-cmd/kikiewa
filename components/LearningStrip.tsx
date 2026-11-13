@@ -6,19 +6,34 @@ import type { ImageSlot } from "@/data/site";
  * Heading and a line, then a pair of portrait photographs (About, "We keep
  * learning"). Two across at every width; from lg the heading sits on the left
  * and the pair on the right, the second photograph set lower so the two read
- * as a composed pair rather than a row with a gap.
+ * as a composed pair rather than a row with a gap. An optional landscape
+ * `lead` (the team together) sits under the heading.
  */
 type LearningStripProps = {
   heading: string;
   body: string;
+  lead?: ImageSlot;
   images: ImageSlot[];
 };
 
-export function LearningStrip({ heading, body, images }: LearningStripProps) {
+export function LearningStrip({ heading, body, lead, images }: LearningStripProps) {
   return (
     <section className="section-y w-full border-t border-border bg-surface">
       <div className="shell grid grid-cols-1 gap-space-2xl lg:grid-cols-12 lg:items-center lg:gap-gutter-desktop">
-        <SectionHeading heading={heading} body={body} className="max-w-2xl lg:col-span-4" />
+        <div className="flex max-w-2xl flex-col gap-space-xl lg:col-span-4">
+          <SectionHeading heading={heading} body={body} />
+          {lead ? (
+            <ImageFrame
+              image={lead.image}
+              alt={lead.alt}
+              placeholder={lead.caption}
+              ratio="aspect-[3/2]"
+              orientation="landscape"
+              tone="warm"
+              sizes="(max-width: 1024px) 100vw, 400px"
+            />
+          ) : null}
+        </div>
         <ul className="grid grid-cols-2 items-start gap-space-sm md:gap-gutter lg:col-span-7 lg:col-start-6 lg:gap-gutter-desktop">
           {images.map((slot, index) => (
             <li key={slot.image?.src ?? index} className={index % 2 === 1 ? "mt-space-2xl lg:mt-space-3xl" : undefined}>

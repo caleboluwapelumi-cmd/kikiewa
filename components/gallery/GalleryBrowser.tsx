@@ -1,24 +1,22 @@
 "use client";
 
-import Image from "next/image";
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
-import { useRef, useState } from "react";
 import { Button } from "@/components/Button";
 import { ImageFrame } from "@/components/ImageFrame";
-import { Icon } from "@/components/Icon";
+import { Lightbox, useLightbox } from "@/components/gallery/Lightbox";
 import { galleryPage, type GalleryCategory, type GalleryItem } from "@/data/site";
 
 /**
  * /gallery (site plan, section 7).
  *
- * - Filters are links (?service=nails), so a filtered view can be shared;
- *   the page's canonical stays /gallery. Only filters with photographs show.
+ * - Every shoot photo, grouped in filter order (lib/photos.ts). Filters
+ *   (services, Academy, Branches) are links (?service=nails), so a filtered
+ *   view can be shared; the page's canonical stays /gallery. Only filters
+ *   with photographs show; uncategorised photos show under All.
  * - Asymmetric grid: a repeating rhythm of tall, wide and square tiles.
  *   The first row loads eagerly, the rest lazily.
- * - Each tile opens a native <dialog> lightbox: Escape closes it, the arrow
- *   keys move between photos, the caption is the photo's alt text, and
- *   focus returns to the tile of the photo last shown.
+ * - Each tile opens the shared lightbox (components/gallery/Lightbox.tsx).
  */
 
 type Filter = { slug: GalleryCategory; label: string };
@@ -52,26 +50,7 @@ export function GalleryView({ items, filters, active }: GalleryProps & { active:
   const unknownFilter = active !== null && !current;
   const shown = current ? items.filter((item) => item.category === current.slug) : unknownFilter ? [] : items;
 
-  const dialogRef = useRef<HTMLDialogElement>(null);
-  const tileRefs = useRef<(HTMLButtonElement | null)[]>([]);
-  const [open, setOpen] = useState<number | null>(null);
-
-  function show(index: number) {
-    setOpen(index);
-    dialogRef.current?.showModal();
-  }
-
-  function move(step: number) {
-    setOpen((index) => (index === null ? index : (index + step + shown.length) % shown.length));
-  }
-
-  function handleClose() {
-    const index = open;
-    setOpen(null);
-    if (index !== null) tileRefs.current[index]?.focus();
-  }
-
-  const photo = open !== null ? shown[open] : undefined;
+  const lightbox = useLightbox(shown.length);
 
   const filterLink = (href: string, label: string, isCurrent: boolean) => (
     <Link
@@ -105,16 +84,17 @@ export function GalleryView({ items, filters, active }: GalleryProps & { active:
           </Button>
         </div>
       ) : (
-        <ul data-reveal-stagger className="grid grid-flow-dense auto-rows-[44vw] grid-cols-2 gap-space-sm md:auto-rows-[30vw] md:gap-gutter lg:auto-rows-[20rem] lg:grid-cols-3">
+        // No data-reveal-stagger: Suspense swaps this list in after the
+        // reveal script has run, so it would never be revealed. The section
+        // around it fades in instead (components/RevealOnScroll.tsx).
+        <ul className="grid grid-flow-dense auto-rows-[44vw] grid-cols-2 gap-space-sm md:auto-rows-[30vw] md:gap-gutter lg:auto-rows-[20rem] lg:grid-cols-3">
           {shown.map((item, index) => (
             <li key={item.src} className={tileShape(index)}>
               <button
-                ref={(node) => {
-                  tileRefs.current[index] = node;
-                }}
+                ref={lightbox.trigger(index)}
                 type="button"
                 aria-haspopup="dialog"
-                onClick={() => show(index)}
+                onClick={() => lightbox.show(index)}
                 className="group relative block size-full rounded-card text-left"
               >
                 <span className="sr-only">
@@ -134,76 +114,7 @@ export function GalleryView({ items, filters, active }: GalleryProps & { active:
         </ul>
       )}
 
-      <dialog
-        ref={dialogRef}
-        data-tone="dark"
-        aria-label={galleryPage.lightbox.label}
-        onClose={handleClose}
-        onKeyDown={(event) => {
-          if (event.key === "ArrowRight") {
-            event.preventDefault();
-            move(1);
-          } else if (event.key === "ArrowLeft") {
-            event.preventDefault();
-            move(-1);
-          }
-        }}
-        onClick={(event) => {
-          // A click on the backdrop (the dialog itself, not its content) closes it.
-          if (event.target === event.currentTarget) dialogRef.current?.close();
-        }}
-        className="m-auto h-[calc(100dvh-1.5rem)] w-[calc(100vw-1.5rem)] max-h-none max-w-none overflow-hidden rounded-card bg-foreground/95 p-0 text-on-primary backdrop:bg-foreground/80"
-      >
-        {photo ? (
-          <div className="pointer-events-none flex size-full flex-col p-space-md md:p-space-lg">
-            <div className="pointer-events-auto flex items-center justify-between gap-space-md">
-              <p className="text-label-sm uppercase tabular-nums text-on-primary/75" aria-live="polite">
-                {open! + 1} {galleryPage.lightbox.of} {shown.length}
-              </p>
-              <button
-                type="button"
-                autoFocus
-                onClick={() => dialogRef.current?.close()}
-                className="inline-flex size-12 items-center justify-center rounded-full text-on-primary transition-[background-color,transform] duration-200 hover:bg-on-primary/10 active:scale-[0.94]"
-              >
-                <Icon name="close" className="size-6" />
-                <span className="sr-only">{galleryPage.lightbox.close}</span>
-              </button>
-            </div>
-            <figure className="flex min-h-0 flex-1 flex-col items-center justify-center gap-space-md py-space-md">
-              <div className="pointer-events-auto relative min-h-0 w-full flex-1">
-                <Image src={photo.src} alt={photo.alt} fill sizes="100vw" className="object-contain" />
-              </div>
-              {/* The alt text, shown as the caption. Hidden from screen readers,
-                  which already hear it as the image alt. */}
-              <figcaption className="pointer-events-auto flex max-w-[60ch] flex-col gap-space-xs text-center text-body-md text-on-primary/90">
-                <span aria-hidden="true">{photo.alt}</span>
-                {photo.caption ? <span className="text-body-sm text-on-primary/75">{photo.caption}</span> : null}
-              </figcaption>
-            </figure>
-            {shown.length > 1 ? (
-              <div className="pointer-events-auto flex items-center justify-center gap-space-md">
-                <button
-                  type="button"
-                  onClick={() => move(-1)}
-                  className="inline-flex size-12 items-center justify-center rounded-full border border-on-primary/40 transition-[border-color,background-color,transform] duration-200 hover:border-on-primary hover:bg-on-primary/10 active:scale-[0.94]"
-                >
-                  <Icon name="chevronLeft" className="size-5" />
-                  <span className="sr-only">{galleryPage.lightbox.previous}</span>
-                </button>
-                <button
-                  type="button"
-                  onClick={() => move(1)}
-                  className="inline-flex size-12 items-center justify-center rounded-full border border-on-primary/40 transition-[border-color,background-color,transform] duration-200 hover:border-on-primary hover:bg-on-primary/10 active:scale-[0.94]"
-                >
-                  <Icon name="chevronRight" className="size-5" />
-                  <span className="sr-only">{galleryPage.lightbox.next}</span>
-                </button>
-              </div>
-            ) : null}
-          </div>
-        ) : null}
-      </dialog>
+      <Lightbox state={lightbox} photos={shown} />
     </>
   );
 }

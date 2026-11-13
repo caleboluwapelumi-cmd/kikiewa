@@ -14,10 +14,12 @@ import { pageMetadata } from "@/lib/seo";
 export const metadata: Metadata = pageMetadata(seo.about);
 
 /**
- * About (site plan, section 4): hero, our story (hidden until supplied),
- * vision and mission side by side, how we work (the four steps and the
- * principles, #how-we-work), we keep learning, our team
- * (hidden until real names exist), the two locations, closing band.
+ * About (site plan, section 4): hero (about-space), our story with the
+ * founder's portrait (hidden until the story is supplied), vision and
+ * mission side by side, how we work (the four steps and the principles,
+ * #how-we-work) beside the consultation photo, we keep learning (the team
+ * together, then its training), our team (hidden until real names exist),
+ * the two locations, closing band.
  *
  * The page's one peacock divider opens the vision and mission.
  */
@@ -31,7 +33,19 @@ export default function AboutPage() {
       {story ? (
         <section className="section-y w-full border-t border-border bg-background">
           <div className="shell grid grid-cols-1 gap-space-2xl lg:grid-cols-12 lg:gap-gutter-desktop">
-            <SectionHeading heading={about.story.heading} className="lg:col-span-4" />
+            <div className="flex flex-col gap-space-xl lg:col-span-4">
+              <SectionHeading heading={about.story.heading} />
+              <ImageFrame
+                image={about.story.founder.image}
+                alt={about.story.founder.alt}
+                placeholder={about.story.founder.caption}
+                ratio="aspect-[4/5]"
+                orientation="portrait"
+                tone="warm"
+                sizes="(max-width: 1024px) 100vw, 360px"
+                className="max-w-sm"
+              />
+            </div>
             <div className="flex flex-col gap-space-lg lg:col-span-7 lg:col-start-6">
               {story.map((paragraph, index) => (
                 <p
@@ -92,6 +106,7 @@ export default function AboutPage() {
             <ImageFrame
               image={about.methodImage.image}
               alt={about.methodImage.alt}
+              placeholder={about.methodImage.caption}
               ratio="aspect-[4/3] lg:aspect-[4/5]"
               orientation="portrait"
               tone="warm"
@@ -119,7 +134,12 @@ export default function AboutPage() {
         </div>
       </section>
 
-      <LearningStrip heading={about.learning.heading} body={about.learning.body} images={about.learning.images} />
+      <LearningStrip
+        heading={about.learning.heading}
+        body={about.learning.body}
+        lead={about.learning.teamImage}
+        images={about.learning.images}
+      />
 
       <TeamGrid heading={about.team.heading} body={about.team.body} members={about.team.members} />
 

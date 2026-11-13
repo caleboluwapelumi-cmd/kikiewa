@@ -13,8 +13,19 @@ Photographs for the site. Everything here is served publicly, so only add files 
 | `team/` | Team portraits |
 | `gallery/` | Our work |
 | `about/` | About page images |
+| `shoot/` | Photoshoot photos, written by `npm run photos:import` (do not add files by hand) |
 
-## Naming
+## Photoshoot photos
+
+Final photography goes through the photo-slot system, not by hand:
+
+1. Save each photo in `photoshoot/` (not committed) with its name from [reference/photoshoot.md](../../reference/photoshoot.md), e.g. `facials-01.jpg`.
+2. Run `npm run photos:import`. It strips all metadata (EXIF, GPS), resizes (hero 2400px long edge, everything else 1600px), writes `shoot/<group>/<slot>.jpg` and updates `data/photos.generated.ts`.
+3. `lib/photos.ts` places it: shoot photo, else approved stock where the slot allows it, else the designed placeholder. Slots for our own work, classes, branches, people and products never fall back to stock.
+
+The slots, their alt text and their stock stand-ins live in `data/photo-slots.ts`.
+
+## Naming (other images)
 
 `{folder}-{subject}-{detail}-{width}.jpg`, all lowercase, words joined with hyphens. For example:
 

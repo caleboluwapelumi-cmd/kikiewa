@@ -1,4 +1,4 @@
-import Image from "next/image";
+import Image, { getImageProps } from "next/image";
 import { ImagePlaceholder } from "@/components/ImagePlaceholder";
 import type { ImageAsset } from "@/data/site";
 import { isProductionSite } from "@/lib/env";
@@ -21,6 +21,9 @@ import { isProductionSite } from "@/lib/env";
  * matching concentric corners, so placeholders and real photographs share
  * the same finished edge. Full-bleed frames (the hero) have neither.
  *
+ * Art direction: with a `mobileImage` (the hero's phone crops) the frame
+ * renders a <picture> whose source swaps to the phone crop under 768px.
+ *
  * Temporary images (source "stock-temp" or "instagram-temp") carry a small
  * "Temp image" badge on previews, so nobody mistakes them for final. Kept
  * stock (source "stock") has no badge. The badge never renders in
@@ -42,6 +45,8 @@ const tones: Record<ImageTone, string> = {
 type ImageFrameProps = {
   /** The photograph. Leave out to show the placeholder. */
   image?: ImageAsset;
+  /** Shown instead under 768px (a portrait phone crop), when there is an `image`. */
+  mobileImage?: ImageAsset;
   /** Alt text the photograph will carry. A real image uses its own `alt`. */
   alt: string;
   /** Placeholder caption (previews only), e.g. "Our work · Nails". Defaults to `alt`. */
@@ -69,6 +74,7 @@ type ImageFrameProps = {
 
 export function ImageFrame({
   image,
+  mobileImage,
   alt,
   placeholder,
   ratio,
@@ -81,9 +87,10 @@ export function ImageFrame({
   imageClassName = "",
   bleed = false,
 }: ImageFrameProps) {
-  if (image && /\.svg($|[?#])/i.test(image.src)) {
+  const svg = [image, mobileImage].find((asset) => asset && /\.svg($|[?#])/i.test(asset.src));
+  if (svg) {
     throw new Error(
-      `ImageFrame: "${image.src}" is an SVG. SVGs must not go through next/image; inline them as components instead.`,
+      `ImageFrame: "${svg.src}" is an SVG. SVGs must not go through next/image; inline them as components instead.`,
     );
   }
 
@@ -101,7 +108,15 @@ export function ImageFrame({
         className,
       ].join(" ")}
     >
-      {image ? (
+      {image && mobileImage ? (
+        <ArtDirected
+          image={image}
+          mobileImage={mobileImage}
+          sizes={sizes}
+          priority={priority}
+          className={["object-cover", zoom, imageClassName].join(" ")}
+        />
+      ) : image ? (
         <Image
           src={image.src}
           alt={image.alt}
@@ -137,6 +152,43 @@ export function ImageFrame({
         </span>
       ) : null}
     </div>
+  );
+}
+
+/** Must match Tailwind's md breakpoint (768px). */
+const MOBILE_QUERY = "(max-width: 767px)";
+
+/**
+ * A <picture>: the phone crop under 768px, the main image above. Both go
+ * through the image optimiser (getImageProps), so each keeps its srcset.
+ */
+function ArtDirected({
+  image,
+  mobileImage,
+  sizes,
+  priority,
+  className,
+}: {
+  image: ImageAsset;
+  mobileImage: ImageAsset;
+  sizes: string;
+  priority: boolean;
+  className: string;
+}) {
+  const shared = {
+    fill: true,
+    sizes,
+    loading: priority ? ("eager" as const) : undefined,
+    fetchPriority: priority ? ("high" as const) : undefined,
+  };
+  const { props: mobile } = getImageProps({ ...shared, src: mobileImage.src, alt: mobileImage.alt });
+  const { props: main } = getImageProps({ ...shared, src: image.src, alt: image.alt });
+  return (
+    <picture>
+      <source media={MOBILE_QUERY} srcSet={mobile.srcSet} sizes={mobile.sizes} />
+      {/* Props come from getImageProps, so this is still the optimised image. */}
+      <img {...main} alt={image.alt} className={className} />
+    </picture>
   );
 }
 

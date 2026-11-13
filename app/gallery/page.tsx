@@ -5,18 +5,22 @@ import { CtaBand } from "@/components/CtaBand";
 import { GalleryBrowser, GalleryView } from "@/components/gallery/GalleryBrowser";
 import { PageIntro } from "@/components/PageIntro";
 import { WorkPlaceholderGrid } from "@/components/WorkPlaceholderGrid";
-import { bookingHref, cta, gallery, galleryFilters, galleryPage, seo, serviceCategories } from "@/data/site";
+import { bookingHref, cta, galleryFilters, galleryPage, seo, serviceCategories } from "@/data/site";
+import { galleryPhotos } from "@/lib/photos";
 import { pageMetadata } from "@/lib/seo";
 
 // Canonical is /gallery for every ?service= view (pageMetadata).
 export const metadata: Metadata = pageMetadata(seo.gallery);
 
 /**
- * Our work (site plan, section 7). The static page renders every photograph
- * ("All"); in the browser the ?service= filter applies. Until photography is
- * supplied the page shows a short note and one placeholder tile per service.
+ * Our work (site plan, section 7): every shoot photo, grouped and filterable
+ * by service, Academy and Branches (lib/photos.ts). The static page renders
+ * every photograph ("All"); in the browser the ?service= filter applies.
+ * Until the shoot photos arrive the page shows a short note and one
+ * placeholder tile per service.
  */
 export default function GalleryPage() {
+  const gallery = galleryPhotos(galleryFilters.map((filter) => filter.slug));
   return (
     <>
       <PageIntro copy={galleryPage.intro} />

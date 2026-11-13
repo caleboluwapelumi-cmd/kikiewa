@@ -19,16 +19,32 @@ export const metadata: Metadata = pageMetadata(seo.contact);
  * confirmed.
  */
 export default function ContactPage() {
-  const tel = telHref(contact.phone);
+  // Both business lines, each with a short note.
+  const phoneLines = [
+    { number: contact.phone, note: contactPage.mainLineNote },
+    { number: contact.secondPhone, note: contactPage.secondLineNote },
+  ];
   const rows = [
     {
       label: contactPage.phoneLabel,
-      value: tel ? (
-        <a href={tel} className="link-touch hover:text-secondary">
-          {contact.phone}
-        </a>
-      ) : (
-        <Confirmable value={contact.phone} />
+      value: (
+        <ul className="flex flex-col gap-space-sm">
+          {phoneLines.map((line) => {
+            const tel = telHref(line.number);
+            return (
+              <li key={line.note} className="flex flex-col">
+                {tel ? (
+                  <a href={tel} className="link-touch hover:text-secondary">
+                    {line.number}
+                  </a>
+                ) : (
+                  <Confirmable value={line.number} />
+                )}
+                <span className="text-body-sm text-muted">{line.note}</span>
+              </li>
+            );
+          })}
+        </ul>
       ),
     },
     {

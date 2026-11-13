@@ -1,4 +1,6 @@
 import type { IconName } from "@/components/Icon";
+import type { OwnSlotId } from "@/data/photo-slots";
+import { heroMobilePhoto, heroPhoto, imageSlot, ownImageSlot } from "@/lib/photos";
 import { whatsappLink } from "@/lib/whatsapp";
 
 /**
@@ -19,8 +21,11 @@ import { whatsappLink } from "@/lib/whatsapp";
  *   without written consent, outcome promises.
  * - No invented facts. Anything unconfirmed is the literal `TBC`; never print
  *   it directly. Prices, durations, addresses, hours, phones and course facts
- *   show "To be confirmed" (components/Confirmable.tsx). Story, team, socials
- *   and testimonials are hidden until real.
+ *   show "To be confirmed" (components/Confirmable.tsx). Story, team and
+ *   testimonials are hidden until real.
+ * - Photographs come from photo slots (data/photo-slots.ts, resolved by
+ *   lib/photos.ts): the shoot photo, else approved stock where allowed,
+ *   else the designed placeholder.
  * - Copy written before client sign-off is marked
  *   `// DRAFT COPY - client approval needed`.
  */
@@ -103,8 +108,8 @@ export type ImageSlot = { alt: string; image?: ImageAsset; caption?: string };
 
 export const site = {
   name: "Kikiewa",
-  /** Registered business name, for structured data. */
-  legalName: TBC as OrTBC<string>,
+  /** Registered business name (CAC), for structured data and the footer's legal line. */
+  legalName: "Kiki Ewa Salon Spa And Makeover" as OrTBC<string>,
   url: "https://kikiewa.com",
   /** Where both branches are. Confirmed in the brief. */
   area: "Ikorodu, Lagos",
@@ -116,20 +121,30 @@ export const site = {
 } as const;
 
 /**
- * Business-wide contact details. `phone` is the main line (from the client's
- * Instagram) and also the WhatsApp line. Numbers are written in the local
+ * Business-wide contact details (client-supplied). `phone` is the main line
+ * and also the WhatsApp line; `secondPhone` is the second business line.
+ * Both show on /contact and in the footer. Numbers are written in the local
  * form shown on screen; tel: and wa.me links convert them to +234
- * (lib/phone.ts, lib/whatsapp.ts). Each branch keeps its own numbers, TBC
- * until confirmed, and falls back to these meanwhile (`branchPhone`).
+ * (lib/phone.ts, lib/whatsapp.ts). Branch-specific numbers are unassigned
+ * (TBC) and fall back to the main line meanwhile (`branchPhone`).
  */
-export const contact: { phone: OrTBC<string>; whatsapp: OrTBC<string>; email: OrTBC<string> } = {
+export const contact: {
+  phone: OrTBC<string>;
+  secondPhone: OrTBC<string>;
+  whatsapp: OrTBC<string>;
+  email: OrTBC<string>;
+} = {
   phone: "0706 621 2933",
+  secondPhone: "0706 204 9358",
   whatsapp: "0706 621 2933",
   email: TBC,
 };
 
-/** Social profiles. The footer's Follow column is hidden while empty. */
-export const socials: NavLink[] = [];
+/** Social profiles (client-supplied): the footer's Follow column and Organization sameAs. */
+export const socials: NavLink[] = [
+  { label: "Instagram", href: "https://www.instagram.com/kikiewa/" },
+  { label: "Facebook", href: "https://www.facebook.com/p/Kikiewa-Salon-Spa-and-Makeover-100063597781525/" },
+];
 
 export const bookingHref = "/book";
 export const contactHref = "/contact";
@@ -326,7 +341,7 @@ export type DayHours = { opens: string; closes: string } | null;
 /**
  * Opening hours, stored per day. The hours table, the booking times and
  * the BeautySalon JSON-LD all read these (lib/format.ts groups matching
- * days for display: "Mon to Sat 8:00 am to 6:00 pm").
+ * days for display: "Mon to Sat 9:00 am to 6:00 pm").
  */
 export type WeeklyHours = Record<Weekday, DayHours>;
 
@@ -373,20 +388,23 @@ export type Location = {
    */
   whatsapp: OrTBC<string>;
   map: BranchMap;
+  /** Frontage with signage: the branch card and page. */
+  exterior: ImageSlot;
+  /** Reception or main room: the branch page. */
+  interior: ImageSlot;
   href: string;
   bookHref: string;
   seo: PageMeta;
 };
 
-// PROVISIONAL - client to confirm
-/** Both branches: Monday to Saturday 8:00 to 18:00, Sunday closed. */
-const provisionalHours: WeeklyHours = {
-  monday: { opens: "08:00", closes: "18:00" },
-  tuesday: { opens: "08:00", closes: "18:00" },
-  wednesday: { opens: "08:00", closes: "18:00" },
-  thursday: { opens: "08:00", closes: "18:00" },
-  friday: { opens: "08:00", closes: "18:00" },
-  saturday: { opens: "08:00", closes: "18:00" },
+/** Both branches (client-supplied): Monday to Saturday 9:00 to 18:00, Sunday closed. */
+const openingHours: WeeklyHours = {
+  monday: { opens: "09:00", closes: "18:00" },
+  tuesday: { opens: "09:00", closes: "18:00" },
+  wednesday: { opens: "09:00", closes: "18:00" },
+  thursday: { opens: "09:00", closes: "18:00" },
+  friday: { opens: "09:00", closes: "18:00" },
+  saturday: { opens: "09:00", closes: "18:00" },
   sunday: null,
 };
 
@@ -396,21 +414,22 @@ export const ebuteLocation: Location = {
   title: "Ebute branch",
   businessName: "Kikiewa Ebute",
   area: "Ebute, Ikorodu",
-  // FROM GOOGLE LISTING - client to confirm
-  address: "62 Beach Road, Ebute Ipakodo Road, beside Kingfield College, Ikorodu, Lagos 104101",
+  // Client-supplied.
+  address: "62 Beach Road, Ebute Ipakodo Road, beside Kingfield College, Ikorodu, Lagos",
   streetAddress: "62 Beach Road, Ebute Ipakodo Road",
-  postalCode: "104101",
   landmark: "Beside Kingfield College",
-  // PROVISIONAL - client to confirm
-  hours: provisionalHours,
+  hours: openingHours,
+  // Branch-specific numbers unassigned: the business line shows (branchPhone).
   phone: TBC,
   whatsapp: TBC,
-  // FROM GOOGLE LISTING - client to confirm
+  // Pin and place ID from the Google listing.
   map: {
     lat: 6.6390909,
     lng: 3.4734478,
     placeId: "ChIJm-5QaI_vOxARHWLfjx849fI",
   },
+  exterior: ownImageSlot("ebute-exterior"),
+  interior: ownImageSlot("ebute-interior"),
   href: "/locations/ebute",
   bookHref: bookingHref + "?location=ebute",
   seo: seo.ebute,
@@ -422,20 +441,22 @@ export const nitelLocation: Location = {
   title: "Nitel branch",
   businessName: "Kikiewa Nitel",
   area: "Nitel, Ikorodu",
-  // Client to confirm: street number TBC.
-  address: "Obafemi Awolowo Road, Oke-Ota Ona, Ikorodu, Lagos",
-  streetAddress: "Obafemi Awolowo Road, Oke-Ota Ona",
+  // Client-supplied.
+  address: "Nitel Estate, off Obafemi Awolowo Road, Oke-Ota Ona, Ikorodu, Lagos",
+  streetAddress: "Nitel Estate, off Obafemi Awolowo Road, Oke-Ota Ona",
   landmark: TBC,
-  // PROVISIONAL - client to confirm
-  hours: provisionalHours,
+  hours: openingHours,
+  // Branch-specific numbers unassigned: the business line shows (branchPhone).
   phone: TBC,
   whatsapp: TBC,
-  // No Google pin yet, so Maps searches these. Add lat, lng and placeId
-  // once the client confirms the listing.
+  // ESTATE PIN, replace with shop-door pin when supplied. From the client's
+  // Google Maps link. No place ID yet (so no hasMap in the JSON-LD).
   map: {
-    directionsQuery: "Kikiewa Obafemi Awolowo Road Oke-Ota Ona Ikorodu Lagos",
-    embedQuery: "Obafemi Awolowo Road, Oke-Ota Ona, Ikorodu, Lagos",
+    lat: 6.6224238,
+    lng: 3.5209325,
   },
+  exterior: ownImageSlot("nitel-exterior"),
+  interior: ownImageSlot("nitel-interior"),
   href: "/locations/nitel",
   bookHref: bookingHref + "?location=nitel",
   seo: seo.nitel,
@@ -570,16 +591,7 @@ export const serviceCategories: ServiceCategory[] = [
     href: serviceHref("facials"),
     icon: "face",
     cardLine: "Deep cleansing, hydrating and glow facials, matched to your skin.",
-    image: {
-      alt: "Facial treatment at Kikiewa, Ikorodu",
-      image: {
-        src: "/images/services/facials.jpg",
-        alt: "A woman smoothing a dab of cream onto her cheek",
-        width: 1600,
-        height: 2400,
-        source: "stock",
-      },
-    },
+    image: imageSlot("facials-cover"),
     heading: "Facials",
     line: "Skin that feels as good as it looks.",
     intro:
@@ -637,16 +649,7 @@ export const serviceCategories: ServiceCategory[] = [
     href: serviceHref("massage"),
     icon: "spa",
     cardLine: "Massages that release tension and help you fully switch off.",
-    image: {
-      alt: "Massage treatment at Kikiewa, Ikorodu",
-      image: {
-        src: "/images/services/massage.jpg",
-        alt: "A woman resting on a massage table beside warm stones, towels and a candle",
-        width: 1600,
-        height: 1036,
-        source: "stock",
-      },
-    },
+    image: imageSlot("massage-cover"),
     heading: "Massage & Spa",
     line: "Switch off. Breathe out.",
     intro:
@@ -672,16 +675,7 @@ export const serviceCategories: ServiceCategory[] = [
     href: serviceHref("aesthetics"),
     icon: "sparkle",
     cardLine: "Advanced skin treatments, always starting with a consultation.",
-    image: {
-      alt: "Aesthetic skin consultation at Kikiewa, Ikorodu",
-      image: {
-        src: "/images/services/aesthetics.jpg",
-        alt: "A clean, white skincare treatment room with a freshly made treatment bed",
-        width: 1600,
-        height: 1988,
-        source: "stock",
-      },
-    },
+    image: imageSlot("aesthetics-cover"),
     heading: "Aesthetics",
     line: "Advanced skin care, always starting with a consultation.",
     intro:
@@ -715,26 +709,9 @@ export const serviceCategories: ServiceCategory[] = [
     href: serviceHref("hair"),
     icon: "scissors",
     cardLine: "Styling, treatments and clean, sharp cuts.",
-    image: {
-      alt: "Hair styling at Kikiewa, Ikorodu",
-      image: {
-        src: "/images/services/hair.jpg",
-        alt: "A close view of hands braiding neat rows into dark hair",
-        width: 1600,
-        height: 2000,
-        source: "stock",
-      },
-    },
-    heroImage: {
-      alt: "Barbering at Kikiewa, Ikorodu",
-      image: {
-        src: "/images/services/hair-barber.jpg",
-        alt: "A barber shaping a man's curly high top fade",
-        width: 1600,
-        height: 1840,
-        source: "stock",
-      },
-    },
+    image: imageSlot("hair-cover"),
+    // Until the shoot cover arrives, the page hero keeps the barber stand-in.
+    heroImage: { ...imageSlot("hair-cover"), image: heroPhoto("hair-cover") },
     heading: "Hair & Barbing",
     line: "Styled, cut and cared for.",
     intro:
@@ -765,16 +742,7 @@ export const serviceCategories: ServiceCategory[] = [
     href: serviceHref("nails"),
     icon: "hand",
     cardLine: "Manicures, pedicures and nail art, finished with precision.",
-    image: {
-      alt: "Manicure at Kikiewa, Ikorodu",
-      image: {
-        src: "/images/services/nails.jpg",
-        alt: "A smiling woman with short nails in white polish, resting her hand at her chin",
-        width: 1600,
-        height: 2400,
-        source: "stock",
-      },
-    },
+    image: imageSlot("nails-cover"),
     heading: "Nails",
     line: "Finished with precision.",
     intro:
@@ -806,16 +774,7 @@ export const serviceCategories: ServiceCategory[] = [
     href: serviceHref("makeup"),
     icon: "brush",
     cardLine: "For your big day, a night out, or a photoshoot.",
-    image: {
-      alt: "Makeup artist at work at Kikiewa, Ikorodu",
-      image: {
-        src: "/images/services/makeup.jpg",
-        alt: "A woman with shimmering eyeshadow lining her lips with a pencil",
-        width: 1600,
-        height: 2400,
-        source: "stock",
-      },
-    },
+    image: imageSlot("makeup-cover"),
     heading: "Makeup",
     line: "For the moments you want to remember.",
     intro:
@@ -1131,6 +1090,8 @@ export type HeroSlide = {
   line: string;
   cta: NavLink;
   image: ImageSlot;
+  /** Phone crop (hero-0X-mobile), shown under 768px when imported. */
+  mobileImage?: ImageAsset;
 };
 
 // DRAFT COPY - client approval needed
@@ -1141,61 +1102,29 @@ export const hero: { label: string; slides: HeroSlide[] } = {
       heading: "Your beauty, seen and felt.",
       line: "Everyone is beautiful in their own way. At Kikiewa, we bring it out.",
       cta: { label: cta.book, href: bookingHref },
-      image: {
-        alt: "A calm treatment room at Kikiewa, Ikorodu",
-        image: {
-          src: "/images/home/hero-1.jpg",
-          alt: "A candlelit steam room with warm lights over a stone bench",
-          width: 2400,
-          height: 1601,
-          source: "stock",
-        },
-      },
+      image: imageSlot("hero-01"),
+      mobileImage: heroMobilePhoto("hero-01"),
     },
     {
       heading: "Skin that feels as good as it looks.",
       line: "Facials and skin treatments, matched to your skin.",
       cta: { label: "Explore facials", href: serviceHref("facials") },
-      image: {
-        alt: "Facial in progress at Kikiewa, Ikorodu",
-        image: {
-          src: "/images/home/hero-2.jpg",
-          alt: "A therapist giving a woman a facial with a handheld skincare device",
-          width: 2400,
-          height: 1600,
-          source: "stock",
-        },
-      },
+      image: imageSlot("hero-02"),
+      mobileImage: heroMobilePhoto("hero-02"),
     },
     {
       heading: "Switch off. Breathe out.",
       line: "Massage and spa treatments to release the week.",
       cta: { label: "Explore massage", href: serviceHref("massage") },
-      image: {
-        alt: "Massage treatment at Kikiewa, Ikorodu",
-        image: {
-          src: "/images/home/hero-3.jpg",
-          alt: "A woman relaxing with her eyes closed during a back massage",
-          width: 2400,
-          height: 1600,
-          source: "stock",
-        },
-      },
+      image: imageSlot("hero-03"),
+      mobileImage: heroMobilePhoto("hero-03"),
     },
     {
       heading: "Finished to be seen.",
       line: "Hair, barbing, nails and makeup, done with care.",
       cta: { label: cta.viewServices, href: "/services" },
-      image: {
-        alt: "Finished hair, nails and makeup at Kikiewa, Ikorodu",
-        image: {
-          src: "/images/home/hero-4.jpg",
-          alt: "A smiling woman with her braids styled in a high, beaded updo",
-          width: 2400,
-          height: 1898,
-          source: "stock",
-        },
-      },
+      image: imageSlot("hero-04"),
+      mobileImage: heroMobilePhoto("hero-04"),
     },
   ],
 };
@@ -1224,7 +1153,17 @@ export const whatWeDo = {
   intro: "Whatever brings you in, we start by listening.",
 };
 
-export type WorkItem = { category: ServiceSlug; alt: string; image?: OwnImageAsset };
+export type WorkItem = { category: ServiceSlug; alt: string; caption?: string; image?: OwnImageAsset };
+
+/** One service's photo slots for "Our work": facials-01, facials-02, facials-03. */
+export function serviceWorkSlots(slug: ServiceSlug): OwnSlotId[] {
+  return [`${slug}-01`, `${slug}-02`, `${slug}-03`] as const;
+}
+
+/** A service's "Our work" tiles (shoot photos, else placeholders). */
+export function serviceWork(slug: ServiceSlug): WorkItem[] {
+  return serviceWorkSlots(slug).map((id) => ({ category: slug, ...ownImageSlot(id) }));
+}
 
 /** Placeholder caption for an "Our work" tile: "Our work · Nails". */
 export function workCaption(category: ServiceSlug): string {
@@ -1232,22 +1171,18 @@ export function workCaption(category: ServiceSlug): string {
 }
 
 /**
- * Home "Our work" tiles. Each links to its service page. No client faces or
- * before/afters without written consent (public/images/README.md).
+ * Home "Our work" tiles: one per service, its first slot (facials-01, ...).
+ * Each links to its service page. No client faces or before/afters without
+ * written consent (public/images/README.md).
  */
 // DRAFT COPY - client approval needed
 export const ourWork: { heading: string; intro: string; link: NavLink; items: WorkItem[] } = {
   heading: "Our work",
   intro: "A few recent favourites from our team.",
   link: { label: cta.seeWork, href: "/gallery" },
-  items: [
-    { category: "facials", alt: "Glowing skin after a facial at Kikiewa, Ikorodu" },
-    { category: "hair", alt: "Finished hairstyle at Kikiewa, Ikorodu" },
-    { category: "nails", alt: "Nail art at Kikiewa, Ikorodu" },
-    { category: "makeup", alt: "Event makeup at Kikiewa, Ikorodu" },
-    { category: "massage", alt: "Massage room at Kikiewa, Ikorodu" },
-    { category: "aesthetics", alt: "Aesthetics treatment room at Kikiewa, Ikorodu" },
-  ],
+  items: (["facials", "hair", "nails", "makeup", "massage", "aesthetics"] as const).map(
+    (slug) => serviceWork(slug)[0],
+  ),
 };
 
 /** `placeholder` says what the photograph should show (previews only). */
@@ -1262,13 +1197,13 @@ export const academyHome = {
   slideshowLabel: "Inside our classes",
 };
 
-/** Class photos, shared by Home and /academy. Captions are optional. */
-export const classSlides: ClassSlide[] = [
-  { alt: "Students practising at Kikiewa Academy, Ikorodu", placeholder: "Inside our classes · Students practising" },
-  { alt: "A hair styling class at Kikiewa Academy, Ikorodu", placeholder: "Inside our classes · Hair styling" },
-  { alt: "A nails class at Kikiewa Academy, Ikorodu", placeholder: "Inside our classes · Nails" },
-  { alt: "A facial training session at Kikiewa Academy, Ikorodu", placeholder: "Inside our classes · Facials" },
-];
+/** Class photos (academy-class-01..04), shared by Home and /academy. Captions are optional. */
+export const classSlides: ClassSlide[] = (
+  ["academy-class-01", "academy-class-02", "academy-class-03", "academy-class-04"] as const
+).map((id) => {
+  const slot = ownImageSlot(id);
+  return { alt: slot.alt, placeholder: slot.caption ?? slot.alt, image: slot.image };
+});
 
 export type Testimonial = {
   quote: string;
@@ -1343,8 +1278,11 @@ export const utilityBar = {
 // DRAFT COPY - client approval needed
 export const footer = {
   tagline: "Your beauty, seen and felt.",
-  /** Before the main line: "Call 0706 621 2933". */
+  /** Before the business lines: "Call 0706 621 2933 or 0706 204 9358". */
   phoneLabel: "Call",
+  phoneJoin: "or",
+  /** "© 2026 Kiki Ewa Salon Spa And Makeover. Trading as Kikiewa." */
+  tradingAs: "Trading as",
   servicesHeading: "Services",
   kikiewaHeading: "Kikiewa",
   kikiewaLinks: [
@@ -1386,9 +1324,12 @@ export const about = {
     heading: "Everyone is beautiful in their own way.",
     body: "We exist to bring that beauty out.",
   } satisfies PageCopy,
-  image: { alt: "Inside Kikiewa, Ikorodu, Lagos", caption: "About · Inside Kikiewa" } as ImageSlot,
-  /** How Kikiewa started, the founder, the year, the name. Hidden while TBC. */
-  story: { heading: "Our story", paragraphs: TBC as OrTBC<string[]> },
+  image: ownImageSlot("about-space"),
+  /**
+   * How Kikiewa started, the founder, the year, the name. Hidden while TBC;
+   * the founder's portrait sits beside it.
+   */
+  story: { heading: "Our story", paragraphs: TBC as OrTBC<string[]>, founder: ownImageSlot("about-founder") },
   vision: {
     heading: "Our vision",
     body: "A world where everyone sees the beauty they already have, and is helped to bring it out.",
@@ -1397,21 +1338,13 @@ export const about = {
     heading: "Our mission",
     body: "To bring expertise and professional know-how to every client, so their beauty can be seen and felt.",
   },
-  /** Beside "How we work". */
-  methodImage: {
-    alt: "A Kikiewa treatment in progress in Ikorodu",
-    image: {
-      src: "/images/home/about.jpg",
-      alt: "Portrait of a woman with glowing skin, eyes closed, in warm light",
-      width: 1600,
-      height: 2400,
-      source: "stock",
-    },
-  } as ImageSlot,
-  /** After "How we work": the team's training, photographed by Kikiewa. */
+  /** Beside "How we work", whose first step is "We listen": a consultation. */
+  methodImage: ownImageSlot("about-consultation"),
+  /** After "How we work": the team together, then its training, photographed by Kikiewa. */
   learning: {
     heading: "We keep learning",
     body: "To serve you better, our team keeps training and growing, inside the beauty industry and beyond.",
+    teamImage: ownImageSlot("about-team"),
     images: [
       {
         alt: "Kikiewa team training",
@@ -1435,7 +1368,7 @@ export const about = {
       },
     ] as ImageSlot[],
   },
-  /** Hidden until real names and roles exist. */
+  /** Hidden until real names and roles exist. Portraits: photoshoot/team-<firstname>.jpg. */
   team: {
     heading: "Our team",
     body: "The people who'll look after you.",
@@ -1500,16 +1433,7 @@ export const courses: Course[] = [
     name: "Cosmetology",
     href: "/academy/cosmetology",
     cardLine: "Hair, barbing, nails, makeup, manicure and pedicure.",
-    image: {
-      alt: "A cosmetology class at Kikiewa Academy, Ikorodu",
-      image: {
-        src: "/images/academy/cosmetology.jpg",
-        alt: "Hands with pink nails braiding a section of dark hair",
-        width: 1600,
-        height: 2000,
-        source: "stock",
-      },
-    },
+    image: imageSlot("cosmetology-cover"),
     overview:
       "A practical course across the beauty services we offer every day, taught by the team behind Kikiewa.",
     modules: [
@@ -1531,16 +1455,7 @@ export const courses: Course[] = [
     name: "Aesthetics",
     href: "/academy/aesthetics",
     cardLine: "Facials and massage.",
-    image: {
-      alt: "An aesthetics class at Kikiewa Academy, Ikorodu",
-      image: {
-        src: "/images/academy/aesthetics.jpg",
-        alt: "A therapist brushing a facial mask onto a woman's face",
-        width: 1600,
-        height: 1067,
-        source: "stock",
-      },
-    },
+    image: imageSlot("aesthetics-course-cover"),
     overview:
       "Practical training in facials and massage, taught by the people who give them at Kikiewa.",
     modules: ["Facials", "Massage"],
@@ -1568,16 +1483,7 @@ export const academy = {
   } satisfies PageCopy,
   /** First item in every course's "What you'll learn". */
   methodModule: "The Kikiewa way: listen, tailor, solve, and bring the beauty out in every client",
-  image: {
-    alt: "A class in progress at Kikiewa Academy, Ikorodu",
-    image: {
-      src: "/images/academy/hero.jpg",
-      alt: "A close view of hands painting nail polish onto another person's nails",
-      width: 2400,
-      height: 1600,
-      source: "stock",
-    },
-  } as ImageSlot,
+  image: imageSlot("academy-cover"),
   whyHeading: "Why train with us",
   /** `confirmed: false` points are hidden in production. */
   why: [
@@ -1627,23 +1533,24 @@ export const academy = {
    Gallery (site plan, section 7)
 --------------------------------------------------------------------------- */
 
-export type GalleryCategory = ServiceSlug | "academy";
+export type GalleryCategory = ServiceSlug | "academy" | "branches";
 
+/** A gallery photograph. Without a category it shows under "All" only. */
 export interface GalleryItem extends OwnImageAsset {
-  category: GalleryCategory;
+  category?: GalleryCategory;
   caption?: string;
 }
 
 /**
- * Gallery photographs. Empty until photography is supplied. No client faces
- * or before/after images without written consent. Captions describe what is
+ * Gallery photographs come from the shoot: every imported photo whose slot
+ * has a gallery group (lib/photos.ts, galleryPhotos). No client faces or
+ * before/after images without written consent. Alt text describes what is
  * shown, never client names.
  */
-export const gallery: GalleryItem[] = [];
-
 export const galleryFilters: { slug: GalleryCategory; label: string }[] = [
   ...serviceCategories.map((category) => ({ slug: category.slug, label: category.name })),
   { slug: "academy", label: "Academy" },
+  { slug: "branches", label: "Branches" },
 ];
 
 // DRAFT COPY - client approval needed
@@ -1822,6 +1729,9 @@ export const contactPage = {
     body: "The quickest way to reach us is WhatsApp.",
   } satisfies PageCopy,
   phoneLabel: "Phone",
+  /** Beside each business line. */
+  mainLineNote: "Main line, also WhatsApp",
+  secondLineNote: "Second line",
   whatsappLabel: "WhatsApp",
   emailLabel: "Email",
   locationsHeading: "Our branches",
@@ -1946,6 +1856,7 @@ export type Product = {
   size?: string;
   /** In naira. Undefined or TBC reads "Price on request"; offers JSON-LD only when a number. */
   price?: number | TBC;
+  /** Leave out to use the shoot photo photoshoot/product-<slug>.jpg (lib/shop.ts). */
   image?: ImageAsset;
   /** Shown only when supplied. */
   nafdacNumber?: string;
@@ -1997,4 +1908,6 @@ export const shopPage = {
   orderNote: "We'll confirm availability and delivery or collection on WhatsApp.",
   /** Placeholder caption for a product without a photo (previews only). */
   photoCaption: "Product photo",
+  /** Under the intro: all products styled together (shop-cover). */
+  cover: ownImageSlot("shop-cover"),
 };

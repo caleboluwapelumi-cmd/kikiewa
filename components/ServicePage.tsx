@@ -1,7 +1,6 @@
 import { Button, ButtonGroup } from "@/components/Button";
 import { CtaBand } from "@/components/CtaBand";
 import { Faq } from "@/components/Faq";
-import { GalleryGrid } from "@/components/GalleryGrid";
 import { MethodStrip } from "@/components/MethodStrip";
 import { IntroStatement } from "@/components/IntroStatement";
 import { JsonLd } from "@/components/JsonLd";
@@ -12,7 +11,7 @@ import { ServiceMenu } from "@/components/ServiceMenu";
 import { ServiceSigns } from "@/components/ServiceSigns";
 import { Steps } from "@/components/Steps";
 import { Testimonials } from "@/components/Testimonials";
-import { WorkPlaceholderGrid } from "@/components/WorkPlaceholderGrid";
+import { WorkGallery } from "@/components/gallery/WorkGallery";
 import {
   bookingHref,
   breadcrumbRoots,
@@ -20,9 +19,9 @@ import {
   contact,
   cta,
   findServiceCategory,
-  gallery,
   howWeWork,
   servicePage,
+  serviceWork,
   testimonials,
   whatsappHref,
   whatsappMessages,
@@ -35,8 +34,8 @@ import { whatsappLink } from "@/lib/whatsapp";
  * The service page template (site plan, section 5), shared by all six:
  * hero, intro, menu, what to expect (the four steps of the Kikiewa method,
  * with this service's line for each, under the method strip), signs
- * (facials only), our work (three placeholder tiles until photographs
- * arrive), FAQs (confirmed answers only), testimonials (same rules as Home), the
+ * (facials only), our work (its three photo slots, placeholders until the
+ * shoot photos arrive, lightbox on tap), FAQs (confirmed answers only), testimonials (same rules as Home), the
  * disclaimer where there is one, closing band.
  *
  * Aesthetics books a consultation, never a treatment: the hero, menu and
@@ -45,7 +44,6 @@ import { whatsappLink } from "@/lib/whatsapp";
  */
 export function ServicePage({ slug }: { slug: ServiceSlug }) {
   const category = findServiceCategory(slug);
-  const work = gallery.filter((item) => item.category === slug);
   const reviews = testimonials.filter((item) => item.service === slug);
   const clinical = category.consultationLed;
   const expect = howWeWork.steps.map((step) => ({ title: step.name, body: category.expect[step.id] }));
@@ -86,7 +84,7 @@ export function ServicePage({ slug }: { slug: ServiceSlug }) {
               {cta.seeWork}
             </Button>
           </div>
-          {work.length ? <GalleryGrid items={work} /> : <WorkPlaceholderGrid categories={[slug, slug, slug]} />}
+          <WorkGallery items={serviceWork(slug)} tone={clinical ? "neutral" : "warm"} />
         </div>
       </section>
 

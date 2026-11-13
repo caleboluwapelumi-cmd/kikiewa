@@ -4,6 +4,7 @@ import { Button, ButtonGroup } from "@/components/Button";
 import { CtaBand } from "@/components/CtaBand";
 import { DirectionsAction } from "@/components/DirectionsAction";
 import { Icon } from "@/components/Icon";
+import { ImageFrame } from "@/components/ImageFrame";
 import { JsonLd } from "@/components/JsonLd";
 import { LocationDetails } from "@/components/LocationDetails";
 import { MapEmbed } from "@/components/MapEmbed";
@@ -26,7 +27,9 @@ import { telHref } from "@/lib/phone";
 
 /**
  * One branch per page (/locations/ebute, /locations/nitel). Both use this
- * exact layout: they are equals, and differ only in their details. Every
+ * exact layout: they are equals, and differ only in their details. The
+ * exterior and interior photos sit under the heading (placeholders until
+ * the shoot). Every
  * service is listed at both unless a service says otherwise. The map loads
  * only when tapped. The foot of each page links to the other, the same way.
  */
@@ -50,6 +53,23 @@ export function LocationPage({ location }: { location: Location }) {
             size="xl"
             className="mb-space-2xl"
           />
+
+          <ul className="mb-space-2xl grid grid-cols-2 gap-space-sm md:gap-gutter lg:mb-space-3xl lg:gap-gutter-desktop">
+            {[location.exterior, location.interior].map((slot, index) => (
+              <li key={slot.alt}>
+                <ImageFrame
+                  image={slot.image}
+                  alt={slot.alt}
+                  placeholder={slot.caption}
+                  ratio="aspect-[3/2]"
+                  orientation="landscape"
+                  tone="warm"
+                  priority={index === 0}
+                  sizes="(max-width: 1360px) 50vw, 600px"
+                />
+              </li>
+            ))}
+          </ul>
 
           <div className="grid grid-cols-1 items-start gap-space-2xl lg:grid-cols-2 lg:gap-16">
             <div className="flex flex-col">

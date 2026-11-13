@@ -1,5 +1,6 @@
 import { contact, primaryNav, products, sampleProducts, shopHref, whatsappMessages, type Product } from "@/data/site";
 import { isProductionSite } from "@/lib/env";
+import { productPhoto } from "@/lib/photos";
 import { whatsappLink } from "@/lib/whatsapp";
 
 /**
@@ -15,8 +16,13 @@ export const shopEnabled = products.length > 0 || !isProductionSite;
 /** True while previews show the sample products. */
 export const showingSamples = products.length === 0 && !isProductionSite;
 
-/** What the shop lists in this environment. */
-export const shopProducts: Product[] = showingSamples ? sampleProducts : products;
+/**
+ * What the shop lists in this environment. A product without its own
+ * `image` takes its shoot photo (photoshoot/product-<slug>.jpg) when imported.
+ */
+export const shopProducts: Product[] = (showingSamples ? sampleProducts : products).map((product) =>
+  product.image ? product : { ...product, image: productPhoto(product.slug, product.name) },
+);
 
 export function productHref(product: Product): string {
   return shopHref + "/" + product.slug;

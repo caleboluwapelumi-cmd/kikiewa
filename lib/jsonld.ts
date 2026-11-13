@@ -63,9 +63,9 @@ const SCHEMA_DAY: Record<Weekday, string> = {
 
 /**
  * BeautySalon for one branch page. Town and region are confirmed; the
- * street address, phone and opening hours are added once set. geo and
- * hasMap only for a branch with a Google pin (Ebute today; Nitel has none
- * yet). The phone is the branch's own line, else the business line shown
+ * street address, phone and opening hours are added once set. geo for a
+ * branch with a pin (both: Nitel's is the estate pin for now), hasMap only
+ * with a Google place ID (Ebute). The phone is the branch's own line, else the business line shown
  * on the page. No image, priceRange or reviews until they are real.
  */
 export function locationJsonLd(location: Location): JsonLdObject {

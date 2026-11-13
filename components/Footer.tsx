@@ -7,10 +7,11 @@ import { shopEnabled } from "@/lib/shop";
 import { telHref } from "@/lib/phone";
 
 /**
- * Plum footer (site plan, section 3.9): logo and line, then Services,
- * Kikiewa (Shop only while the shop is on), Visit (both branches, same
- * details) and Follow (hidden until
- * social links are confirmed). Text sits at white or white/75, both clear
+ * Plum footer (site plan, section 3.9): logo, line and both business
+ * phone lines, then Services, Kikiewa (Shop only while the shop is on),
+ * Visit (both branches, same details) and Follow (Instagram, Facebook).
+ * The bottom line carries the registered name: "© 2026 Kiki Ewa Salon Spa
+ * And Makeover. Trading as Kikiewa." Text sits at white or white/75, both clear
  * AA on plum, and `data-tone="dark"` switches the focus ring to white.
  */
 
@@ -20,7 +21,12 @@ const columnHeading = "mb-space-xs font-body text-label-sm uppercase text-on-pri
 const linkClass = "link-touch w-fit text-body-md text-on-primary/80 hover:text-on-primary";
 
 export function Footer() {
-  const tel = telHref(contact.phone);
+  // Both business lines: the main line (also WhatsApp) and the second line.
+  const lines = [contact.phone, contact.secondPhone].flatMap((number) => {
+    const href = telHref(number);
+    return href && !isTBC(number) ? [{ number, href }] : [];
+  });
+  const legalName = isTBC(site.legalName) ? site.name : site.legalName;
   return (
     <footer data-tone="dark" className="w-full bg-primary pb-space-lg text-on-primary">
       <div className="shell">
@@ -30,12 +36,17 @@ export function Footer() {
               <Logo variant="mono" className="h-16 w-auto text-cream" />
             </Link>
             <p className="font-display text-headline-sm text-on-primary">{footer.tagline}</p>
-            {tel ? (
+            {lines.length ? (
               <p className="text-body-md text-on-primary/80">
                 {footer.phoneLabel}{" "}
-                <a href={tel} className="link-touch text-on-primary">
-                  {contact.phone}
-                </a>
+                {lines.map((line, index) => (
+                  <span key={line.href}>
+                    {index > 0 ? ` ${footer.phoneJoin} ` : null}
+                    <a href={line.href} className="link-touch whitespace-nowrap text-on-primary">
+                      {line.number}
+                    </a>
+                  </span>
+                ))}
               </p>
             ) : null}
           </div>
@@ -101,7 +112,8 @@ export function Footer() {
 
         <div className="flex flex-col items-start justify-between gap-space-sm pt-space-md text-body-sm text-on-primary/75 md:flex-row md:items-center">
           <span>
-            © {site.copyrightYear} {site.name}
+            © {site.copyrightYear} {legalName}.
+            {legalName !== site.name ? ` ${footer.tradingAs} ${site.name}.` : null}
           </span>
           <nav aria-label="Legal" className="flex flex-wrap items-center gap-x-space-lg">
             {footer.legalLinks.map((link) => (
