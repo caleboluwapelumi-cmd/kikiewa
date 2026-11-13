@@ -6,6 +6,7 @@ import { PageIntro } from "@/components/PageIntro";
 import { WhatsAppAction } from "@/components/WhatsAppAction";
 import { bookPage, cta, seo, whatsappMessages } from "@/data/site";
 import { pageMetadata } from "@/lib/seo";
+import { bookingsMode } from "@/lib/server/env";
 
 export const metadata: Metadata = pageMetadata(seo.book);
 
@@ -14,11 +15,16 @@ export const metadata: Metadata = pageMetadata(seo.book);
  * the URL, so it renders in the browser; the static page carries the intro,
  * a loading line, a no-JavaScript route (WhatsApp or call) and the call
  * option underneath. The canonical stays /book whatever the query.
+ *
+ * BOOKINGS_MODE (server env, default 'whatsapp') picks the flow: WhatsApp
+ * requests, or live slots with stored bookings and Paystack ('database').
+ * It is read at build time here, so changing it needs a redeploy.
  */
 export default function BookPage() {
+  const mode = bookingsMode();
   return (
     <>
-      <PageIntro copy={bookPage.intro} />
+      <PageIntro copy={mode === "database" ? { ...bookPage.intro, body: bookPage.live.introBody } : bookPage.intro} />
       <section className="w-full border-t border-border bg-surface py-space-2xl lg:py-space-3xl">
         <div className="shell">
           <noscript>
@@ -28,7 +34,7 @@ export default function BookPage() {
             </div>
           </noscript>
           <Suspense fallback={<BookingLoading />}>
-            <BookingFlow />
+            <BookingFlow mode={mode} />
           </Suspense>
         </div>
       </section>

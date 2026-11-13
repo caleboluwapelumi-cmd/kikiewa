@@ -1680,7 +1680,57 @@ export const bookPage = {
     phoneRequired: "Enter your phone number.",
     phoneInvalid: "Enter a Nigerian mobile number: 11 digits starting with 0, or +234 and 10 digits.",
     email: "Enter a valid email address, or leave it blank.",
+    /** Database mode, services that take payment: Paystack needs an email. */
+    emailRequired: "Enter your email address. We need it for your payment receipt.",
     consent: "Tick the box to agree before sending.",
+  },
+  /**
+   * BOOKINGS_MODE=database: live free times, bookings stored online, and
+   * Paystack where a service takes payment. The WhatsApp copy above is
+   * used when BOOKINGS_MODE=whatsapp (the default).
+   */
+  // DRAFT COPY - client approval needed
+  live: {
+    introBody: "Choose your treatment, a branch and a free time. We'll keep it for you.",
+    dateHint: "These times are free right now. Sending your booking keeps one for you.",
+    loadingTimes: "Checking free times…",
+    timesError: "We couldn't load free times just now. Please try again, or book on WhatsApp.",
+    retry: "Try again",
+    noDates: "No free times in the next two weeks at this branch. Please try the other branch, or book on WhatsApp.",
+    emailHintPayment: "Needed for your Paystack receipt.",
+    privacyNote: "Your details are sent to us only when you confirm on the last step.",
+    amountDue: "Due now",
+    deposit: "Deposit",
+    fullPayment: "Full payment",
+    sendRequest: "Send request",
+    sendPayment: "Continue to payment",
+    sendNoteRequest: "We'll save your request and contact you to confirm it.",
+    sendNotePayment: "You'll pay securely with Paystack. We keep your time for 15 minutes while you pay.",
+    sending: "Sending…",
+    preferWhatsapp: "Prefer WhatsApp?",
+    preferWhatsappLink: "Send your request on WhatsApp instead",
+    errors: {
+      slot: "Sorry, that time has just been taken. Please choose another time.",
+      throttled: "Too many booking attempts. Please wait a while, or book on WhatsApp.",
+      payment: "We couldn't start the payment, so your time wasn't kept. Please try again, or book on WhatsApp.",
+      unavailable: "Online booking isn't available for this right now. Please book on WhatsApp.",
+      generic: "Something went wrong. Please try again, or book on WhatsApp.",
+    },
+    requested: {
+      heading: "Request received",
+      body: "Thank you. We'll contact you to confirm your appointment. Keep your booking code handy.",
+    },
+  },
+  /** The booking summary after sending, and on /book/status. */
+  receipt: {
+    ref: "Booking code",
+    service: "Service",
+    branch: "Branch",
+    time: "Time",
+    paid: "Amount paid",
+    due: "Amount due",
+    addToCalendar: "Add to calendar",
+    calendarTitle: "Kikiewa appointment",
   },
   sent: {
     heading: "Your request is ready to send",
@@ -1696,6 +1746,54 @@ export const bookPage = {
   },
   callHeading: "Prefer to talk?",
   callBody: "Call us and we'll book you in.",
+};
+
+/**
+ * /book/status: where Paystack returns the customer after paying. Not in
+ * the sitemap and noindex (it only means something with a ?reference=).
+ */
+// DRAFT COPY - client approval needed
+export const bookStatusPage = {
+  meta: {
+    title: "Booking status | Kikiewa",
+    description: "Check the status of your Kikiewa booking and payment.",
+    path: "/book/status",
+  } satisfies PageMeta,
+  intro: {
+    eyebrow: "Appointments",
+    heading: "Your booking",
+    body: "Here's where your booking stands.",
+  } satisfies PageCopy,
+  loading: "Checking your payment…",
+  confirmed: { heading: "You're booked", body: "Payment received. We look forward to seeing you." },
+  pending: {
+    heading: "Payment still processing",
+    body: "Paystack hasn't confirmed your payment yet. Check again in a minute.",
+    heldUntil: "Your time is kept until",
+  },
+  failed: {
+    heading: "Payment not completed",
+    body: "Your payment didn't go through. Please book again, or book on WhatsApp.",
+  },
+  expired: {
+    heading: "This booking has lapsed",
+    body: "The time to pay ran out and the slot was released. Please book again.",
+  },
+  refund: {
+    heading: "We received your payment",
+    body: "Your time was no longer free when the payment arrived, so we'll refund you in full and contact you to rebook.",
+  },
+  notFound: {
+    heading: "We couldn't find that booking",
+    body: "Check the link, or contact us and quote your booking code.",
+  },
+  unavailable: {
+    heading: "Online booking is not open yet",
+    body: "Please book on WhatsApp or call us.",
+  },
+  checkAgain: "Check again",
+  bookAgain: "Book again",
+  contact: "Contact us",
 };
 
 /**

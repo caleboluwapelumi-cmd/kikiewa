@@ -3,6 +3,8 @@
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
+import { createBooking, loadAvailability } from "@/app/book/actions";
+import { BookingReceipt } from "@/components/booking/BookingReceipt";
 import { Button } from "@/components/Button";
 import { Confirmable } from "@/components/Confirmable";
 import { ChoiceGroup, choiceId, type Choice } from "@/components/form/ChoiceGroup";
@@ -14,21 +16,32 @@ import {
   locations,
   serviceCategories,
   servicePage,
+  whatsappHref,
+  type Location,
   type LocationId,
 } from "@/data/site";
-import { formatTime } from "@/lib/format";
+import { formatNaira, formatTime } from "@/lib/format";
 import {
   bookingDates,
-  isSlotOffered,
   longDate,
   preferredSlots,
   shortDateParts,
   usesExampleTimes,
-} from "@/lib/booking/availability";
-import { useBookingDraft } from "@/lib/booking/draft";
+  type BookingDate,
+} from "@/lib/booking/calendar";
+import { useBookingDraft, useBookingReceipt } from "@/lib/booking/draft";
+import { koboToNaira } from "@/lib/booking/pricing";
 import { bookableItems, resolveService, type ServiceChoice } from "@/lib/booking/services";
 import { submitBooking } from "@/lib/booking/submit";
-import type { BookingDetails, BookingRequest, BookingStep, BookingStepNumber } from "@/lib/booking/types";
+import type {
+  AvailabilityResult,
+  BookingDetails,
+  BookingRequest,
+  BookingsMode,
+  BookingStep,
+  BookingStepNumber,
+  CreateBookingResult,
+} from "@/lib/booking/types";
 import { formatNigerianPhone, isValidEmail, normaliseNigerianPhone, type FieldErrors } from "@/lib/validation";
 
 /**
@@ -44,7 +57,14 @@ import { formatNigerianPhone, isValidEmail, normaliseNigerianPhone, type FieldEr
  *   that skips ahead lands on the first incomplete step.
  * - Focus moves to each step's heading, and to the error summary when a
  *   step is sent with problems.
- * - Sending opens WhatsApp to that location (lib/booking/submit.ts).
+ * - mode "whatsapp" (default): sending opens WhatsApp to that location
+ *   (lib/booking/submit.ts) and times are preferences.
+ * - mode "database": step 3 shows live free slots (loadAvailability), and
+ *   sending calls the createBooking server action, which stores the
+ *   booking and, for services that take payment, returns a Paystack
+ *   checkout link. Prices are never sent from here; amounts shown come
+ *   from the server and the server recomputes them anyway. WhatsApp stays
+ *   on offer as "Prefer WhatsApp?".
  * - On phones the Continue and Back buttons stick to the bottom of the
  *   screen while the step is in view (the floating action bar is hidden on
  *   /book, so nothing covers them).
@@ -74,13 +94,33 @@ function updateUrl(patch: Partial<Record<UrlKey, string | null>>, mode: "push" |
   else window.history.replaceState(null, "", url);
 }
 
-function validateDetails(details: BookingDetails): FieldErrors {
+function validateDetails(details: BookingDetails, emailRequired: boolean): FieldErrors {
   const errors: FieldErrors = {};
   if (!details.name.trim()) errors.name = t.errors.name;
   if (!details.phone.trim()) errors.phone = t.errors.phoneRequired;
   else if (!normaliseNigerianPhone(details.phone)) errors.phone = t.errors.phoneInvalid;
-  if (details.email.trim() && !isValidEmail(details.email)) errors.email = t.errors.email;
+  if (emailRequired && !details.email.trim()) errors.email = t.errors.emailRequired;
+  else if (details.email.trim() && !isValidEmail(details.email)) errors.email = t.errors.email;
   return errors;
+}
+
+/** Fields that live on step 4: server errors on these send the customer back there. */
+const DETAIL_FIELDS = new Set(["name", "phone", "email", "notes"]);
+
+/** A failed createBooking(), as a message for the error summary. */
+function bookingErrorMessage(result: Extract<CreateBookingResult, { ok: false }>): string {
+  switch (result.error) {
+    case "slot_unavailable":
+      return t.live.errors.slot;
+    case "throttled":
+      return t.live.errors.throttled;
+    case "payment_unavailable":
+      return t.live.errors.payment;
+    case "unavailable":
+      return t.live.errors.unavailable;
+    default:
+      return t.live.errors.generic;
+  }
 }
 
 function serviceLabel(choice: ServiceChoice): string {
@@ -93,13 +133,16 @@ function dayName(offset: number, iso: string): string {
   return shortDateParts(iso).day;
 }
 
-export function BookingFlow() {
+export function BookingFlow({ mode = "whatsapp" }: { mode?: BookingsMode }) {
+  const live = mode === "database";
   const searchParams = useSearchParams();
   const [details, updateDetails, clearDetails, ready] = useBookingDraft();
+  const [receipt, setReceipt] = useBookingReceipt();
   // Read once: the date list stays stable while the form is open.
   const [now] = useState(() => new Date());
   const [errorState, setErrorState] = useState<{ step: BookingStep; errors: FieldErrors }>({ step: 1, errors: {} });
   const [consent, setConsent] = useState(false);
+  const [submitting, setSubmitting] = useState(false);
 
   const headingRef = useRef<HTMLHeadingElement>(null);
   const summaryRef = useRef<HTMLDivElement>(null);
@@ -109,8 +152,45 @@ export function BookingFlow() {
   const location = locations.find((entry) => entry.id === searchParams.get("location"));
   const date = searchParams.get("date") ?? undefined;
   const time = searchParams.get("time") ?? undefined;
-  const slotOffered = Boolean(location && date && time && isSlotOffered(location, date, time, now));
-  const detailErrors = validateDetails(details);
+
+  // Live availability (database mode), per service and branch. `reload`
+  // refetches after a slot is lost or a load fails.
+  const serviceSlug = service?.slug;
+  const locationId = location?.id;
+  const [reload, setReload] = useState(0);
+  const availabilityKey = live && serviceSlug && locationId ? `${serviceSlug}|${locationId}|${reload}` : null;
+  const [availability, setAvailability] = useState<{ key: string; result: AvailabilityResult } | null>(null);
+  useEffect(() => {
+    if (!availabilityKey || !serviceSlug || !locationId) return;
+    let cancelled = false;
+    loadAvailability(serviceSlug, locationId)
+      .catch((): AvailabilityResult => ({ ok: false, error: "server" }))
+      .then((result) => {
+        if (!cancelled) setAvailability({ key: availabilityKey, result });
+      });
+    return () => {
+      cancelled = true;
+    };
+  }, [availabilityKey, serviceSlug, locationId]);
+  const liveResult = availabilityKey && availability?.key === availabilityKey ? availability.result : null;
+  const liveLoading = Boolean(availabilityKey) && !liveResult;
+  const payment = liveResult?.ok ? liveResult.payment : null;
+
+  /** Bookable dates: live free slots, or (WhatsApp mode) preferred times. */
+  function datesAt(at: Location): BookingDate[] {
+    if (!live) return bookingDates(at, now);
+    return liveResult?.ok ? liveResult.dates : [];
+  }
+  function slotsAt(at: Location, iso: string): string[] {
+    if (!live) return preferredSlots(at, iso, now);
+    return liveResult?.ok ? (liveResult.dates.find((entry) => entry.iso === iso)?.slots ?? []) : [];
+  }
+
+  const slotOffered = Boolean(
+    location && date && time && datesAt(location).some((entry) => entry.iso === date) && slotsAt(location, date).includes(time),
+  );
+  const emailRequired = Boolean(payment && payment.amountDueKobo > 0);
+  const detailErrors = validateDetails(details, emailRequired);
 
   const firstIncomplete: BookingStepNumber = !service
     ? 1
@@ -123,12 +203,18 @@ export function BookingFlow() {
           : 5;
 
   const requested = parseStep(searchParams.get("step"));
-  const step: BookingStep =
-    requested === "sent"
-      ? firstIncomplete === 5
+  // Database mode: the stored booking's receipt is the confirmation.
+  const receiptShown = live && requested === "sent" && receipt !== null;
+  const step: BookingStep = receiptShown
+    ? "sent"
+    : requested === "sent"
+      ? firstIncomplete === 5 && !live
         ? "sent"
         : firstIncomplete
       : (Math.min(requested, firstIncomplete) as BookingStepNumber);
+  // Hold the form while live times load for a step that needs them, so a
+  // refresh on step 4 or 5 doesn't flash step 3.
+  const waiting = live && !receiptShown && liveLoading && (requested === "sent" || requested >= 3);
 
   const errors = errorState.step === step ? errorState.errors : {};
 
@@ -136,7 +222,7 @@ export function BookingFlow() {
   // the first render (Continue, Back, the progress links, browser back).
   const shownStep = useRef<BookingStep | null>(null);
   useEffect(() => {
-    if (!ready) return;
+    if (!ready || waiting) return;
     if (shownStep.current !== null && shownStep.current !== step) {
       const heading = headingRef.current;
       if (heading) {
@@ -145,9 +231,9 @@ export function BookingFlow() {
       }
     }
     shownStep.current = step;
-  }, [step, ready]);
+  }, [step, ready, waiting]);
 
-  if (!ready) return <BookingLoading />;
+  if (!ready || waiting) return <BookingLoading />;
 
   function goTo(next: BookingStep) {
     setErrorState({ step: next, errors: {} });
@@ -172,7 +258,7 @@ export function BookingFlow() {
     if (step === 2 && !location) return fail({ location: t.errors.location });
     if (step === 3) {
       const found: FieldErrors = {};
-      if (!date || !location || !bookingDates(location, now).some((entry) => entry.iso === date)) {
+      if (!date || !location || !datesAt(location).some((entry) => entry.iso === date)) {
         found.date = t.errors.date;
       } else if (!slotOffered) {
         found.time = t.errors.time;
@@ -203,11 +289,16 @@ export function BookingFlow() {
     };
   }
 
-  function handleSend(event: React.FormEvent) {
+  function handleSend(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
     if (!consent) return fail({ consent: t.errors.consent });
     const request = buildRequest();
     if (!request) return;
+    if (live) {
+      const honeypot = new FormData(event.currentTarget).get("website");
+      void sendLive(request, typeof honeypot === "string" ? honeypot : "");
+      return;
+    }
     const result = submitBooking(request);
     // Opened straight from the click, so pop-up blockers allow it. The
     // confirmation screen links to it again in case it didn't open.
@@ -215,8 +306,66 @@ export function BookingFlow() {
     goTo("sent");
   }
 
+  /** Database mode: store the booking; go to Paystack when payment is due. */
+  async function sendLive(request: BookingRequest, honeypot: string) {
+    if (submitting) return;
+    setSubmitting(true);
+    let result: CreateBookingResult;
+    try {
+      // No price or amount: the server looks those up itself.
+      result = await createBooking({
+        serviceSlug: request.serviceSlug,
+        locationId: request.locationId,
+        date: request.preferredDate,
+        time: request.preferredTime,
+        name: request.customer.name,
+        phone: request.customer.phone,
+        email: request.customer.email,
+        notes: request.customer.notes,
+        consent: request.consent,
+        website: honeypot,
+      });
+    } catch {
+      result = { ok: false, error: "server" };
+    }
+
+    if (result.ok && result.kind === "payment") {
+      // Keep the button disabled: the page is leaving for Paystack.
+      window.location.assign(result.authorizationUrl);
+      return;
+    }
+    setSubmitting(false);
+
+    if (result.ok) {
+      setReceipt(result.receipt);
+      clearDetails();
+      setConsent(false);
+      goTo("sent");
+      return;
+    }
+
+    if (result.error === "slot_unavailable") {
+      // Back to the times, refreshed, with the reason shown there.
+      setReload((value) => value + 1);
+      updateUrl({ step: "3", time: null }, "push");
+      setErrorState({ step: 3, errors: { time: t.live.errors.slot } });
+      requestAnimationFrame(() => summaryRef.current?.focus());
+      return;
+    }
+    const fieldErrors = result.fieldErrors ?? {};
+    const detailKeys = Object.keys(fieldErrors).filter((key) => DETAIL_FIELDS.has(key));
+    if (detailKeys.length) {
+      updateUrl({ step: "4" }, "push");
+      setErrorState({ step: 4, errors: Object.fromEntries(detailKeys.map((key) => [key, fieldErrors[key]])) });
+      requestAnimationFrame(() => summaryRef.current?.focus());
+      return;
+    }
+    fail({ form: bookingErrorMessage(result) });
+  }
+
   function startAgain() {
     clearDetails();
+    setReceipt(null);
     setConsent(false);
     setErrorState({ step: 1, errors: {} });
     window.history.pushState(null, "", window.location.pathname);
@@ -227,12 +376,13 @@ export function BookingFlow() {
     const target: Record<string, string> = {
       service: service ? choiceId("treatment", service.slug) : choiceId("category", serviceCategories[0].slug),
       location: choiceId("location", locations[0].id),
-      date: location ? choiceId("date", bookingDates(location, now)[0]?.iso ?? "") : "",
-      time: location && date ? choiceId("time", preferredSlots(location, date, now)[0] ?? "") : "",
+      date: location ? choiceId("date", datesAt(location)[0]?.iso ?? "") : "",
+      time: location && date ? choiceId("time", slotsAt(location, date)[0] ?? "") : "",
       name: "name",
       phone: "phone",
       email: "email",
       consent: "consent",
+      form: "booking-send",
     };
     if (key === "service" && !service) target.service = choiceId("category", serviceCategories[0].slug);
     return [[target[key] ?? key, message] as [string, string]];
@@ -255,18 +405,40 @@ export function BookingFlow() {
     </div>
   );
 
-  const actions = (continueLabel: string = t.continue) => (
+  const actions = (continueLabel: string = t.continue, options: { id?: string; busy?: boolean } = {}) => (
     <div className="sticky bottom-0 z-10 -mx-space-lg mt-space-xl -mb-space-lg flex items-center gap-3 rounded-b-card border-t border-border bg-card/95 px-space-lg pt-space-md pb-[calc(var(--spacing-space-md)+env(safe-area-inset-bottom))] backdrop-blur-md md:static md:mx-0 md:mb-0 md:flex-wrap md:rounded-none md:bg-transparent md:px-0 md:pt-space-lg md:pb-0 md:backdrop-blur-none">
-      <Button type="submit" className="flex-1 md:flex-none">
-        {continueLabel}
+      <Button type="submit" id={options.id} disabled={options.busy} aria-busy={options.busy || undefined} className="flex-1 md:flex-none">
+        {options.busy ? t.live.sending : continueLabel}
       </Button>
       {typeof step === "number" && step > 1 ? (
-        <Button variant="secondary" onClick={() => goTo((step - 1) as BookingStepNumber)}>
+        <Button variant="secondary" disabled={options.busy} onClick={() => goTo((step - 1) as BookingStepNumber)}>
           {t.back}
         </Button>
       ) : null}
     </div>
   );
+
+  /** "Prefer WhatsApp?": the WhatsApp request, offered beside the live flow. */
+  const whatsappFallback = (() => {
+    if (!live) return null;
+    const request = buildRequest();
+    // The filled-in request once there is one; until then the general chat.
+    const href = request ? submitBooking(request).href : whatsappHref;
+    const external = href.startsWith("https://");
+    return (
+      <p className="text-body-sm text-muted">
+        {t.live.preferWhatsapp}{" "}
+        <a
+          href={href}
+          target={external ? "_blank" : undefined}
+          rel={external ? "noopener noreferrer" : undefined}
+          className="font-semibold text-primary underline underline-offset-4 hover:text-secondary"
+        >
+          {t.live.preferWhatsappLink}
+        </a>
+      </p>
+    );
+  })();
 
   const summary = (
     <ErrorSummary ref={summaryRef} title={t.errors.summary} errors={errorList} />
@@ -370,21 +542,46 @@ export function BookingFlow() {
         {actions()}
       </form>
     );
+  } else if (step === 3 && location && live && !liveResult?.ok) {
+    // Database mode: free times are loading, or couldn't be loaded.
+    body = (
+      <form noValidate onSubmit={handleContinue}>
+        {stepHeading(t.steps[2].heading)}
+        <div className="flex flex-col gap-space-lg">
+          {liveLoading ? (
+            <p role="status" className="text-body-md text-muted">
+              {t.live.loadingTimes}
+            </p>
+          ) : (
+            <>
+              <p role="alert" className="max-w-[60ch] text-body-md text-foreground">
+                {liveResult?.ok === false && liveResult.error === "unavailable" ? t.live.errors.unavailable : t.live.timesError}
+              </p>
+              <Button variant="secondary" className="w-fit" onClick={() => setReload((value) => value + 1)}>
+                {t.live.retry}
+              </Button>
+            </>
+          )}
+          {whatsappFallback}
+        </div>
+      </form>
+    );
   } else if (step === 3 && location) {
-    const dates = bookingDates(location, now);
+    const dates = datesAt(location);
     const dateValid = Boolean(date && dates.some((entry) => entry.iso === date));
-    const slots = date && dateValid ? preferredSlots(location, date, now) : [];
+    const slots = date && dateValid ? slotsAt(location, date) : [];
     body = (
       <form noValidate onSubmit={handleContinue}>
         {stepHeading(t.steps[2].heading)}
         <div className="flex flex-col gap-space-xl">
-          <p className="max-w-[60ch] text-body-md text-muted">{t.dateTime.hint}</p>
-          {usesExampleTimes(location) ? (
+          <p className="max-w-[60ch] text-body-md text-muted">{live ? t.live.dateHint : t.dateTime.hint}</p>
+          {!live && usesExampleTimes(location) ? (
             <p className="w-fit rounded-chip border border-dashed border-border-strong px-space-md py-space-sm text-label-sm uppercase text-muted">
               {t.dateTime.exampleTimes}
             </p>
           ) : null}
           {summary}
+          {live && dates.length === 0 ? <p className="text-body-md text-foreground">{t.live.noDates}</p> : null}
           <ChoiceGroup
             name="date"
             legend={t.dateTime.dateLegend}
@@ -398,7 +595,7 @@ export function BookingFlow() {
             value={dateValid ? date : undefined}
             onChange={(value) => {
               clearError("date");
-              const keepTime = time && preferredSlots(location, value, now).includes(time);
+              const keepTime = time && slotsAt(location, value).includes(time);
               updateUrl({ date: value, time: keepTime ? time : null }, "replace");
             }}
             error={errors.date}
@@ -424,6 +621,7 @@ export function BookingFlow() {
           ) : (
             <p className="text-body-md text-muted">{t.dateTime.chooseDateFirst}</p>
           )}
+          {whatsappFallback}
         </div>
         {actions()}
       </form>
@@ -464,7 +662,9 @@ export function BookingFlow() {
           <TextField
             id="email"
             label={t.details.email}
-            optional={t.details.optional}
+            optional={emailRequired ? undefined : t.details.optional}
+            hint={emailRequired ? t.live.emailHintPayment : undefined}
+            required={emailRequired || undefined}
             value={details.email}
             onValueChange={(email) => {
               updateDetails({ email });
@@ -485,14 +685,16 @@ export function BookingFlow() {
             onValueChange={(notes) => updateDetails({ notes })}
             maxLength={500}
           />
-          <p className="text-body-sm text-muted">{t.details.privacyNote}</p>
+          <p className="text-body-sm text-muted">{live ? t.live.privacyNote : t.details.privacyNote}</p>
         </div>
         {actions()}
       </form>
     );
   } else if (step === 5 && service && location && date && time) {
     const phone = normaliseNigerianPhone(details.phone);
-    const rows: { label: string; value: React.ReactNode; edit: BookingStepNumber }[] = [
+    // Display only: the server charges what its own catalogue says.
+    const due = payment && payment.amountDueKobo > 0 ? payment : null;
+    const rows: { label: string; value: React.ReactNode; edit?: BookingStepNumber }[] = [
       { label: t.review.service, value: serviceLabel(service), edit: 1 },
       { label: t.review.location, value: location.title, edit: 2 },
       { label: t.review.dateTime, value: `${longDate(date)}, ${formatTime(time)}`, edit: 3 },
@@ -500,6 +702,14 @@ export function BookingFlow() {
       { label: t.review.phone, value: phone ? formatNigerianPhone(phone) : details.phone, edit: 4 },
       ...(details.email.trim() ? [{ label: t.review.email, value: details.email.trim(), edit: 4 as const }] : []),
       ...(details.notes.trim() ? [{ label: t.review.notes, value: details.notes.trim(), edit: 4 as const }] : []),
+      ...(due
+        ? [
+            {
+              label: t.live.amountDue,
+              value: `${formatNaira(koboToNaira(due.amountDueKobo))} (${due.mode === "deposit" ? t.live.deposit : t.live.fullPayment})`,
+            },
+          ]
+        : []),
     ];
     body = (
       <form noValidate onSubmit={handleSend}>
@@ -515,18 +725,27 @@ export function BookingFlow() {
                 <dt className="text-label-sm uppercase text-muted">{row.label}</dt>
                 <dd className="text-body-md break-words whitespace-pre-line text-foreground">{row.value}</dd>
                 <dd>
-                  <button
-                    type="button"
-                    onClick={() => goTo(row.edit)}
-                    className="inline-flex min-h-12 items-center text-body-sm font-semibold text-primary underline decoration-border-strong underline-offset-4 transition-colors duration-200 hover:text-secondary hover:decoration-secondary"
-                  >
-                    {t.change}
-                    <span className="sr-only"> {row.label.toLowerCase()}</span>
-                  </button>
+                  {row.edit ? (
+                    <button
+                      type="button"
+                      onClick={() => goTo(row.edit as BookingStepNumber)}
+                      className="inline-flex min-h-12 items-center text-body-sm font-semibold text-primary underline decoration-border-strong underline-offset-4 transition-colors duration-200 hover:text-secondary hover:decoration-secondary"
+                    >
+                      {t.change}
+                      <span className="sr-only"> {row.label.toLowerCase()}</span>
+                    </button>
+                  ) : null}
                 </dd>
               </div>
             ))}
           </dl>
+          {live ? (
+            // Honeypot: hidden from people and assistive tech; bots fill it.
+            <div aria-hidden="true" className="absolute -left-[9999px] size-px overflow-hidden">
+              <label htmlFor="website">Website</label>
+              <input id="website" name="website" type="text" tabIndex={-1} autoComplete="off" defaultValue="" />
+            </div>
+          ) : null}
 
           <div className="flex flex-col gap-space-sm">
             {errors.consent ? (
@@ -568,10 +787,30 @@ export function BookingFlow() {
               {t.review.policiesAfter}
             </p>
           </div>
-          <p className="text-body-sm text-muted">{t.review.sendNote}</p>
+          <p className="text-body-sm text-muted">
+            {live ? (due ? t.live.sendNotePayment : t.live.sendNoteRequest) : t.review.sendNote}
+          </p>
+          {whatsappFallback}
         </div>
-        {actions(t.review.send)}
+        {live
+          ? actions(due ? t.live.sendPayment : t.live.sendRequest, { id: "booking-send", busy: submitting })
+          : actions(t.review.send, { id: "booking-send" })}
       </form>
+    );
+  } else if (step === "sent" && live && receipt) {
+    body = (
+      <div>
+        {stepHeading(t.live.requested.heading)}
+        <div className="flex flex-col gap-space-xl">
+          <p className="max-w-[60ch] text-pretty text-body-lg text-foreground">{t.live.requested.body}</p>
+          <BookingReceipt receipt={receipt} />
+          <div className="flex flex-wrap items-center gap-3">
+            <Button variant="secondary" onClick={startAgain}>
+              {t.sent.another}
+            </Button>
+          </div>
+        </div>
+      </div>
     );
   } else if (step === "sent" && service && location && date && time) {
     const request = buildRequest();

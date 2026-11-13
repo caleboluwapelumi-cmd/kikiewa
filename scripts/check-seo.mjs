@@ -6,7 +6,8 @@
  * 1. Routes: every page in the site plan is prerendered, and no page exists
  *    that the plan doesn't list. /shop is required on previews; in
  *    production it is a 404 until real products exist. Product pages
- *    (/shop/{slug}) are allowed whenever they are built.
+ *    (/shop/{slug}) are allowed whenever they are built, and so is
+ *    /book/status (Paystack's return page), which must be noindex.
  * 2. Metadata: every page's title (and og:/twitter: title) is ≤ 60
  *    characters, every description ≤ 155, and none contains "TBC" or "{{".
  * 3. Redirects: each old URL redirects permanently (308) to its new home,
@@ -61,8 +62,15 @@ const EXPECTED_ROUTES = [
 /** On previews the shop always builds (sample products); in production only once real products exist. */
 const SHOP_ROUTE = "/shop";
 if (process.env.NEXT_PUBLIC_SITE_ENV !== "production") EXPECTED_ROUTES.push(SHOP_ROUTE);
+/**
+ * Transactional pages: not content, not in the sitemap, and they must stay
+ * noindex (checked below). /book/status is where Paystack returns customers.
+ */
+const UTILITY_ROUTES = ["/book/status"];
+
 /** Built pages the plan allows without listing them one by one. */
-const isAllowedExtra = (route) => route === SHOP_ROUTE || /^\/shop\/[a-z0-9-]+$/.test(route);
+const isAllowedExtra = (route) =>
+  route === SHOP_ROUTE || /^\/shop\/[a-z0-9-]+$/.test(route) || UTILITY_ROUTES.includes(route);
 
 /** Old URLs and where they must land (site plan, section 2, "Redirects"). */
 const EXPECTED_REDIRECTS = [
@@ -207,6 +215,9 @@ for (const file of pages) {
   ];
 
   if (titleTags.length === 0) problems.push(`${route}: no <title>`);
+  if (UTILITY_ROUTES.includes(route) && !metaContents(head, "robots").some((value) => /noindex/.test(value))) {
+    problems.push(`${route}: transactional page must be noindex`);
+  }
   if (!descriptions.some(([field]) => field === "description")) {
     problems.push(`${route}: no meta description`);
   }

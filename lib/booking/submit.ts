@@ -2,21 +2,21 @@ import { bookingMessage, contact, isTBC, locations, type Location } from "@/data
 import { formatTime } from "@/lib/format";
 import { formatNigerianPhone } from "@/lib/validation";
 import { isUsableWhatsAppNumber, whatsappLink, WHATSAPP_FALLBACK_HREF } from "@/lib/whatsapp";
-import { longDate } from "@/lib/booking/availability";
+import { longDate } from "@/lib/booking/calendar";
 import { resolveService } from "@/lib/booking/services";
 import type { BookingRequest, SubmitResult } from "@/lib/booking/types";
 
 /**
- * Sends a booking request.
+ * WhatsApp booking requests (BOOKINGS_MODE=whatsapp, and the "Prefer
+ * WhatsApp?" fallback in database mode).
  *
- * Phase 1 (today): builds a pre-filled WhatsApp link to the chosen
- * location's number. Nothing leaves the browser until the customer presses
- * send in WhatsApp. While the number is TBC the result is /contact.
+ * Builds a pre-filled WhatsApp link to the chosen location's number.
+ * Nothing leaves the browser until the customer presses send in WhatsApp.
+ * While the number is TBC the result is /contact.
  *
- * Phase 2: becomes a server action that stores the request and, where a
- * deposit applies, starts a Paystack payment.
- * TODO(phase 2): the server must look up prices by service slug from its own
- * catalogue. Never trust a price, total or deposit sent from the client.
+ * Database mode stores bookings through the createBooking server action
+ * instead (app/book/actions.ts, lib/booking/create.ts), which looks prices
+ * up server-side and never trusts an amount from the browser.
  */
 
 /** The location's own WhatsApp, else the business number, else none. */
