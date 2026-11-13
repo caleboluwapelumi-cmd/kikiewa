@@ -39,4 +39,12 @@
 
 `npm test` runs the unit tests. The database suite (`tests/database.integration.test.ts`) runs the real SQL functions against the **test** project when `.env.test.local` has `TEST_SUPABASE_URL`, `TEST_SUPABASE_SERVICE_ROLE_KEY` and `TEST_SUPABASE_ANON_KEY`; otherwise it is skipped.
 
-The seed migration is generated from `data/site.ts` (`npm run db:seed`) and a test checks it is current. Until the first `supabase db push`, regenerate it whenever the menu changes. Once it has been applied, treat it as history: add later menu changes as a new migration, and drop the "matches data/site.ts" test.
+The seed migration was generated from `data/site.ts` and **was applied to the live project on 2026-11-13** (pasted into the SQL Editor, together with the other two migrations, so the CLI has no record of them). It is history now: don't run `npm run db:seed` (it would rewrite the applied file). Add later menu changes as a new migration, or, from Prompt H, in the admin screens.
+
+If you use the CLI with this project later, log in with the account that owns it, `supabase link`, then mark the three as applied before any `db push`:
+
+```sh
+supabase migration repair --status applied 20261113120000 20261113120100 20261113120200
+```
+
+`npm run db:check` checks the project in `.env.local` (read-only): keys, tables, functions, seed and RLS.

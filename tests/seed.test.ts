@@ -1,14 +1,12 @@
 import assert from "node:assert/strict";
-import { readFileSync } from "node:fs";
 import { describe, it } from "node:test";
-import { buildSeed, SEED_PATH } from "../scripts/generate-seed.mjs";
+import { buildSeed } from "../scripts/generate-seed.mjs";
 import { locations, serviceMenus } from "@/data/site";
 
+// The seed migration was applied to the live project on 2026-11-13 and is
+// now history, so there is no longer a "matches data/site.ts" check. Later
+// menu changes go in a new migration (or, from Prompt H, the admin screens).
 describe("catalogue seed", () => {
-  it("matches data/site.ts (run `npm run db:seed` after changing the menu)", () => {
-    assert.equal(readFileSync(SEED_PATH, "utf8").replace(/\r\n/g, "\n"), buildSeed());
-  });
-
   it("seeds every branch and every menu item, with no payment while prices are unset", () => {
     const seed: string = buildSeed();
     for (const location of locations) assert.match(seed, new RegExp(`'${location.id}', '${location.title}'`));
