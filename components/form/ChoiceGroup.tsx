@@ -1,9 +1,14 @@
+import { useRef } from "react";
 import { FieldError } from "@/components/form/Field";
 
 /**
  * A radio group drawn as cards. The radios are real (visually hidden, still
  * focusable), so arrow keys move between options and screen readers announce
  * "1 of 6, selected" as usual. The whole card is the label.
+ *
+ * onPick fires when an option is tapped or clicked (the one already chosen
+ * too), never when arrow keys move the selection: a form can move on after
+ * a tap without throwing keyboard users forward while they browse.
  */
 
 export type Choice = {
@@ -30,6 +35,8 @@ type ChoiceGroupProps = {
   choices: Choice[];
   value: string | undefined;
   onChange: (value: string) => void;
+  /** Tapped or clicked (never arrow keys). */
+  onPick?: (value: string) => void;
   error?: string;
   /** Grid columns, e.g. "sm:grid-cols-2". */
   columns?: string;
@@ -45,6 +52,7 @@ export function ChoiceGroup({
   choices,
   value,
   onChange,
+  onPick,
   error,
   columns = "sm:grid-cols-2",
   compact = false,
@@ -52,9 +60,18 @@ export function ChoiceGroup({
   const hintId = hint ? name + "-hint" : "";
   const errorId = error ? name + "-error" : "";
   const described = [hintId, errorId].filter(Boolean).join(" ") || undefined;
+  // The option a pointer went down on. The click that follows on its radio
+  // is a tap; a click with no pointer before it came from the keyboard.
+  const pointerOn = useRef<string | null>(null);
 
   return (
-    <fieldset aria-describedby={described} aria-invalid={error ? true : undefined} className="min-w-0">
+    <fieldset
+      id={name + "-group"}
+      aria-describedby={described}
+      aria-invalid={error ? true : undefined}
+      onKeyDown={() => (pointerOn.current = null)}
+      className="min-w-0"
+    >
       <legend className={legendHidden ? "sr-only" : "mb-space-sm text-title-md text-foreground"}>{legend}</legend>
       {hint ? (
         <p id={hintId} className="mb-space-md text-body-sm text-muted">
@@ -74,6 +91,7 @@ export function ChoiceGroup({
             <label
               key={choice.value}
               htmlFor={id}
+              onPointerDown={() => (pointerOn.current = choice.value)}
               className={[
                 "group relative flex cursor-pointer rounded-input border bg-card transition-[border-color,background-color,box-shadow,transform] duration-200 ease-out-soft active:scale-[0.98]",
                 "hover:border-primary has-focus-visible:outline-2 has-focus-visible:outline-offset-3 has-focus-visible:outline-secondary",
@@ -90,6 +108,11 @@ export function ChoiceGroup({
                 value={choice.value}
                 checked={checked}
                 onChange={() => onChange(choice.value)}
+                onClick={() => {
+                  if (pointerOn.current !== choice.value) return;
+                  pointerOn.current = null;
+                  onPick?.(choice.value);
+                }}
                 className="sr-only"
               />
               {compact ? null : (

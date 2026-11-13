@@ -57,6 +57,9 @@ import { formatNigerianPhone, isValidEmail, normaliseNigerianPhone, type FieldEr
  *   that skips ahead lands on the first incomplete step.
  * - Focus moves to each step's heading, and to the error summary when a
  *   step is sent with problems.
+ * - Tapping a treatment, a branch or a time moves on to the next step by
+ *   itself; a category or a date brings its follow-up question into view.
+ *   Arrow keys never move on, and on step 4 Enter goes to the next field.
  * - mode "whatsapp" (default): sending opens WhatsApp to that location
  *   (lib/booking/submit.ts) and times are preferences.
  * - mode "database": step 3 shows live free slots (loadAvailability), and
@@ -71,6 +74,8 @@ import { formatNigerianPhone, isValidEmail, normaliseNigerianPhone, type FieldEr
  */
 
 const STEP_COUNT = 5;
+/** Pause between a finishing tap and the next step. */
+const AUTO_ADVANCE_MS = 400;
 const t = bookPage;
 
 type UrlKey = "service" | "location" | "date" | "time" | "step";
@@ -233,11 +238,50 @@ export function BookingFlow({ mode = "whatsapp" }: { mode?: BookingsMode }) {
     shownStep.current = step;
   }, [step, ready, waiting]);
 
+  // Moving on by itself. A tap that finishes steps 1 to 3 (a treatment, a
+  // branch, a time) goes to the next step after a short pause, so the
+  // customer sees the choice land first. The timer checks the latest render,
+  // once the URL holds the new choice. Arrow keys never move on (see
+  // ChoiceGroup), Continue and Back still work, and typed details (step 4)
+  // and sending (step 5) are never automatic.
+  const latest = useRef({ step, firstIncomplete });
+  const advanceTimer = useRef<number | undefined>(undefined);
+  // A follow-up question to bring into view once it renders (the treatment
+  // list after a category, the times after a date).
+  const revealId = useRef<string | null>(null);
+  useEffect(() => {
+    latest.current = { step, firstIncomplete };
+    const target = revealId.current ? document.getElementById(revealId.current) : null;
+    if (!target) return;
+    revealId.current = null;
+    const top = target.getBoundingClientRect().top;
+    if (top < 0 || top > window.innerHeight * 0.6) target.scrollIntoView({ block: "start" });
+  });
+  useEffect(() => () => window.clearTimeout(advanceTimer.current), []);
+
   if (!ready || waiting) return <BookingLoading />;
 
   function goTo(next: BookingStep) {
     setErrorState({ step: next, errors: {} });
     updateUrl({ step: next === 1 ? null : String(next) }, "push");
+  }
+
+  /** A tap finished step `from`: move on shortly, if it's still complete then. */
+  function advanceAfterPick(from: BookingStepNumber) {
+    window.clearTimeout(advanceTimer.current);
+    advanceTimer.current = window.setTimeout(() => {
+      const now = latest.current;
+      if (now.step === from && now.firstIncomplete > from) goTo((from + 1) as BookingStepNumber);
+    }, AUTO_ADVANCE_MS);
+  }
+
+  /** Step 4: Enter (the keyboard's "Next" key on phones) goes to the next field. */
+  function nextFieldOnEnter(nextId: string) {
+    return (event: React.KeyboardEvent<HTMLInputElement>) => {
+      if (event.key !== "Enter" || event.nativeEvent.isComposing) return;
+      event.preventDefault();
+      document.getElementById(nextId)?.focus();
+    };
   }
 
   function fail(found: FieldErrors) {
@@ -484,6 +528,11 @@ export function BookingFlow({ mode = "whatsapp" }: { mode?: BookingsMode }) {
               clearError("service");
               updateUrl({ service: value }, "replace");
             }}
+            onPick={(value) => {
+              // A category opens the treatment list; the treatment moves on.
+              const picked = serviceCategories.find((entry) => entry.slug === value);
+              if (picked && !picked.consultationLed && bookableItems(picked).length) revealId.current = "treatment-group";
+            }}
             error={errors.service}
           />
           {category?.consultationLed && service?.item ? (
@@ -500,6 +549,7 @@ export function BookingFlow({ mode = "whatsapp" }: { mode?: BookingsMode }) {
                 choices={treatmentChoices}
                 value={service?.slug}
                 onChange={(value) => updateUrl({ service: value }, "replace")}
+                onPick={() => advanceAfterPick(1)}
               />
             ) : (
               <p className="border-l-2 border-accent pl-space-md text-body-md text-muted">{t.service.menuComing}</p>
@@ -536,6 +586,7 @@ export function BookingFlow({ mode = "whatsapp" }: { mode?: BookingsMode }) {
               clearError("location");
               updateUrl({ location: value as LocationId }, "replace");
             }}
+            onPick={() => advanceAfterPick(2)}
             error={errors.location}
           />
         </div>
@@ -598,6 +649,9 @@ export function BookingFlow({ mode = "whatsapp" }: { mode?: BookingsMode }) {
               const keepTime = time && slotsAt(location, value).includes(time);
               updateUrl({ date: value, time: keepTime ? time : null }, "replace");
             }}
+            onPick={(value) => {
+              if (slotsAt(location, value).length) revealId.current = "time-group";
+            }}
             error={errors.date}
           />
           {date && dateValid ? (
@@ -613,6 +667,7 @@ export function BookingFlow({ mode = "whatsapp" }: { mode?: BookingsMode }) {
                   clearError("time");
                   updateUrl({ time: value }, "replace");
                 }}
+                onPick={() => advanceAfterPick(3)}
                 error={errors.time}
               />
             ) : (
@@ -641,6 +696,8 @@ export function BookingFlow({ mode = "whatsapp" }: { mode?: BookingsMode }) {
               clearError("name");
             }}
             autoComplete="name"
+            enterKeyHint="next"
+            onKeyDown={nextFieldOnEnter("phone")}
             maxLength={80}
             error={errors.name}
           />
@@ -656,6 +713,8 @@ export function BookingFlow({ mode = "whatsapp" }: { mode?: BookingsMode }) {
             type="tel"
             inputMode="tel"
             autoComplete="tel"
+            enterKeyHint="next"
+            onKeyDown={nextFieldOnEnter("email")}
             maxLength={20}
             error={errors.phone}
           />
